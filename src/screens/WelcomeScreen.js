@@ -66,7 +66,7 @@ export default class WelcomeScreen extends Component {
                                 fullname: doc.fullname,
                             }
                             if(doc.exists) {
-                                navigation.navigate('Home', user)
+                                navigation.navigate('Home', doc)
                             }
                         })
                         .catch(function(err) {
