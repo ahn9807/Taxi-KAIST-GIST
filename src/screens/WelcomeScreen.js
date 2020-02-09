@@ -42,9 +42,9 @@ export default class WelcomeScreen extends Component {
     }
 
     async tryToLoginFirst() {
-        const email = await AsyncStorage.getItem("@loggedInUserID:key")
+        const email = await AsyncStorage.getItem("@loggedInUserID:email")
         const password = await AsyncStorage.getItem('@loggedInUserID:password')
-        const id = await AsyncStorage.getItem('@loggedInUserID:id')
+        const id = await AsyncStorage.getItem('@loggedInUserID:uid')
         if(
             id != null &&
             id.length > 0 &&
@@ -53,20 +53,16 @@ export default class WelcomeScreen extends Component {
         ) {
             firebase.auth()
                 .signInWithEmailAndPassword(email, password)
-                .then(userCredential => {
+                .then(response => {
+                    user_uid = response.user.uid
                     const { navigation } = this.props
                     firebase.firestore()
                         .collection('users')
                         .doc(id)
                         .get()
-                        .then(function(doc) {
-                            var user = {
-                                id: id,
-                                email: email,
-                                fullname: doc.fullname,
-                            }
-                            if(doc.exists) {
-                                navigation.navigate('Home', doc)
+                        .then(function(user) {
+                            if(user.exists) {
+                                navigation.navigate('Home', user.data())
                             }
                         })
                         .catch(function(err) {

@@ -31,11 +31,12 @@ export default class LoginScreen extends Component {
                     .get()
                     .then(function(user) {
                         if(user.exists) {
-                            AsyncStorage.setItem("@loggedInUserID:id", user_uid);
-                            AsyncStorage.setItem("@loggedInUserID:key", email);
-                            AsyncStorage.setItem("@loggedInUserID:password", password);
-                            //성공할 경우 화면 전환
-                            alert('Success to Login')
+                            AsyncStorage.setItem("@loggedInUserID:uid", user_uid)
+                            AsyncStorage.setItem("@loggedInUserID:email", email)
+                            AsyncStorage.setItem("@loggedInUserID:password", password)
+                            if(user.exists) {
+                                navigation.navigate('Home', user.data())
+                            }
                         } else {
                             alert('User does not exist. Please try again')
                         }
