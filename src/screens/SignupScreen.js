@@ -18,9 +18,9 @@ export default class SignupScreen extends Component {
 
     }
 
-    componentWillMount() {
+    // componentWillMount() {
 
-    }
+    // }
 
     onRegister = () => {
         const { email, password } = this.state
@@ -46,6 +46,7 @@ export default class SignupScreen extends Component {
                     .get()
                     .then(function(user) {
                         alert('success to signup')
+                        navigation.navigate('Login')
                     }).catch(function(err) {
                         alert(err.message)
                     })
