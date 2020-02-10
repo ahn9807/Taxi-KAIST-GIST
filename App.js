@@ -1,7 +1,10 @@
 import React from  'react'
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
+import { MaterialCommunityIcons } from 'react-native-vector-icons'
 import { createStore, applyMiddleware } from 'redux'
+import { StyleSheet } from 'react-native';
 import { Provider } from 'react-redux'
 import thunkMiddleware from 'redux-thunk'
 import appReducers from './src/reducers/Index'
@@ -9,10 +12,12 @@ import appReducers from './src/reducers/Index'
 import LoginScreen from "./src/screens/LoginScreen";
 import SignupScreen from "./src/screens/SignupScreen";
 import WelcomeScreen from "./src/screens/WelcomeScreen";
-import { StyleSheet } from 'react-native';
 import HomeScreen from './src/screens/HomeScreen';
+import SettingScreen from './src/screens/SettingScreen'
+import MessangerLobbyScreen from './src/screens/MessangerLobbyScreen'
 
 const Stack = createStackNavigator()
+const Tab = createMaterialBottomTabNavigator()
 
 const AuthNavigator = () => (
     <Stack.Navigator headerMode='none' initialRouteName='Welcome'>
@@ -22,12 +27,46 @@ const AuthNavigator = () => (
     </Stack.Navigator>
 )
 
+const MainTabNavigator = () => (
+  <Tab.Navigator 
+    initialRouteName='Home'
+    activeColor='red'
+    labelStyle={{fontSize:12}}
+    style={{ backgroundColor: 'tomato'}}
+  >
+    <Tab.Screen name='Home' component={HomeScreen}
+      options={{
+        tabBarLabel: 'Home',
+        tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons name='home' color={color} size={size} />
+        )
+      }}
+    />
+    <Tab.Screen name='MessangerLobby' component={MessangerLobbyScreen}
+      options={{
+        tabBarLabel: 'Messager Lobby',
+        tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons name='message-text-outline' color={color} size={size} />
+        )
+      }}
+    />
+    <Tab.Screen name='Setting' component={SettingScreen}
+      options={{
+        tabBarLabel: 'Setting',
+        tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons name='settings-outline' color={color} size={size} />
+        )
+      }}
+    />
+  </Tab.Navigator>
+)
+
 function AppNavigator() {
     return(
         <NavigationContainer>
             <Stack.Navigator headerMode='none' initialRouteName='Auth'>
-                <Stack.Screen name='Auth' component={AuthNavigator}/>
-                <Stack.Screen name='Home' component={HomeScreen}/>
+                <Stack.Screen name='Auth' component={AuthNavigator} options={{gesturesEnabled: 'false'}}/>
+                <Stack.Screen name='Main' component={MainTabNavigator} options={{gesturesEnabled: 'false'}}/>
             </Stack.Navigator>
         </NavigationContainer>
     )

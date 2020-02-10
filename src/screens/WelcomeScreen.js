@@ -62,7 +62,7 @@ export default class WelcomeScreen extends Component {
                         .get()
                         .then(function(user) {
                             if(user.exists) {
-                                navigation.navigate('Home', user.data())
+                                navigation.navigate('Main', user.data())
                             }
                         })
                         .catch(function(err) {

@@ -35,7 +35,7 @@ export default class LoginScreen extends Component {
                             AsyncStorage.setItem("@loggedInUserID:email", email)
                             AsyncStorage.setItem("@loggedInUserID:password", password)
                             if(user.exists) {
-                                navigation.navigate('Home', user.data())
+                                navigation.navigate('Main', user.data())
                             }
                         } else {
                             alert('User does not exist. Please try again')
