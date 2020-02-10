@@ -15,12 +15,14 @@ export default class WelcomeScreen extends Component {
     }
 
     render() {
+        console.log("welcome")
         if(this.state.isLoading == true) {
             return(
                 <View>
                     <ActivityIndicator
                         style={styles.spinner}
                         size='large'
+                    
                     />
                 </View>
             )
