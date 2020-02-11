@@ -14,14 +14,6 @@ export default class SignupScreen extends Component {
         }
     }
 
-    componentDidMount() {
-
-    }
-
-    // componentWillMount() {
-
-    // }
-
     onRegister = () => {
         const { email, password } = this.state
         firebase
@@ -45,8 +37,8 @@ export default class SignupScreen extends Component {
                     .doc(user_uid)
                     .get()
                     .then(function(user) {
+                        this.props.navigation.navigate('Login')
                         alert('success to signup')
-                        navigation.navigate('Login')
                     }).catch(function(err) {
                         alert(err.message)
                     })

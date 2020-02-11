@@ -1,4 +1,5 @@
 export default Region_GIST = {
+    regionName: 'GIST',
     initialRegion: {
         latitude: 37.78825,
         longitude: -122.4324,
@@ -7,7 +8,7 @@ export default Region_GIST = {
     },
     markers: [
         {
-            title: 'Test Marker',
+            title: 'KAIST',
             description: 'Test Description',
             latlng: {
                 latitude: 37.78825,
