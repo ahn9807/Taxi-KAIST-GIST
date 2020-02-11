@@ -11,12 +11,16 @@ export default class LoginScreen extends Component {
             isLoading: true,
             email: '',
             password: '',
+
         }
     }
 
+    // const emailVerified= await AsyncStorage.getItem('@loggedInUserID:emailVerified') 
+
     onPressLogin = () => {
-        const {email, password} = this.state
-        if(email.length <= 0 || password.length <= 0) {
+
+        const { email, password, emailVerified } = this.state
+        if (email.length <= 0 || password.length <= 0) {
             alert('Please fill out the required fields')
             return
         }
@@ -29,27 +33,32 @@ export default class LoginScreen extends Component {
                     .collection('users')
                     .doc(user_uid)
                     .get()
-                    .then(function(user) {
-                        if(user.exists) {
+                    .then(function (user) {
+                        if (user.exists) {
                             AsyncStorage.setItem("@loggedInUserID:uid", user_uid)
                             AsyncStorage.setItem("@loggedInUserID:email", email)
                             AsyncStorage.setItem("@loggedInUserID:password", password)
-                            if(user.exists) {
+                            
+                            if (user.data().emailVerified) {
+                                console.log("f")
                                 navigation.navigate('Main', user.data())
+                            } else {
+                                navigation.navigate('EmailAuth', user.data())
                             }
+
                         } else {
                             alert('User does not exist. Please try again')
                         }
-                    }).catch(function(err) {
+                    }).catch(function (err) {
                         alert(err.message)
                     })
-            }).catch(function(err) {
+            }).catch(function (err) {
                 alert(err.message)
             })
     }
 
     render() {
-        return(
+        return (
             <View style={styles.container}>
                 <TextInput
                     placeholder='Email'
@@ -74,9 +83,9 @@ export default class LoginScreen extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent:'center',
+        justifyContent: 'center',
         alignItems: "center"
-      },
+    },
     spinner: {
         marginTop: 200
     }

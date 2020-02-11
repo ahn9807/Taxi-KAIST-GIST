@@ -10,7 +10,10 @@ export default class WelcomeScreen extends Component {
         super(props)
         this.state = {
             isLoading: true
+            // 계속 spinner가 돌아서 comment 처리 함
+            // spinner 주는 방법을 좀 다르게 해야 한다.
         }
+        console.log("trylogin")
         this.tryToLoginFirst()
     }
 
@@ -26,7 +29,8 @@ export default class WelcomeScreen extends Component {
                     />
                 </View>
             )
-        } else {
+        } else 
+        {
             return(
                 <View style={styles.container}>
                     <Text>
@@ -47,6 +51,7 @@ export default class WelcomeScreen extends Component {
         const email = await AsyncStorage.getItem("@loggedInUserID:email")
         const password = await AsyncStorage.getItem('@loggedInUserID:password')
         const id = await AsyncStorage.getItem('@loggedInUserID:uid')
+        const emailVerified= await AsyncStorage.getItem('@loggedInUserID:emailVerified') 
         if(
             id != null &&
             id.length > 0 &&
@@ -64,7 +69,13 @@ export default class WelcomeScreen extends Component {
                         .get()
                         .then(function(user) {
                             if(user.exists) {
+                                console.log(71)
+                                if(user.data().emailVerified){
                                 navigation.navigate('Main', user.data())
+                                }
+                                else{
+                                    navigation.navigate('EmailAuth', user.data())
+                                }
                             }
                         })
                         .catch(function(err) {

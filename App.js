@@ -15,6 +15,7 @@ import WelcomeScreen from "./src/screens/WelcomeScreen";
 import HomeScreen from './src/screens/HomeScreen';
 import SettingScreen from './src/screens/SettingScreen'
 import MessangerLobbyScreen from './src/screens/MessangerLobbyScreen'
+import EmailAuthScreen from './src/screens/EmailAuthScreen'
 
 const Stack = createStackNavigator()
 const Tab = createMaterialBottomTabNavigator()
@@ -24,6 +25,7 @@ const AuthNavigator = () => (
         <Stack.Screen name='Login' component={LoginScreen}/>
         <Stack.Screen name='Signup' component={SignupScreen}/>
         <Stack.Screen name='Welcome' component={WelcomeScreen}/>
+        <Stack.Screen name='EmailAuth' component={EmailAuthScreen}/>
     </Stack.Navigator>
 )
 
