@@ -1,13 +1,7 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Text, Button, AsyncStorage } from "react-native";
-import firebase from 'firebase'
-import 'firebase/firestore'
+import { StyleSheet, View, Text } from "react-native";
 
 export default class SettingScreen extends Component {
-    // constructor(props){
-
-    // }
-
     onLogout = () => {
         firebase.auth().signOut()
         AsyncStorage.setItem("@loggedInUserID:uid", '')
@@ -16,6 +10,9 @@ export default class SettingScreen extends Component {
         this.props.navigation.navigate('Welcome')
     }
 
+    onChnageID = () => {
+
+    }
 
     render() {
         return(
@@ -23,9 +20,6 @@ export default class SettingScreen extends Component {
                 <Text>
                     Setting Screen
                 </Text>
-                <Button title="Logout" onPress={this.onLogout}>
-                </Button>
-
             </View>
         )
     }
