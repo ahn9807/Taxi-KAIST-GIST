@@ -16,6 +16,7 @@ import HomeScreen from './src/screens/HomeScreen';
 import SettingScreen from './src/screens/SettingScreen'
 import MessangerLobbyScreen from './src/screens/MessangerLobbyScreen'
 import EmailAuthScreen from './src/screens/EmailAuthScreen'
+import ReservationScreen from './src/screens/ReservationScreen'
 
 const Stack = createStackNavigator()
 const Tab = createMaterialBottomTabNavigator()
@@ -69,6 +70,7 @@ function AppNavigator() {
             <Stack.Navigator headerMode='none' initialRouteName='Auth'>
                 <Stack.Screen name='Auth' component={AuthNavigator} options={{gesturesEnabled: 'false'}}/>
                 <Stack.Screen name='Main' component={MainTabNavigator} options={{gesturesEnabled: 'false'}}/>
+                <Stack.Screen name='Reservation' component={ReservationScreen} options={{gestureEnabled: 'false'}}/>
             </Stack.Navigator>
         </NavigationContainer>
     )

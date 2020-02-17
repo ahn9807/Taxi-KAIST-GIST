@@ -9,7 +9,7 @@ export default class WelcomeScreen extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            isLoading: true
+            isLoading: false
             // 계속 spinner가 돌아서 comment 처리 함
             // spinner 주는 방법을 좀 다르게 해야 한다.
         }
@@ -69,9 +69,8 @@ export default class WelcomeScreen extends Component {
                         .get()
                         .then(function(user) {
                             if(user.exists) {
-                                console.log(71)
                                 if(user.data().emailVerified){
-                                navigation.navigate('Main', user.data())
+                                    navigation.navigate('Main', user.data())
                                 }
                                 else{
                                     navigation.navigate('EmailAuth', user.data())
@@ -80,14 +79,16 @@ export default class WelcomeScreen extends Component {
                         })
                         .catch(function(err) {
                             alert(err.message)
+                            this.setState({
+                                isLoading: false
+                            })
                         })
-                    this.state.isLoading = false
                 }).catch(err => {
                     alert(err.message)
+                    this.setState({
+                        isLoading: false
+                    })
                 })
-            this.setState({
-                isLoading: true
-            })
         } else {
             this.setState({
                 isLoading: false

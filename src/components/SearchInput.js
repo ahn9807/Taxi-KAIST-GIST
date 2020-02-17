@@ -3,21 +3,23 @@ import React, { useState } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
+import { Button } from 'react-native-elements';
 
 const query = {
   key: 'AIzaSyDFND1fH5Cs8laIZKQ_UbUb0nL0gVx_OQ0',
   language: 'ko',
 };
 
-const SearchInput = ({ onLocationSelected }) => {
+const SearchInput = ({ onLocationSelected, rightButtonCallback, focusedOnSource }) => {
   const [searchFocused, setSearchFocused] = useState(false);
 
   return (
     <GooglePlacesAutocomplete
       minLength={2}
       autoFocus={true}
-      placeholder="출발지 / 목적지"
+      placeholder={focusedOnSource ? '출발지 검색' : '도착지 검색'}
       onPress={onLocationSelected}
+      autoFocus={false}
       query={query}
       textInputProps={{
         onFocus: () => {
@@ -37,9 +39,14 @@ const SearchInput = ({ onLocationSelected }) => {
       debounce={200}
       enablePoweredByContainer={false}
       styles={style}
+
+      renderRightButton={()=>
+        <Button buttonStyle={style.button} title={focusedOnSource ? '출발지' : '도착지'} onPress={rightButtonCallback}/>
+      }
     />
   );
 };
+
 
 SearchInput.propTypes = {
   onLocationSelected: PropTypes.func.isRequired,
@@ -100,6 +107,11 @@ const style = StyleSheet.create({
     padding: 20,
     height: 58,
   },
+  button: {
+    height: 54,
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
 })
 
 export default SearchInput;
