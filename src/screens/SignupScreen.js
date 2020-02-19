@@ -8,7 +8,7 @@ export default class SignupScreen extends Component {
         super(props)
         this.state = {
             isLoading: false,
-            fullname: '',
+            displayName: '',
             email: '',
             password: '',
             emailVerified: false,
@@ -31,10 +31,10 @@ export default class SignupScreen extends Component {
             .createUserWithEmailAndPassword(email, password)
             .then(response => {
                 const { navigation } = this.props
-                const { fullname, email, emailVerified, origin } = this.state
+                const { displayName, email, emailVerified, origin } = this.state
                 const data = {
                     email: email,
-                    fullname: fullname,
+                    displayName: displayName,
                     emailVerified: emailVerified,
                     appIdentifire: 'test app',
                     origin: origin 
@@ -54,7 +54,7 @@ export default class SignupScreen extends Component {
                         alert('success to signup')
                         navigation.navigate('Login')
                     }).catch(function (err) {
-                        alert(err.message)
+                        alert(ferr.message)
                     })
             }).catch(function (err) {
                 alert(err.message)
@@ -77,8 +77,8 @@ export default class SignupScreen extends Component {
                 </Text>
                 <TextInput
                     placeholder='full name'
-                    onChangeText={text => this.setState({ fullname: text })}
-                    value={this.state.fullname}
+                    onChangeText={text => this.setState({ displayName: text })}
+                    value={this.state.displayName}
                     style={{ marginTop: 30 }}
                 />
                 <TextInput

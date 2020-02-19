@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Button, AsyncStorage } from "react-native";
+import firebase from 'firebase'
 
 export default class SettingScreen extends Component {
     onLogout = () => {
@@ -20,6 +21,8 @@ export default class SettingScreen extends Component {
                 <Text>
                     Setting Screen
                 </Text>
+                <Button title= "logout" onPress={this.onLogout}/>
+
             </View>
         )
     }

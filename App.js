@@ -14,12 +14,15 @@ import SignupScreen from "./src/screens/SignupScreen";
 import WelcomeScreen from "./src/screens/WelcomeScreen";
 import HomeScreen from './src/screens/HomeScreen';
 import SettingScreen from './src/screens/SettingScreen'
-import MessangerLobbyScreen from './src/screens/MessangerLobbyScreen'
+import MessengerLobbyScreen from './src/screens/MessengerLobbyScreen'
 import EmailAuthScreen from './src/screens/EmailAuthScreen'
 import ReservationScreen from './src/screens/ReservationScreen'
 
+import ChatRoomScreen from './src/screens/ChatRoomScreen'
+
 const Stack = createStackNavigator()
 const Tab = createMaterialBottomTabNavigator()
+const Chat = createStackNavigator()
 
 const AuthNavigator = () => (
     <Stack.Navigator headerMode='none' initialRouteName='Welcome'>
@@ -45,9 +48,9 @@ const MainTabNavigator = () => (
         )
       }}
     />
-    <Tab.Screen name='MessangerLobby' component={MessangerLobbyScreen}
+    <Tab.Screen name='ChatNavigator' component={ChatNavigator}
       options={{
-        tabBarLabel: 'Messager Lobby',
+        tabBarLabel: 'Messeger Lobby',
         tabBarIcon: ({ color, size }) => (
           <MaterialCommunityIcons name='message-text-outline' color={color} size={size} />
         )
@@ -63,6 +66,15 @@ const MainTabNavigator = () => (
     />
   </Tab.Navigator>
 )
+
+const ChatNavigator =()=>(
+  <Chat.Navigator headerMode='none' initialRouteName='MessengerLobby'>
+    <Chat.Screen name='MessengerLobby' component={MessengerLobbyScreen}/>
+    <Chat.Screen name='ChatRoom' component={ChatRoomScreen}/>
+  </Chat.Navigator>
+)
+
+  
 
 function AppNavigator() {
     return(
