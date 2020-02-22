@@ -2,9 +2,10 @@ import React from  'react'
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { MaterialCommunityIcons } from 'react-native-vector-icons'
 import { createStore, applyMiddleware } from 'redux'
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import { Provider } from 'react-redux'
 import thunkMiddleware from 'redux-thunk'
 import appReducers from './src/reducers/Index'
@@ -19,9 +20,11 @@ import EmailAuthScreen from './src/screens/EmailAuthScreen'
 import ReservationScreen from './src/screens/ReservationScreen'
 
 import ChatRoomScreen from './src/screens/ChatRoomScreen'
+import { SafeAreaProvider } from 'react-native-safe-area-view';
 
 const Stack = createStackNavigator()
 const Tab = createMaterialBottomTabNavigator()
+const TopTab = createMaterialTopTabNavigator()
 const Chat = createStackNavigator()
 
 const AuthNavigator = () => (
@@ -33,7 +36,7 @@ const AuthNavigator = () => (
     </Stack.Navigator>
 )
 
-const MainTabNavigator = () => (
+const MainTabNavigatorIOS = () => (
   <Tab.Navigator 
     initialRouteName='Home'
     activeColor='red'
@@ -67,6 +70,44 @@ const MainTabNavigator = () => (
   </Tab.Navigator>
 )
 
+const MainTabNavigatorAndroid = () => (
+  <TopTab.Navigator
+    initialRouteName='Home'
+    tabBarPosition="bottom"
+    style={{backgroundColor: 'tomato'}}
+  >
+    <TopTab.Screen name='Home' component={HomeScreen}
+      options={{
+        tabBarLabel: 'Home',
+        tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons name='home' color={color} size={size} />
+        )
+      }}
+    />
+    <TopTab.Screen name='ChatNavigator' component={ChatNavigator}
+      options={{
+        tabBarLabel: 'Messeger Lobby',
+        tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons name='message-text-outline' color={color} size={size} />
+        )
+      }}
+    />
+    <TopTab.Screen name='Setting' component={SettingScreen}
+      options={{
+        tabBarLabel: 'Setting',
+        tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons name='settings-outline' color={color} size={size} />
+        )
+      }}
+    />
+  </TopTab.Navigator>
+)
+
+const MainTabNavigator = Platform.select({
+  ios: MainTabNavigatorIOS,
+  android: MainTabNavigatorAndroid,
+})
+
 const ChatNavigator =()=>(
   <Chat.Navigator headerMode='none' initialRouteName='MessengerLobby'>
     <Chat.Screen name='MessengerLobby' component={MessengerLobbyScreen}/>
@@ -80,9 +121,9 @@ function AppNavigator() {
     return(
         <NavigationContainer>
             <Stack.Navigator headerMode='none' initialRouteName='Auth'>
-                <Stack.Screen name='Auth' component={AuthNavigator} options={{gesturesEnabled: 'false'}}/>
-                <Stack.Screen name='Main' component={MainTabNavigator} options={{gesturesEnabled: 'false'}}/>
-                <Stack.Screen name='Reservation' component={ReservationScreen} options={{gestureEnabled: 'false'}}/>
+                <Stack.Screen name='Auth' component={AuthNavigator} options={{gesturesEnabled: false}}/>
+                <Stack.Screen name='Main' component={MainTabNavigator} options={{gesturesEnabled: false}}/>
+                <Stack.Screen name='Reservation' component={ReservationScreen} options={{gestureEnabled: false}}/>
             </Stack.Navigator>
         </NavigationContainer>
     )

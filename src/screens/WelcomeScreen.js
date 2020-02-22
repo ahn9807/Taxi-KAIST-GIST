@@ -4,6 +4,8 @@ import { Button } from "react-native-elements";
 import { connect } from "react-redux";
 import firebase from 'firebase'
 import 'firebase/firestore'
+import SlidingUpPanel from "rn-sliding-up-panel";
+import Details from "../components/Details";
 
 export default class WelcomeScreen extends Component {
     constructor(props) {
@@ -25,7 +27,6 @@ export default class WelcomeScreen extends Component {
                     <ActivityIndicator
                         style={styles.spinner}
                         size='large'
-                    
                     />
                 </View>
             )

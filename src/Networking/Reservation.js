@@ -1,4 +1,5 @@
-import firebase from '../config/Firebase'
+import firebase from 'firebase'
+import 'firebase/firestore'
 import { Alert } from 'react-native'
 
 var regionName
@@ -101,7 +102,14 @@ export function getReservationByDest(dest) {
     return returnArray
 }
 
-export function makeReservation(source, dest, startTime, endTime, marker, userUid) {
+export function makeReservation(item) {
+    console.log('make Reservation')
+    var source = item.source
+    var dest = item.dest
+    var startTime = item.startTime
+    var endTime = item.endTime
+    var marker = item.marker
+    var userUid = firebase.auth().currentUser.uid
     return new Promise(function(resolve, reject) {
         var docRef = firebase.firestore()
         .collection(regionName)
@@ -126,11 +134,15 @@ export function makeReservation(source, dest, startTime, endTime, marker, userUi
                         docRef.set({
                             users: tempArray
                         }, { merge: true})
+                        alert('가입되었습니다')
+                        resolve(true)
                     } else {
+                        alert('이미 가입되어 있습니다')
                         resolve(false)
                     }
                 } else {
                     //유저가 이미 4명이라서 방에 가입할 수 없는 상태이다.
+                    alert('탑승객이 이미 4명입니다')
                     resolve(false)
                 }
             } else {
@@ -142,10 +154,13 @@ export function makeReservation(source, dest, startTime, endTime, marker, userUi
                     marker: marker,
                     users: [userUid],
                 })
+                alert('가입되었습니다')
+                resolve(true)
             }
+        }).catch(function(err) {
+            alert(err.message)
+            resolve(false)
         })
-
-        resolve(true)
     })
 }
 
