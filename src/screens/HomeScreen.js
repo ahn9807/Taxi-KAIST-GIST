@@ -1,5 +1,5 @@
 import React, { useState, useRef, Component } from "react";
-import { Text, View, Button, AsyncStorage, StatusBar, StyleSheet, Dimensions, Alert, ActivityIndicator } from "react-native";
+import { Text, View, Button, AsyncStorage, StatusBar, StyleSheet, Dimensions, Alert, ActivityIndicator, InteractionManager } from "react-native";
 import { BaseRouter } from "@react-navigation/native";
 import firebase from '../config/Firebase'
 import MapView, { Marker } from 'react-native-maps';
@@ -11,6 +11,7 @@ import Markers, { removeDupulicatedMarkers } from '../components/Markers'
 import SlidingUpPanel from 'rn-sliding-up-panel'
 import { Badge, Overlay } from "react-native-elements";
 import Details from "../components/Details";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 var reservationInfo
 
@@ -35,7 +36,9 @@ export default class HomeScreen extends Component {
             this.setState({
                 isLoading: false,
             })
-        }.bind(this))
+        }.bind(this)).catch(function(err) {
+            alert(err.message)
+        })
     }
 
     handleOnLocationSelected = (data, { geometry }) => {
@@ -86,17 +89,23 @@ export default class HomeScreen extends Component {
     }
 
     handleOnPinCalloutPressed = () => {
-        console.log('sdf')
-        this.setState({
-            reservationInfo: {
-                target: reservationInfo.target
-            }
-        })
-        this._panel.show()
+        InteractionManager.runAfterInteractions(() => {
+            this.setState({
+                reservationInfo: {
+                    target: reservationInfo.target
+                }
+            })
+        }).done(function(res) {
+            this._panel.show()
+        }.bind(this))
     }
 
     handleOnReservationPressed = () => {
-        this.props.navigation.navigate('Reservation')
+        this.props.navigation.navigate('Reservation',{
+            focusedOnSource: this.state.focusedOnSource,
+            regionName: this.state.initialRegionName,
+            targetName: this.state.reservationInfo.target,
+        })
     }
 
     render() {
@@ -139,7 +148,9 @@ export default class HomeScreen extends Component {
                             backdropOpacity={0.5}
                             friction={0.7}
                         >
-                            <Details target={this.state.reservationInfo.target} 
+                            <Details 
+                                 title={'조회하기'}
+                                target={this.state.reservationInfo.target} 
                                 description={[this.state.reservationInfo.target+'->'+this.state.initialRegionName]}
                                 reservationButton={this.handleOnReservationPressed}
                             />
@@ -148,10 +159,11 @@ export default class HomeScreen extends Component {
                 )
             } else {
                 return(
-                    <View style={styles.container}>
+                    <SafeAreaView style={styles.container}>
                         <MapView style={styles.mapStyle} 
                             initialRegion={this.state.region.initialRegion}
                             showsCompass={false}
+                            ref={c=>this._mapView = c}
                         >
                             <Markers 
                                 markers={this.state.region.defaultMarkers} 
@@ -178,17 +190,20 @@ export default class HomeScreen extends Component {
                         <SearchInput onLocationSelected={this.handleOnLocationSelected} 
                         rightButtonCallback={this.handleOnLocationRightButtonSelected}
                         focusedOnSource={this.state.focusedOnSource}/>
+
                         <SlidingUpPanel 
                             ref={c=> this._panel = c}
                             backdropOpacity={0.5}
                             friction={0.7}
                         >
-                            <Details target={this.state.reservationInfo.target} 
+                            <Details 
+                                title={'조회하기'}
+                                target={this.state.reservationInfo.target} 
                                 description={[this.state.initialRegionName+'->'+this.state.reservationInfo.target]}
                                 reservationButton={this.handleOnReservationPressed}
                             />
                         </SlidingUpPanel>
-                    </View>
+                    </SafeAreaView>
                 )
             }
         } else {

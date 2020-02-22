@@ -1,5 +1,5 @@
 import firebase from 'firebase';
-import 'firebase/firestore';
+import 'firebase/firestore'
 
 class Fire {
     constructor() {

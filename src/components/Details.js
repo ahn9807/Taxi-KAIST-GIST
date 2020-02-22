@@ -3,15 +3,15 @@ import { Text, StyleSheet, View } from 'react-native';
 import { PricingCard, Card } from 'react-native-elements';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 
-const Details = ({ target, description, reservationButton }) => (
+const Details = ({ title, target, description, reservationButton }) => (
     <View style={styles.container}>
         <PricingCard
             containerStyle={styles.pricingCardContainer}
             color="#4f9deb"
-            title="예약하기"
+            title={title}
             price={target}
             info={description}
-            button={{ title: '택시 조회하기', icon: 'local-taxi' }}
+            button={{ title: ' 택시 ' + title, icon: 'local-taxi' }}
             onButtonPress={reservationButton}
         />
     </View>

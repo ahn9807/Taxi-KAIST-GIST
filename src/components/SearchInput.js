@@ -81,7 +81,7 @@ const style = StyleSheet.create({
     marginRight: 0,
     elevation: 5,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.0,
     shadowOffset: { x: 0, y: 0 },
     shadowRadius: 15,
     borderWidth: 1,
