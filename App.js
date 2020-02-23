@@ -10,7 +10,7 @@ import { Provider } from 'react-redux'
 import thunkMiddleware from 'redux-thunk'
 import appReducers from './src/reducers/Index'
 
-import LoginScreen from "./src/screens/LoginScreen";
+import FindAuthScreen from "./src/screens/FindAuthScreen";
 import SignupScreen from "./src/screens/SignupScreen";
 import WelcomeScreen from "./src/screens/WelcomeScreen";
 import HomeScreen from './src/screens/HomeScreen';
@@ -29,7 +29,7 @@ const Chat = createStackNavigator()
 
 const AuthNavigator = () => (
     <Stack.Navigator headerMode='none' initialRouteName='Welcome'>
-        <Stack.Screen name='Login' component={LoginScreen}/>
+        <Stack.Screen name='FindAuth' component={FindAuthScreen}/>
         <Stack.Screen name='Signup' component={SignupScreen}/>
         <Stack.Screen name='Welcome' component={WelcomeScreen}/>
         <Stack.Screen name='EmailAuth' component={EmailAuthScreen}/>
