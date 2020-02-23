@@ -54,6 +54,18 @@ export function getReservationBySource(source) {
     return returnArray
 }
 
+export function getReservationByDest(dest) {
+    var returnArray = []
+    internalDocumentation.forEach(function(doc) {
+        if(doc.data().dest == dest && doc.data().endTime > Date.now()) {
+            returnArray.push(doc.data())
+        }
+    })
+    
+    return returnArray
+}
+
+
 export function getReservationByDate(year, month, day, offset=0) {
     var returnArray = []
     var refDate = Date(year, month, day)
@@ -88,17 +100,6 @@ export function getMarkerByDest(dest) {
         }
     })
 
-    return returnArray
-}
-
-export function getReservationByDest(dest) {
-    var returnArray = []
-    internalDocumentation.forEach(function(doc) {
-        if(doc.data().dest == dest && doc.data().endTime > Date.now()) {
-            returnArray.push(doc.data())
-        }
-    })
-    
     return returnArray
 }
 

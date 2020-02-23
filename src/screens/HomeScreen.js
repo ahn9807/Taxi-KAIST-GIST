@@ -25,7 +25,7 @@ export default class HomeScreen extends Component {
             isLoading: true,
             destination: null,
             location: null,
-            focusedOnSource: false,
+            targetToRegion: false,
             reservationInfo: {
                 target: '마법부',
             },
@@ -76,15 +76,16 @@ export default class HomeScreen extends Component {
     }
 
     handleOnLocationRightButtonSelected = () => {
-        var focusedOnSource = !this.state.focusedOnSource
+        var focusedOnSource = !this.state.targetToRegion
         this.setState({
-            focusedOnSource: focusedOnSource
+            targetToRegion: focusedOnSource
         })
     }
 
     handleOnPinPressed = (marker) => {
         reservationInfo = {
-            target: marker.title
+            target: marker.title,
+            marker: marker,
         }
     }
 
@@ -92,7 +93,8 @@ export default class HomeScreen extends Component {
         InteractionManager.runAfterInteractions(() => {
             this.setState({
                 reservationInfo: {
-                    target: reservationInfo.target
+                    target: reservationInfo.target,
+                    marker: reservationInfo.marker
                 }
             })
         }).done(function(res) {
@@ -102,15 +104,16 @@ export default class HomeScreen extends Component {
 
     handleOnReservationPressed = () => {
         this.props.navigation.navigate('Reservation',{
-            focusedOnSource: this.state.focusedOnSource,
+            targetToRegion: this.state.targetToRegion,
             regionName: this.state.initialRegionName,
             targetName: this.state.reservationInfo.target,
+            marker: this.state.reservationInfo.marker,
         })
     }
 
     render() {
         if(this.state.isLoading == false) {
-            if(this.state.focusedOnSource) {
+            if(this.state.targetToRegion) {
                 return(
                     <View style={styles.container}>
                         <MapView style={styles.mapStyle} 
@@ -142,7 +145,7 @@ export default class HomeScreen extends Component {
                         </MapView>
                         <SearchInput onLocationSelected={this.handleOnLocationSelected} 
                         rightButtonCallback={this.handleOnLocationRightButtonSelected} 
-                        focusedOnSource={this.state.focusedOnSource}/>
+                        focusedOnSource={this.state.targetToRegion}/>
                         <SlidingUpPanel 
                             ref={c=> this._panel = c}
                             backdropOpacity={0.5}
@@ -189,7 +192,7 @@ export default class HomeScreen extends Component {
                         </MapView>
                         <SearchInput onLocationSelected={this.handleOnLocationSelected} 
                         rightButtonCallback={this.handleOnLocationRightButtonSelected}
-                        focusedOnSource={this.state.focusedOnSource}/>
+                        focusedOnSource={this.state.targetToRegion}/>
 
                         <SlidingUpPanel 
                             ref={c=> this._panel = c}

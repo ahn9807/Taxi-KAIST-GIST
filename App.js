@@ -115,7 +115,6 @@ const ChatNavigator =()=>(
   </Chat.Navigator>
 )
 
-  
 
 function AppNavigator() {
     return(
