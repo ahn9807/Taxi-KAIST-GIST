@@ -4,15 +4,14 @@ import { Header, Button, Icon, ListItem, Card, Divider, Overlay } from "react-na
 import * as Reservation from '../Networking/Reservation'
 import SlidingUpPanel from "rn-sliding-up-panel";
 import Details from "../components/Details";
-import DateTimePicker from 'react-native-modal-datetime-picker'
+import DateTimePicker from '@react-native-community/datetimepicker'
 
 export default class ReservationScreen extends Component {
     constructor(props) {
         super(props)
         this.state = {
             isLoading: true,
-            currentMarker: this.props.route.params.marker,
-            targetToRegion: this.props.route.params.targetToRegion,
+            focusOnSource: this.props.route.params.focusOnSource,
             regionName: this.props.route.params.regionName,
             targetName: this.props.route.params.targetName,
             listItem: null,
@@ -23,20 +22,15 @@ export default class ReservationScreen extends Component {
             },
             makeNewReservation: false,
             selectedDate: new Date(),
-            showTimePicker: false,
-            selectedStartTime: new Date(),
-            selectedEndTime: new Date(),
-            focusOnStart: true,
         }
         Reservation.setRegion(this.state.regionName)
         Reservation.fetchReservationData().then(function(res, err) {
-            console.log(Reservation.getReservationByDest(this.state.targetName))
-            console.log(Reservation.getReservationBySource(this.state.targetName))
-            if(this.state.targetToRegion) {
+            if(this.state.focusOnSource) {
                 this.state.listItem = Reservation.getReservationBySource(this.state.targetName)
             } else {
                 this.state.listItem = Reservation.getReservationByDest(this.state.targetName)
             }
+            console.log(this.state.listItem)
             this.setState({
                 isLoading: false,
             })
@@ -53,19 +47,12 @@ export default class ReservationScreen extends Component {
             isLoading:true
         })
         Reservation.fetchReservationData().then(function(res, err) {
-            console.log(Reservation.getReservationBySource(this.state.targetName))
-            console.log(Reservation.getReservationByDest(this.state.targetName))
-            if(this.state.targetToRegion) {
-                console.log('focus On Source')
-                this.setState({
-                    listItem: Reservation.getReservationBySource(this.state.targetName)
-                })
+            if(this.state.focusOnSource) {
+                this.state.listItem = Reservation.getReservationBySource(this.state.targetName)
             } else {
-                console.log('Not focus On Source')
-                this.setState({
-                    listItem: Reservation.getReservationByDest(this.state.targetName)
-                })
+                this.state.listItem = Reservation.getReservationByDest(this.state.targetName)
             }
+            console.log(this.state.listItem)
             this.setState({
                 isLoading:false
             })
@@ -118,7 +105,7 @@ export default class ReservationScreen extends Component {
                     style={{justifyContent: 'center', alignItems: 'center'}}
                 >
                     <Text>
-                        {this.state.targetToRegion ? this.state.targetName+' -> '+this.state.regionName : this.state.regionName + ' -> ' + this.state.targetName}
+                        {this.state.focusOnSource ? this.state.regionName+' -> '+this.state.targetName : this.state.targetName + ' -> ' + this.state.regionName}
                     </Text>
                     <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
                         <Button title="이전날" onPress={()=> {this.setState({ today: new Date(-86400000 + +new Date(this.state.today))})}}>
@@ -183,61 +170,29 @@ export default class ReservationScreen extends Component {
                     visible={this.state.makeNewReservation}    
                 >
                     <Text>
-                        {this.state.targetToRegion ? this.state.targetName+' -> '+this.state.regionName : this.state.regionName + ' -> ' + this.state.targetName}
+                        {this.state.focusOnSource ? this.state.regionName+' -> '+this.state.targetName : this.state.targetName + ' -> ' + this.state.regionName}
                     </Text>
-                    <Button title='터치해서 예정 출발 시간' onPress={()=>{this.setState({ showTimePicker: true, focusOnStart: true})}}/>
                     <Text>
-                        {this.state.selectedStartTime.toString()}
+                        예정 출발 시간
                     </Text>
-                    <Button title='터치해서 예정 도착 시간' onPress={()=>{this.setState({ showTimePicker: true, focusOnStart: false})}}/>
                     <Text>
-                        {this.state.selectedEndTime.toString()}
+                        asdf
                     </Text>
-                    <Button title="예약 하기" onPress={()=>{
-                        if(this.state.selectedStartTime > this.state.selectedEndTime) {
-                            alert('시작 시간은 종료 시간을 넘을 수 없습니다.')
-                        } else {
-                            if(!this.state.targetToRegion) {
-                                Reservation.makeReservation({
-                                    source: this.state.regionName, 
-                                    dest: this.state.targetName,
-                                    startTime: this.state.selectedStartTime.getTime(),
-                                    endTime: this.state.selectedEndTime.getTime(),
-                                    marker: this.state.currentMarker,
-                                })
-                                console.log(this.state.currentMarker)
-                            } else {
-                                Reservation.makeReservation({
-                                    source: this.state.targetName, 
-                                    dest: this.state.regionName,
-                                    startTime: this.state.selectedStartTime.getTime(),
-                                    endTime: this.state.selectedEndTime.getTime(),
-                                    marker: this.state.currentMarker,
-                                })
-                                console.log(this.state.currentMarker)
-                            }
-                        }
-                    }}/>
-                    <Button title="나가기" onPress={()=>this.setState({ makeNewReservation: false })}/>
+                    <Text>
+                        asdf
+                    </Text>
                     <DateTimePicker
-                    isVisible={this.state.showTimePicker}
-                    mode='time'
-                    onCancel={()=>this.setState({ showTimePicker: false })}
-                    onConfirm={(date)=>{
-                            if(this.state.focusOnStart) {
-                                this.setState({
-                                    selectedStartTime: date,
-                                    showTimePicker: false,
-                                })
-                            } else {
-                                this.setState({
-                                    selectedEndTime: date,
-                                    showTimePicker: false,
-                                })
-                            }
-                        }
-                    }
-                />
+                        value={new Date()}
+                    />
+                    <Text>
+                        최대 출발 시간
+                    </Text>
+                    <Button title="예약 하기">
+                        
+                    </Button>
+                    <Button title="나가기" onPress={()=>this.setState({ makeNewReservation: false })}>
+
+                    </Button>
                 </Overlay>
             </View>
         )
