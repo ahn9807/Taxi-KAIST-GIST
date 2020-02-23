@@ -85,6 +85,7 @@ export default class MessengerLobbyScreen extends Component {
             temp.splice(index, 1);
         }
         this.setState({chatList: temp})
+        this.setState({ isModalVisible: !this.state.isModalVisible });
     }
 
 
