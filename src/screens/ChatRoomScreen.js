@@ -9,11 +9,13 @@ import Fire from '../config/Firebase'
 export default class ChatRoomScreen extends Component {
   constructor(props) {
     super(props)
+ 
   }
-
   state = {
     messages: [],
+    roomname: this.props.route.params.id
   }
+
 
   static navigationOptions = ({ props }) => {
     // title: (props.navigation.state.params || {}).name,
@@ -29,7 +31,7 @@ export default class ChatRoomScreen extends Component {
 
     const { navigation } = this.props
     console.log("why?")
-    console.log(navigation)
+    // console.log(navigation)
 
   }
 
@@ -56,11 +58,10 @@ export default class ChatRoomScreen extends Component {
     const roomname = this.props.navigation
       .dangerouslyGetState()
       .routes
-      .find(v => v.name === 'ChatRoom')
-      .params
-      .roomname;
+      .find(v => v.name==='ChatRoom')
+      .params.roomname;
 
-
+    console.log(roomname)
     return firebase.firestore().collection('ChatRooms')
       .doc(roomname).collection('messages');
     //roomname 확인해주어야 함.
@@ -111,7 +112,7 @@ export default class ChatRoomScreen extends Component {
           onSend={this.send}
           user={this.user}
         ></GiftedChat>
-        <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={80} />
+        <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={10} />
       </View>
     )
   }

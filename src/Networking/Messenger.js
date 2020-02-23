@@ -17,12 +17,6 @@ export function fetchReservationData() {
             .get()
             .then(function (doc) {
                 internalDocumentation = doc
-                // internalDocumentation.forEach(doc => {
-                //     if(doc.data().endTime < Date.now()) {
-                //         doc.ref.delete()
-                //     }
-                // })
-
                 resolve(doc)
             })
     })
