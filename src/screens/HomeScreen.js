@@ -1,5 +1,5 @@
 import React, { useState, useRef, Component } from "react";
-import { Text, View, Button, AsyncStorage, StatusBar, StyleSheet, Dimensions, Alert, ActivityIndicator, InteractionManager } from "react-native";
+import { Text, View, AsyncStorage, StatusBar, StyleSheet, Dimensions, Alert, ActivityIndicator, InteractionManager } from "react-native";
 import { BaseRouter } from "@react-navigation/native";
 import firebase from '../config/Firebase'
 import MapView, { Marker } from 'react-native-maps';
@@ -9,7 +9,7 @@ import SearchInput from "../components/SearchInput";
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Markers, { removeDupulicatedMarkers } from '../components/Markers'
 import SlidingUpPanel from 'rn-sliding-up-panel'
-import { Badge, Overlay } from "react-native-elements";
+import { Badge, Overlay, Button } from "react-native-elements";
 import Details from "../components/Details";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -75,7 +75,7 @@ export default class HomeScreen extends Component {
         })
     }
 
-    handleOnLocationRightButtonSelected = () => {
+    handleOnLocationChanged = () => {
         var focusedOnSource = !this.state.targetToRegion
         this.setState({
             targetToRegion: focusedOnSource
@@ -143,9 +143,11 @@ export default class HomeScreen extends Component {
                                 </Marker>
                             }
                         </MapView>
-                        <SearchInput onLocationSelected={this.handleOnLocationSelected} 
-                        rightButtonCallback={this.handleOnLocationRightButtonSelected} 
-                        focusedOnSource={this.state.targetToRegion}/>
+                        <SearchInput 
+                            onLocationSelected={this.handleOnLocationSelected} 
+                            focusedOnSource={this.state.targetToRegion}
+                            rightButtonCallback={this.handleOnLocationChanged}
+                        />
                         <SlidingUpPanel 
                             ref={c=> this._panel = c}
                             backdropOpacity={0.5}
@@ -154,7 +156,7 @@ export default class HomeScreen extends Component {
                             <Details 
                                  title={'조회하기'}
                                 target={this.state.reservationInfo.target} 
-                                description={[this.state.reservationInfo.target+'->'+this.state.initialRegionName]}
+                                description={[this.state.reservationInfo.target+' 출발' + '  ➲  ' + this.state.initialRegionName + ' 도착']}
                                 reservationButton={this.handleOnReservationPressed}
                             />
                         </SlidingUpPanel>
@@ -190,10 +192,11 @@ export default class HomeScreen extends Component {
                                 </Marker>
                             }
                         </MapView>
-                        <SearchInput onLocationSelected={this.handleOnLocationSelected} 
-                        rightButtonCallback={this.handleOnLocationRightButtonSelected}
-                        focusedOnSource={this.state.targetToRegion}/>
-
+                        <SearchInput 
+                            onLocationSelected={this.handleOnLocationSelected} 
+                            focusedOnSource={this.state.targetToRegion}
+                            rightButtonCallback={this.handleOnLocationChanged}
+                        />
                         <SlidingUpPanel 
                             ref={c=> this._panel = c}
                             backdropOpacity={0.5}
@@ -202,7 +205,7 @@ export default class HomeScreen extends Component {
                             <Details 
                                 title={'조회하기'}
                                 target={this.state.reservationInfo.target} 
-                                description={[this.state.initialRegionName+'->'+this.state.reservationInfo.target]}
+                                description={[this.state.initialRegionName+' 출발'+ '  ➲  ' + this.state.reservationInfo.target + ' 도착']}
                                 reservationButton={this.handleOnReservationPressed}
                             />
                         </SlidingUpPanel>
@@ -232,9 +235,6 @@ const styles = StyleSheet.create({
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
     },
-    overlay: {
-        position: 'absolute',
-    },  
     spinner: {
         marginTop: 200
     }

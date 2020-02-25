@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView, DatePickerIOS } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView, DatePickerIOS, ImageBackground } from "react-native";
 import { Header, Button, Icon, ListItem, Card, Divider, Overlay } from "react-native-elements";
 import * as Reservation from '../Networking/Reservation'
 import SlidingUpPanel from "rn-sliding-up-panel";
@@ -108,138 +108,145 @@ export default class ReservationScreen extends Component {
 
     render() {
         return(
-            <View style={styles.container}>
-                <Header
-                    leftComponent={<Button tyle='Solid' icon={<Icon name='keyboard-arrow-left' color='white' onPress={this.handleBackPress}></Icon>}></Button>}
-                    rightComponent={<Button tyle='Solid' icon={<Icon name='cached' color='white' onPress={this.handleReloadPress}></Icon>}></Button>}
-                    centerComponent={{ text: '택시 예약 조회 및 만들기', style: {color: '#fff', fontWeight:'bold'}}}
-                />
-                <View 
-                    style={{justifyContent: 'center', alignItems: 'center'}}
-                >
-                    <Text>
-                        {this.state.targetToRegion ? this.state.targetName+' -> '+this.state.regionName : this.state.regionName + ' -> ' + this.state.targetName}
-                    </Text>
-                    <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-                        <Button title="이전날" onPress={()=> {this.setState({ today: new Date(-86400000 + +new Date(this.state.today))})}}>
-
-                        </Button>
-                        <View style={{flex: 1, alignItems: 'center'}}>
-                            <Text style={{fontWeight: 'bold'}}>
-                                {new Date(this.state.today).toString().slice(0,16)}
-                            </Text>
-                            <Text>
-                                {new Date(this.state.today).toString().slice(0,4)}
-                            </Text>
-                        </View>
-                        <Button title="다음날" onPress={()=> {this.setState({ today: new Date(86400000 + +new Date(this.state.today))})}}>
-                            
-                        </Button>
-                    </View>
-                </View>
-                <View 
-                    style={styles.indexContainer}
-                >
-                    <Text style={{fontWeight:'bold', fontSize: 15}}>
-                        {'예정 출발 시간' + '          ' + '최대 출발 시간'}
-                    </Text>
-                    <Text style={{fontWeight:'bold', fontSize: 15}}>
-                        {'탑승객     '}
-                    </Text>
-                </View>
-                <Divider></Divider>
-                {this.state.isLoading == true && 
-                    <ActivityIndicator size='large' style={{marginTop: 200}}/>
-                }
-                <ScrollView style={styles.ScrollViewContainer}>
-                    <Button title={'+ 새로 만들기'} style={{padding:5}} onPress={this.handleOnMakeNewReservation}/>
-                    <Divider></Divider>
-                    {this.state.isLoading == false &&
-                        this.state.listItem.map((l ,i) => (
-                            <ListItem  
-                                key={i}
-                                title={'  ' + FormattedDate(l.startTime) + ' 부터' + '          ' + FormattedDate(l.endTime) + ' 까지'}
-                                rightIcon={{name:'chevron-right'}}
-                                bottomDivider
-                                badge={{value: ' '+l.users.length + ' '}}
-                                onPress={()=>this.handleOnSelectExistReservation(l)}
-                            />
-                        ))
-                    }
-                </ScrollView>
-                <SlidingUpPanel 
-                    ref={c=> this._panelExist = c}
-                    backdropOpacity={0.5}
-                    friction={0.7}
-                >
-                    <Details 
-                        title={'예약 하기'}
-                        target={this.state.targetName} 
-                        description={[FormattedDate(this.state.selectedItem.startTime) + ' 부터',FormattedDate(this.state.selectedItem.endTime) + ' 까지']}
-                        reservationButton={this.handleOnEnterExistReservation}
+            <ImageBackground
+                source={require('../../images/testBackReservation.jpg')}
+                style={{ width: '100%', height: '100%'}}
+                resizeMode='cover'
+            >
+                <View style={styles.container}>
+                    <Header
+                        containerStyle={{backgroundColor:'transparent'}}
+                        leftComponent={<Button type='clear' icon={<Icon name='keyboard-arrow-left' color='#5d5d5d' onPress={this.handleBackPress}></Icon>}></Button>}
+                        rightComponent={<Button type='clear' icon={<Icon name='cached' color='#5d5d5d' onPress={this.handleReloadPress}></Icon>}></Button>}
+                        centerComponent={{ text: '택시 예약 조회 및 만들기', style: {color: '#5d5d5d', fontWeight:'bold'}}}
                     />
-                </SlidingUpPanel>
-                <Overlay
-                    visible={this.state.makeNewReservation}    
-                >
-                    <Text>
-                        {this.state.targetToRegion ? this.state.targetName+' -> '+this.state.regionName : this.state.regionName + ' -> ' + this.state.targetName}
-                    </Text>
-                    <Button title='터치해서 예정 출발 시간' onPress={()=>{this.setState({ showTimePicker: true, focusOnStart: true})}}/>
-                    <Text>
-                        {this.state.selectedStartTime.toString()}
-                    </Text>
-                    <Button title='터치해서 예정 도착 시간' onPress={()=>{this.setState({ showTimePicker: true, focusOnStart: false})}}/>
-                    <Text>
-                        {this.state.selectedEndTime.toString()}
-                    </Text>
-                    <Button title="예약 하기" onPress={()=>{
-                        if(this.state.selectedStartTime > this.state.selectedEndTime) {
-                            alert('시작 시간은 종료 시간을 넘을 수 없습니다.')
-                        } else {
-                            if(!this.state.targetToRegion) {
-                                Reservation.makeReservation({
-                                    source: this.state.regionName, 
-                                    dest: this.state.targetName,
-                                    startTime: this.state.selectedStartTime.getTime(),
-                                    endTime: this.state.selectedEndTime.getTime(),
-                                    marker: this.state.currentMarker,
-                                })
-                                console.log(this.state.currentMarker)
-                            } else {
-                                Reservation.makeReservation({
-                                    source: this.state.targetName, 
-                                    dest: this.state.regionName,
-                                    startTime: this.state.selectedStartTime.getTime(),
-                                    endTime: this.state.selectedEndTime.getTime(),
-                                    marker: this.state.currentMarker,
-                                })
-                                console.log(this.state.currentMarker)
-                            }
-                        }
-                    }}/>
-                    <Button title="나가기" onPress={()=>this.setState({ makeNewReservation: false })}/>
-                    <DateTimePicker
-                    isVisible={this.state.showTimePicker}
-                    mode='time'
-                    onCancel={()=>this.setState({ showTimePicker: false })}
-                    onConfirm={(date)=>{
-                            if(this.state.focusOnStart) {
-                                this.setState({
-                                    selectedStartTime: date,
-                                    showTimePicker: false,
-                                })
-                            } else {
-                                this.setState({
-                                    selectedEndTime: date,
-                                    showTimePicker: false,
-                                })
-                            }
-                        }
+                    <View 
+                        style={{justifyContent: 'center', alignItems: 'center'}}
+                    >
+                        <Text>
+                            {this.state.targetToRegion ? this.state.targetName+' -> '+this.state.regionName : this.state.regionName + ' -> ' + this.state.targetName}
+                        </Text>
+                        <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+                            <Button title="이전날" onPress={()=> {this.setState({ today: new Date(-86400000 + +new Date(this.state.today))})}}>
+
+                            </Button>
+                            <View style={{flex: 1, alignItems: 'center'}}>
+                                <Text style={{fontWeight: 'bold'}}>
+                                    {new Date(this.state.today).toString().slice(0,16)}
+                                </Text>
+                                <Text>
+                                    {new Date(this.state.today).toString().slice(0,4)}
+                                </Text>
+                            </View>
+                            <Button title="다음날" onPress={()=> {this.setState({ today: new Date(86400000 + +new Date(this.state.today))})}}>
+                                
+                            </Button>
+                        </View>
+                    </View>
+                    <View 
+                        style={styles.indexContainer}
+                    >
+                        <Text style={{fontWeight:'bold', fontSize: 15}}>
+                            {'예정 출발 시간' + '          ' + '최대 출발 시간'}
+                        </Text>
+                        <Text style={{fontWeight:'bold', fontSize: 15}}>
+                            {'탑승객     '}
+                        </Text>
+                    </View>
+                    <Divider></Divider>
+                    {this.state.isLoading == true && 
+                        <ActivityIndicator size='large' style={{marginTop: 200}}/>
                     }
-                />
-                </Overlay>
-            </View>
+                    <ScrollView style={styles.ScrollViewContainer}>
+                        <Button title={'+ 새로 만들기'} style={{padding:5}} onPress={this.handleOnMakeNewReservation}/>
+                        <Divider></Divider>
+                        {this.state.isLoading == false &&
+                            this.state.listItem.map((l ,i) => (
+                                <ListItem  
+                                    key={i}
+                                    title={'  ' + FormattedDate(l.startTime) + ' 부터' + '          ' + FormattedDate(l.endTime) + ' 까지'}
+                                    rightIcon={{name:'chevron-right'}}
+                                    bottomDivider
+                                    badge={{value: ' '+l.users.length + ' '}}
+                                    onPress={()=>this.handleOnSelectExistReservation(l)}
+                                />
+                            ))
+                        }
+                    </ScrollView>
+                    <SlidingUpPanel 
+                        ref={c=> this._panelExist = c}
+                        backdropOpacity={0.5}
+                        friction={0.7}
+                    >
+                        <Details 
+                            title={'예약 하기'}
+                            target={this.state.targetName} 
+                            description={[FormattedDate(this.state.selectedItem.startTime) + ' 부터',FormattedDate(this.state.selectedItem.endTime) + ' 까지']}
+                            reservationButton={this.handleOnEnterExistReservation}
+                        />
+                    </SlidingUpPanel>
+                    <Overlay
+                        visible={this.state.makeNewReservation}    
+                    >
+                        <Text>
+                            {this.state.targetToRegion ? this.state.targetName+' -> '+this.state.regionName : this.state.regionName + ' -> ' + this.state.targetName}
+                        </Text>
+                        <Button title='터치해서 예정 출발 시간' onPress={()=>{this.setState({ showTimePicker: true, focusOnStart: true})}}/>
+                        <Text>
+                            {this.state.selectedStartTime.toString()}
+                        </Text>
+                        <Button title='터치해서 예정 도착 시간' onPress={()=>{this.setState({ showTimePicker: true, focusOnStart: false})}}/>
+                        <Text>
+                            {this.state.selectedEndTime.toString()}
+                        </Text>
+                        <Button title="예약 하기" onPress={()=>{
+                            if(this.state.selectedStartTime > this.state.selectedEndTime) {
+                                alert('시작 시간은 종료 시간을 넘을 수 없습니다.')
+                            } else {
+                                if(!this.state.targetToRegion) {
+                                    Reservation.makeReservation({
+                                        source: this.state.regionName, 
+                                        dest: this.state.targetName,
+                                        startTime: this.state.selectedStartTime.getTime(),
+                                        endTime: this.state.selectedEndTime.getTime(),
+                                        marker: this.state.currentMarker,
+                                    })
+                                    console.log(this.state.currentMarker)
+                                } else {
+                                    Reservation.makeReservation({
+                                        source: this.state.targetName, 
+                                        dest: this.state.regionName,
+                                        startTime: this.state.selectedStartTime.getTime(),
+                                        endTime: this.state.selectedEndTime.getTime(),
+                                        marker: this.state.currentMarker,
+                                    })
+                                    console.log(this.state.currentMarker)
+                                }
+                            }
+                        }}/>
+                        <Button title="나가기" onPress={()=>this.setState({ makeNewReservation: false })}/>
+                        <DateTimePicker
+                        isVisible={this.state.showTimePicker}
+                        mode='time'
+                        onCancel={()=>this.setState({ showTimePicker: false })}
+                        onConfirm={(date)=>{
+                                if(this.state.focusOnStart) {
+                                    this.setState({
+                                        selectedStartTime: date,
+                                        showTimePicker: false,
+                                    })
+                                } else {
+                                    this.setState({
+                                        selectedEndTime: date,
+                                        showTimePicker: false,
+                                    })
+                                }
+                            }
+                        }
+                    />
+                    </Overlay>
+                </View>
+            </ImageBackground>
         )
     }
 }
@@ -249,7 +256,6 @@ const styles = StyleSheet.create({
         width: '100%',
         justifyContent: 'center',
         flex: 1,
-        backgroundColor: 'white'
     },
     indexContainer: {
         width: '100%',

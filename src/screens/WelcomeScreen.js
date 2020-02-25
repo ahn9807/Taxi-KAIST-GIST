@@ -96,13 +96,22 @@ export default class WelcomeScreen extends Component {
 
                         } else {
                             alert('로그인 실패하였습니다. 다시 한번 시도해 보세요')
+                            this.setState({
+                                isLoading: false
+                            })
                         }
                     }).catch(function (err) {
                         alert(err.message)
+                        this.setState({
+                            isLoading: false
+                        })
                     })
             }).catch(function (err) {
                 alert(err.message)
-            })
+                this.setState({
+                    isLoading: false
+                })
+            }.bind(this))
     }
 
     render() {
@@ -161,14 +170,14 @@ export default class WelcomeScreen extends Component {
                                     icon={
                                         <Icon
                                             name='lock-open'
-                                            color='white'
+                                            color='#fff'
                                         />
                                     }
                             />
                             <Text h5 style={{color: 'white', textAlign: 'center', fontWeight:'bold'}}>
                                 {'가입하는데 오래 안결려요!! 지금 가입해요~'}
                             </Text>
-                            <Button title=" 회원가입"
+                            <Button title="회원가입"
                                     titleStyle={{ fontWeight: 'bold'}}
                                     onPress={()=>{this.props.navigation.navigate('Signup')}}
                                     buttonStyle={{borderRadius: 30, width:'100%'}}

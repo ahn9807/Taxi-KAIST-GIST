@@ -17,7 +17,7 @@ const SearchInput = ({ onLocationSelected, rightButtonCallback, focusedOnSource 
     <GooglePlacesAutocomplete
       minLength={2}
       autoFocus={true}
-      placeholder={focusedOnSource ? '출발지 검색' : '도착지 검색'}
+      placeholder={focusedOnSource ? '출발지에서 학교로 검색' : '학교에서 도착지로 검색'}
       onPress={onLocationSelected}
       autoFocus={false}
       query={query}
@@ -32,16 +32,22 @@ const SearchInput = ({ onLocationSelected, rightButtonCallback, focusedOnSource 
         autoCorrect: false,
       }}
       renderDescription={row => {
-          return row.structured_formatting.main_text
+          if(row.terms[1].value == undefined) {
+            return row.structured_formatting.main_text
+          }
+          return row.terms[1].value + ' ' + row.structured_formatting.main_text
       }}
       listViewDisplayed={searchFocused}
       fetchDetails={true}
       debounce={200}
       enablePoweredByContainer={false}
       styles={style}
-
       renderRightButton={()=>
-        <Button buttonStyle={style.button} title={focusedOnSource ? '출발지' : '도착지'} onPress={rightButtonCallback}/>
+        <Button 
+          buttonStyle={style.button} 
+          onPress={rightButtonCallback}
+          icon={{ name: 'repeat', color: '#5d5d5d'}}
+        />
       }
     />
   );
@@ -71,7 +77,10 @@ const style = StyleSheet.create({
   textInput: {
     height: 54,
     margin: 0,
-    borderRadius: 0,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
     paddingTop: 0,
     paddingBottom: 0,
     paddingLeft: 20,
@@ -79,29 +88,21 @@ const style = StyleSheet.create({
     marginTop: 0,
     marginLeft: 0,
     marginRight: 0,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOpacity: 0.0,
-    shadowOffset: { x: 0, y: 0 },
-    shadowRadius: 15,
     borderWidth: 1,
     borderColor: '#ddd',
+    borderRightColor: '#ddd',
     fontSize: 18,
   },
   listView: {
     borderWidth: 1,
+    borderRadius: 10,
     borderColor: '#ddd',
     backgroundColor: '#fff',
     marginHorizontal: 20,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { x: 0, y: 0 },
-    shadowRadius: 15,
     marginTop: 10,
   },
   description: {
-    fontSize: 16,
+    fontSize: 14,
   },
   row: {
     padding: 20,
@@ -109,6 +110,15 @@ const style = StyleSheet.create({
   },
   button: {
     height: 54,
+    width: 54,
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 0,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    borderLeftColor: '#fff',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ddd',
     alignItems: 'center',
     justifyContent: 'center',
   }
