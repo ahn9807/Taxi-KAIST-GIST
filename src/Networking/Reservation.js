@@ -104,7 +104,7 @@ export function getMarkerByDest(dest) {
     return returnArray
 }
 
-export function makeReservation(item) {
+export function makeReservation(item, index = 0) {
     console.log('make Reservation')
     var source = item.source
     var dest = item.dest
@@ -115,11 +115,11 @@ export function makeReservation(item) {
     return new Promise(function(resolve, reject) {
         var docRef = firebase.firestore()
         .collection(regionName)
-        .doc()
-        // .doc(source + '->' + dest + ' s:' + startTime + ' d:' + endTime)
-        // 채팅방 중복 방지를 위해 랜덤 이름 생성
+        .doc(source + '->' + dest + ' s:' + startTime + ' d:' + endTime + 'index:' + index)
     
         docRef.get().then(function(doc) {
+
+            console.log(doc.data())
             if(doc.exists) {
                 var tempArray = doc.data().users
                 console.log(tempArray.length)
@@ -146,8 +146,13 @@ export function makeReservation(item) {
                     }
                 } else {
                     //유저가 이미 4명이라서 방에 가입할 수 없는 상태이다.
-                    alert('탑승객이 이미 4명입니다')
-                    resolve(false)
+                    //이경우 새로운 방을 판다
+                    if(index > 10) {
+                        //에러일 가능성 100%
+                        alert('동일 시간대에 이미 많은 방이 있습니다. 살짝만 시간을 피해서 예약해 주세요.')
+                        resolve(false)
+                    }
+                    makeReservation(item, index + 1)
                 }
             } else {
                 docRef.set({
@@ -168,49 +173,56 @@ export function makeReservation(item) {
     })
 }
 
-// export function removeReservation(source, dest, startTime, endTime, marker, userUid) {
-//     return new Promise(function(resolve, reject) {
-//         var docRef = firebase.firestore()
-//         .collection(regionName)
-//         .doc(source + '->' + dest + ' s:' + startTime + ' d:' + endTime)
-    
-//         docRef.get().then(function(doc) {
-//             if(doc.exists) {
-//                 var tempArray = doc.data().users
-//                 var contained = false
-//                 for(var i=0;i<tempArray.length;i++) {
-//                     if(tempArray[i] == userUid) {
-//                         contained = true
-//                         tempArray.splice(i, 1)
-//                     }
-//                 }
+export function removeReservation(source, dest, startTime, endTime, index = 0) {
+    return new Promise(function(resolve, reject) {
+        var docRef = firebase.firestore()
+        .collection(regionName)
+        .doc(source + '->' + dest + ' s:' + startTime + ' d:' + endTime + 'index:' + index)
 
-//                 if(contained) {
-//                     //만약 아무도 가입하지 않은 예약이면 예약을 삭제한다
-//                     if(tempArray.length == 0) {
-//                         docRef.delete()
-//                     }
-//                     //누군가 가입한 방이면 예약을 삭제하지 않는다 
-//                     else {
-//                         docRef.set({
-//                             users: tempArray
-//                         }, { merge: true })
-//                     }
+        var userUid = firebase.auth().currentUser.uid
+
+        docRef.get().then(function(doc) {
+            if(doc.exists) {
+                var tempArray = doc.data().users
+                var contained = false
+                for(var i=0;i<tempArray.length;i++) {
+                    if(tempArray[i] == userUid) {
+                        contained = true
+                        tempArray.splice(i, 1)
+                    }
+                }
+
+                if(contained) {
+                    //만약 아무도 가입하지 않은 예약이면 예약을 삭제한다
+                    if(tempArray.length == 0) {
+                        docRef.delete()
+                    }
+                    //누군가 가입한 방이면 예약을 삭제하지 않는다 
+                    else {
+                        docRef.set({
+                            users: tempArray
+                        }, { merge: true })
+                    }
                     
-//                     resolve(false)
-//                 }
-//             }
-//         })
+                    resolve(false)
+                }
+                else {
+                    removeReservation(source, dest, startTime, endTime, userUid, index + 1)
+                }
+            }
+        })
 
-//         resolve(false)
-//     })
-// }
+        resolve(false)
+    })
+}
 
-export function removeReservation(reservationId, userUid) {
+export function removeReservationById(reservationId) {
     return new Promise(function(resolve, reject) {
         var docRef = firebase.firestore()
         .collection(regionName)
         .doc(reservationId)
+
+        var userUid = firebase.auth().currentUser.uid
     
         docRef.get().then(function(doc) {
             if(doc.exists) {

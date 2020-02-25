@@ -12,7 +12,7 @@ export default class WelcomeScreen extends Component {
             email: '',
             password: '',
         }
-        //this.tryToLoginFirst()
+        this.tryToLoginFirst()
     }
 
     async tryToLoginFirst() {
@@ -71,6 +71,9 @@ export default class WelcomeScreen extends Component {
         const { email, password, emailVerified } = this.state
         if (email.length <= 0 || password.length <= 0) {
             alert('이메일 주소와 비밀번호를 입력해 주세요')
+            this.setState({
+                isLoading: false,
+            })
             return
         }
         firebase.auth()

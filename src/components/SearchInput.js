@@ -17,7 +17,7 @@ const SearchInput = ({ onLocationSelected, rightButtonCallback, focusedOnSource 
     <GooglePlacesAutocomplete
       minLength={2}
       autoFocus={true}
-      placeholder={focusedOnSource ? '출발지에서 학교로 검색' : '학교에서 도착지로 검색'}
+      placeholder={focusedOnSource ? '학교로 도착' : '학교에서 출발'}
       onPress={onLocationSelected}
       autoFocus={false}
       query={query}

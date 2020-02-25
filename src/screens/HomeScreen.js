@@ -1,5 +1,5 @@
 import React, { useState, useRef, Component } from "react";
-import { Text, View, AsyncStorage, StatusBar, StyleSheet, Dimensions, Alert, ActivityIndicator, InteractionManager } from "react-native";
+import { Text, View, AsyncStorage, StatusBar, StyleSheet, Dimensions, Alert, ActivityIndicator, InteractionManager, Platform } from "react-native";
 import { BaseRouter } from "@react-navigation/native";
 import firebase from '../config/Firebase'
 import MapView, { Marker } from 'react-native-maps';
@@ -98,11 +98,17 @@ export default class HomeScreen extends Component {
                 }
             })
         }).done(function(res) {
-            this._panel.show()
+            if(Platform.OS == 'ios') {
+                this._panel.show()
+            } else {
+                this.handleOnReservationPressed()
+            }
+
         }.bind(this))
     }
 
     handleOnReservationPressed = () => {
+        console.log("Sdf")
         this.props.navigation.navigate('Reservation',{
             targetToRegion: this.state.targetToRegion,
             regionName: this.state.initialRegionName,
@@ -154,7 +160,7 @@ export default class HomeScreen extends Component {
                             friction={0.7}
                         >
                             <Details 
-                                 title={'조회하기'}
+                                title={'조회하기'}
                                 target={this.state.reservationInfo.target} 
                                 description={[this.state.reservationInfo.target+' 출발' + '  ➲  ' + this.state.initialRegionName + ' 도착']}
                                 reservationButton={this.handleOnReservationPressed}
@@ -164,7 +170,7 @@ export default class HomeScreen extends Component {
                 )
             } else {
                 return(
-                    <SafeAreaView style={styles.container}>
+                    <View style={styles.container}>
                         <MapView style={styles.mapStyle} 
                             initialRegion={this.state.region.initialRegion}
                             showsCompass={false}
@@ -209,7 +215,7 @@ export default class HomeScreen extends Component {
                                 reservationButton={this.handleOnReservationPressed}
                             />
                         </SlidingUpPanel>
-                    </SafeAreaView>
+                    </View>
                 )
             }
         } else {
