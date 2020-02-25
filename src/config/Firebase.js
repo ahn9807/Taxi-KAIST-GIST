@@ -34,44 +34,50 @@ class Fire {
         // }
     }; 
 
-    static get ref(){
-        return firebase.firestore().collection('messages');
-    }
-
-    static get uid(){
-        return (firebase.auth().currentUser || {} ).uid;
-    }
-
-    static off(){
-        Fire.ref.onSnapshot(function(){
-            console.log("off")
-        })
-    }
-
-    on= callback => Fire.ref.orderBy('createdAt', 'asc').onSnapshot(snapshot=>{
-        snapshot.docChanges().forEach(change=>{
-            if(change.type === 'added'){
-                callback(this.parse(change.doc))
-            }
-        })
-    });
-
-    parse= message => {
-        const {createdAt, text, user}= message.data();
-        const {id: _id}= message; //무슨 의미지...
+    // static get ref(){
         
-        return {_id, createdAt: Date(createdAt), text, user}
-    }
+    //     return firebase.firestore().collection('ChatRooms')
+    //                     .doc('roomname').collection('messages');
+    //                     //roomname 고쳐야 함
+    // }
 
-    send= messages =>{
-        for(let i=0; i<messages.length;i++){
-            const {text, user}= messages[i];
-            const message= {text, user, createdAt: new Date()};
-            this.append(message)
-        }
-    };
+    // static get uid(){
+    //     return (firebase.auth().currentUser || {} ).uid;
+    // }
 
-    append=message => Fire.ref.add(message)
+    // static off(){
+    //     Fire.ref.onSnapshot(function(){
+    //         console.log("off")
+    //     })
+    // }
+
+    // on= callback => Fire.ref.orderBy('createdAt', 'asc').onSnapshot(snapshot=>{
+    //     snapshot.docChanges().forEach(change=>{
+    //         if(change.type === 'added'){
+    //             callback(this.parse(change.doc))
+    //         }
+    //     })
+    // });
+
+    // parse= message => {
+    //     const {createdAt, text, user}= message.data();
+    //     const {id: _id}= message; //무슨 의미지...
+        
+    //     return {_id, createdAt: Date(createdAt), text, user}
+    // }
+
+    // send= messages =>{
+    //     for(let i=0; i<messages.length;i++){
+    //         const {text, user}= messages[i];
+    //         const message= {text, user, createdAt: new Date()};
+    //         this.append(message)
+    //     }
+    // };
+
+
+    // append=message => Fire.ref.add(message)
+
+
 
 }
 Fire.shared = new Fire();

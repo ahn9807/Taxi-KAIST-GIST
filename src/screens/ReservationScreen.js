@@ -43,6 +43,11 @@ export default class ReservationScreen extends Component {
         }.bind(this))
 
     }
+    
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     return this.state.listItem != nextState.listItem;
+    // }
+    // 2/23: 이 코드 넣으면 계속 loading
 
     handleBackPress = () => {
         this.props.navigation.navigate('Home')
