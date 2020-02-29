@@ -98,22 +98,19 @@ export default class HomeScreen extends Component {
                 }
             })
         }).done(function(res) {
-            if(Platform.OS == 'ios') {
-                this._panel.show()
-            } else {
-                this.handleOnReservationPressed()
-            }
+            this._panel.show()
 
         }.bind(this))
     }
 
     handleOnReservationPressed = () => {
-        console.log("Sdf")
-        this.props.navigation.navigate('Reservation',{
-            targetToRegion: this.state.targetToRegion,
-            regionName: this.state.initialRegionName,
-            targetName: this.state.reservationInfo.target,
-            marker: this.state.reservationInfo.marker,
+        setTimeout(() => {
+            this.props.navigation.navigate('Reservation',{
+                targetToRegion: this.state.targetToRegion,
+                regionName: this.state.initialRegionName,
+                targetName: this.state.reservationInfo.target,
+                marker: this.state.reservationInfo.marker,
+            })
         })
     }
 
@@ -158,12 +155,14 @@ export default class HomeScreen extends Component {
                             ref={c=> this._panel = c}
                             backdropOpacity={0.5}
                             friction={0.7}
+                            allowDragging={Platform.OS == 'android' ? false : true}
                         >
                             <Details 
                                 title={'조회하기'}
-                                target={this.state.reservationInfo.target} 
-                                description={[this.state.reservationInfo.target+' 출발' + '  ➲  ' + this.state.initialRegionName + ' 도착']}
+                                source={this.state.reservationInfo.target}
+                                dest={this.state.initialRegionName}
                                 reservationButton={this.handleOnReservationPressed}
+                                reservationData={Reservation.getReservationBySource(this.state.reservationInfo.target)}
                             />
                         </SlidingUpPanel>
                     </View>
@@ -207,12 +206,14 @@ export default class HomeScreen extends Component {
                             ref={c=> this._panel = c}
                             backdropOpacity={0.5}
                             friction={0.7}
+                            allowDragging={Platform.OS == 'android' ? false : true}
                         >
                             <Details 
                                 title={'조회하기'}
-                                target={this.state.reservationInfo.target} 
-                                description={[this.state.initialRegionName+' 출발'+ '  ➲  ' + this.state.reservationInfo.target + ' 도착']}
+                                source={this.state.initialRegionName}
+                                dest={this.state.reservationInfo.target}
                                 reservationButton={this.handleOnReservationPressed}
+                                reservationData={Reservation.getReservationByDest(this.state.reservationInfo.target)}
                             />
                         </SlidingUpPanel>
                     </View>
@@ -234,8 +235,6 @@ export default class HomeScreen extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
     },
     mapStyle: {
         width: Dimensions.get('window').width,

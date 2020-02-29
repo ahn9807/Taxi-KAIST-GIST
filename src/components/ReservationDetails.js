@@ -1,17 +1,17 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import { PricingCard, Card, Button, Text, Badge, Divider, ListItem, Avatar } from 'react-native-elements';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import tabBarHeight from '../tools/TabBarHeight'
 import HorizontalList from './HorizontalList';
 
-const Details = ({ source, dest, reservationData, reservationButton }) => (
+const ReservationDetails = ({ startTime, endTime, startTimeButton, endTimeButton, bottomButtonCallback }) => (
     <View style={styles.container}>
         <View style={styles.pricingCardContainer}>
             <View style={styles.HorizontalListContainer}>
                 <HorizontalList></HorizontalList>
             </View>
-                <View style={styles.sdContainer}>
+                <TouchableOpacity style={styles.sdContainer} onPress={startTimeButton}>
                     <View>
                         <Avatar
                             rounded
@@ -20,10 +20,10 @@ const Details = ({ source, dest, reservationData, reservationButton }) => (
                         />
                     </View>
                     <Text style={{color: '#fff', textAlign: 'center', fontWeight:'500', fontSize: 25}}>
-                        {'  '+source}
+                        {startTime == null ? '  터치해서 시간 선택' : '  출발 시작  '+FormattedDate(new Date(startTime), true)}
                     </Text>
-                </View>
-                <View style={styles.sdContainer}>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.sdContainer} onPress={endTimeButton}>
                     <View>
                         <Avatar
                             rounded
@@ -32,24 +32,22 @@ const Details = ({ source, dest, reservationData, reservationButton }) => (
                         />
                     </View>
                     <Text style={{color: '#fff', textAlign: 'center', fontWeight:'500', fontSize: 25}}>
-                        {'  '+dest}
+                        {endTime == null ? '  터치해서 시간 선택' : '  출발 마감  '+FormattedDate(new Date(endTime), true)}
                     </Text>
-                </View>
-            <Divider></Divider>
-
-            <Button 
-                title="예약하기"
-                titleStyle={{ textAlign:'center', fontWeight: 'bold'}}
-                onPress={reservationButton}
-                buttonStyle={{borderRadius: 30, width:250 }}
-                containerStyle={{marginBottom: 20, marginTop: 10}}
-                icon={{name: 'local-taxi', color: 'white'}}
-            />
+                </TouchableOpacity>
+                <Button 
+                    title="예약하기"
+                    titleStyle={{ textAlign:'center', fontWeight: 'bold'}}
+                    onPress={bottomButtonCallback}
+                    buttonStyle={{borderRadius: 30, width:250 }}
+                    containerStyle={{marginBottom: 20, marginTop: 10}}
+                    icon={{name: 'local-taxi', color: 'white'}}
+                />
         </View>
     </View>
 )
 
-export default Details;
+export default ReservationDetails;
 
 const styles = StyleSheet.create({
     container: {
@@ -84,3 +82,28 @@ const styles = StyleSheet.create({
     }
 
 })
+
+function FormattedDate(date, line = false) {
+    var d = new Date(date)
+    var h = d.getHours()
+    var m = d.getMinutes()
+    var cvt = 12
+    var str = '오전'
+
+    if(h >= 12) {
+        str='오후'
+    }
+
+    if(h == 12) {
+        cvt = 12
+    } else {
+        cvt = h % 12
+    }
+    
+    if(line ==false) {
+        return str + '\n' + cvt + ':' + m
+    } else {
+        return str + ' ' + cvt + ':' + m
+    }
+
+}
