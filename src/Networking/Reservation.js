@@ -95,10 +95,6 @@ export function getReservationByDateAndSource(date_, source) {
     })
 
     tempArray.forEach(function(doc) {
-        console.log(new Date(doc.endTime).toString())
-        console.log(new Date(doc.startTime).toString())
-        console.log(new Date(date).toString())
-        console.log('------')
         if((doc.endTime > date && doc.endTime <= date + 86400000) || (doc.startTime > date && doc.startTime <= date + 86400000)) {
             returnArray.push(doc)
         }
@@ -118,10 +114,6 @@ export function getReservationByDateAndDest(date_, dest) {
     })
 
     tempArray.forEach(function(doc) {
-        console.log(new Date(doc.endTime).toString())
-        console.log(new Date(doc.startTime).toString())
-        console.log(new Date(date).toString())
-        console.log('------')
         if((doc.endTime > date && doc.endTime <= date + 86400000) || (doc.startTime > date && doc.startTime <= date + 86400000)) {
             returnArray.push(doc)
         }

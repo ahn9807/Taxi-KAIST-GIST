@@ -8,41 +8,38 @@ import HorizontalList from './HorizontalList';
 const ReservationDetails = ({ startTime, endTime, startTimeButton, endTimeButton, bottomButtonCallback }) => (
     <View style={styles.container}>
         <View style={styles.pricingCardContainer}>
-            <View style={styles.HorizontalListContainer}>
-                <HorizontalList></HorizontalList>
-            </View>
-                <TouchableOpacity style={styles.sdContainer} onPress={startTimeButton}>
-                    <View>
-                        <Avatar
-                            rounded
-                            icon={{name:'flight-takeoff', color:'black'}}
-                            overlayContainerStyle={{backgroundColor: 'white'}}
-                        />
-                    </View>
-                    <Text style={{color: '#fff', textAlign: 'center', fontWeight:'500', fontSize: 25}}>
-                        {startTime == null ? '  터치해서 시간 선택' : '  출발 시작  '+FormattedDate(new Date(startTime), true)}
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.sdContainer} onPress={endTimeButton}>
-                    <View>
-                        <Avatar
-                            rounded
-                            icon={{name:'flight-land', color:'black'}}
-                            overlayContainerStyle={{backgroundColor: 'white'}}
-                        />
-                    </View>
-                    <Text style={{color: '#fff', textAlign: 'center', fontWeight:'500', fontSize: 25}}>
-                        {endTime == null ? '  터치해서 시간 선택' : '  출발 마감  '+FormattedDate(new Date(endTime), true)}
-                    </Text>
-                </TouchableOpacity>
-                <Button 
-                    title="예약하기"
-                    titleStyle={{ textAlign:'center', fontWeight: 'bold'}}
-                    onPress={bottomButtonCallback}
-                    buttonStyle={{borderRadius: 30, width:250 }}
-                    containerStyle={{marginBottom: 20, marginTop: 10}}
-                    icon={{name: 'local-taxi', color: 'white'}}
-                />
+            <TouchableOpacity style={styles.sdContainer} onPress={startTimeButton}>
+                <View>
+                    <Avatar
+                        rounded
+                        icon={{name:'flight-takeoff', color:'black'}}
+                        overlayContainerStyle={{backgroundColor: 'white'}}
+                    />
+                </View>
+                <Text style={{color: '#fff', textAlign: 'center', fontWeight:'500', fontSize: 25}}>
+                    {startTime == null ? '  터치해서 시간 선택' : '  출발 시작  '+FormattedDate(new Date(startTime), true)}
+                </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.sdContainer} onPress={endTimeButton}>
+                <View>
+                    <Avatar
+                        rounded
+                        icon={{name:'flight-land', color:'black'}}
+                        overlayContainerStyle={{backgroundColor: 'white'}}
+                    />
+                </View>
+                <Text style={{color: '#fff', textAlign: 'center', fontWeight:'500', fontSize: 25}}>
+                    {endTime == null ? '  터치해서 시간 선택' : '  출발 마감  '+FormattedDate(new Date(endTime), true)}
+                </Text>
+            </TouchableOpacity>
+            <Button 
+                title="예약하기"
+                titleStyle={{ textAlign:'center', fontWeight: 'bold'}}
+                onPress={bottomButtonCallback}
+                buttonStyle={{borderRadius: 30, width:250 }}
+                containerStyle={{marginBottom: 20, marginTop: 10}}
+                icon={{name: 'local-taxi', color: 'white'}}
+            />
         </View>
     </View>
 )
@@ -56,12 +53,15 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     pricingCardContainer: {
+        paddingTop: 25,
         width: '100%',
         alignItems: 'center',
         justifyContent: 'flex-start',
         backgroundColor: 'white',
         position: 'absolute',
         flex: 1,
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
     },
     HorizontalListContainer: {
         width: '100%',

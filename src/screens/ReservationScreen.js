@@ -19,7 +19,7 @@ export default class ReservationScreen extends Component {
             regionName: this.props.route.params.regionName,
             targetName: this.props.route.params.targetName,
             listItem: null,
-            today: Date.now(),
+            today: this.props.route.params.today,
             selectedItem: {
                 startTime: 0,
                 endTime: 0,
@@ -34,9 +34,9 @@ export default class ReservationScreen extends Component {
         Reservation.setRegion(this.state.regionName)
         Reservation.fetchReservationData().then(function(res, err) {
             if(this.state.targetToRegion) {
-                this.state.listItem = Reservation.getReservationByDateAndSource(new Date().getTime(),this.state.targetName)
+                this.state.listItem = Reservation.getReservationByDateAndSource(this.props.route.params.today, this.state.targetName)
             } else {
-                this.state.listItem = Reservation.getReservationByDateAndDest(new Date().getTime(), this.state.targetName)
+                this.state.listItem = Reservation.getReservationByDateAndDest(this.props.route.params.today, this.state.targetName)
             }
             this.setState({
                 isLoading: false,
@@ -149,18 +149,26 @@ export default class ReservationScreen extends Component {
             >
                 <View style={styles.container}>
                     <Header
-                        containerStyle={{backgroundColor:'skyblue'}}
+                        containerStyle={{backgroundColor:'#fffa', borderBottomColor: 'transparent'}}
                         leftComponent={<Button type='clear' icon={<Icon name='keyboard-arrow-left' color='black' onPress={this.handleBackPress}></Icon>}></Button>}
                         rightComponent={<Button type='clear' titleStyle={{color:'black'}} icon={<Icon name='plus' type='feather' color='black' onPress={this.handleOnOpenNewReservation}></Icon>}></Button>}
-                        centerComponent={{ text: this.state.targetToRegion ? this.state.targetName + ' 출발': this.state.targetName + ' 도착', style: {color: 'black', fontWeight:'bold'}}}
+                        centerComponent={{ text: '택시 조회 및 예약', style: {color: 'black', fontWeight:'bold'}}}
                     />
+                    <View style={styles.titleContainer}>
+                        <Text h5 style={{color: 'black', textAlign: 'center', fontWeight:'bold'}}>
+                            {!this.state.targetToRegion ? this.state.regionName + ' ➤ ' + this.state.targetName : this.state.targetName + ' ➤ ' + this.state.regionName}
+                        </Text>
+                    </View>
+                    <Divider style={{height: 1}}></Divider>
                     <View  style={styles.topContainer}>
                         <View style={{flexDirection: 'row', justifyContent: 'space-around', alignItems:'center'}}>
                             <Button 
-                                type='clear'
+                                type='outline'
+                                title='이전날'
+                                titleStyle={{fontSize: 15, fontWeight: '500'}}
                                 disabled={new Date(this.state.today).getDate() == new Date().getDate()}
-                                icon={{name:'doubleleft', type:'antdesign', color:'#5d5d5d'}}
-                                containerStyle={{paddingLeft: 25}}
+                                containerStyle={{paddingLeft: 20}}
+                                buttonStyle={{borderRadius: 30, padding: 3, borderWidth: 2}}
                                 onPress={()=> {this.setState({ today: new Date(-86400000 + +new Date(this.state.today))}); this.handleReloadPress();}}
                             />
                             <View style={{flex: 1, alignItems: 'center'}}>
@@ -172,13 +180,16 @@ export default class ReservationScreen extends Component {
                                 </Text>
                             </View>
                             <Button 
-                                type='clear'
-                                icon={{name:'doubleright', type:'antdesign', color:'#5d5d5d'}}
-                                containerStyle={{paddingRight: 25}}
+                                type='outline'
+                                title='다음날'
+                                titleStyle={{fontSize: 15, fontWeight: '500'}}
+                                containerStyle={{paddingRight: 20}}
+                                buttonStyle={{borderRadius: 30, padding: 3, borderWidth: 2}}
                                 onPress={()=> {this.setState({ today: new Date(86400000 + +new Date(this.state.today))}); this.handleReloadPress();}}
                             />
                         </View>
                     </View>
+                    <Divider style={{height: 1}}></Divider>
                     <View style={styles.middleContainer}>
                         <Text h5 style={{color: 'black', textAlign: 'center', fontWeight:'bold', paddingTop: 2, flex: 1}}>
                             {'출발 시작 시간'}
@@ -196,18 +207,18 @@ export default class ReservationScreen extends Component {
                     <ScrollView style={styles.ScrollViewContainer}>
                         {this.state.isLoading == false &&
                             this.state.listItem.map((l ,i) => (
-                                <TouchableOpacity onPress={()=>this.handleOnSelectExistReservation(l)}>
-                                    <Divider style={{width:'90%', alignSelf:'center'}}></Divider>
+                                <TouchableOpacity onPress={()=>this.handleOnSelectExistReservation(l)} key={i}>
+                                    <Divider style={{width:'100%', alignSelf:'center', height: 1}}></Divider>
                                     <View style={styles.listContainer}>
                                         <Text h5 style={{color: 'black', textAlign: 'center', fontWeight:'bold', paddingTop: 2, flex: 1}}>
-                                            {FormattedDate(l.startTime)}
+                                            {'🚕 ' + FormattedDate(l.startTime, true)}
                                         </Text>
                                         <Text h5 style={{color: 'black', textAlign: 'center', fontWeight:'bold', paddingTop: 2, flex: 1}}>
-                                            {FormattedDate(l.endTime)}
+                                            {'🚓 ' + FormattedDate(l.endTime, true)}
                                         </Text>
                                         <Badge 
-                                            containerStyle={{flex: 1}}
-                                            value={' '+l.users.length+' '}
+                                            containerStyle={{flex: 1, borderColor: 'transparent'}}
+                                            value={' '+l.users.length+' / 4 '}
                                             status={l.users.length == 4 ? 'warning' : 'success'}
                                         />
                                     </View>
@@ -231,6 +242,7 @@ export default class ReservationScreen extends Component {
                     <DateTimePicker
                         isVisible={this.state.showTimePicker}
                         mode='time'
+                        locale='ko_KR'
                         onCancel={()=>this.setState({ showTimePicker: false })}
                         onConfirm={(date)=>{
                                 if(this.state.focusOnStart) {
@@ -259,24 +271,33 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         flex: 1,
     },
+    titleContainer: {
+        width: '100%', 
+        height: 30, 
+        backgroundColor: '#fffa', 
+        flexDirection:'row', 
+        alignItems:'center',
+        justifyContent:'center',
+    },
     topContainer: {
-        backgroundColor:'lightblue', 
-        paddingTop: 5,
-        paddingBottom: 5,
+        backgroundColor:'#fffa', 
+        paddingTop: 10,
+        paddingBottom: 10,
     },
     middleContainer: {
         width: '100%', 
         height: 30, 
-        backgroundColor: 'lightblue', 
+        backgroundColor: '#fffa', 
         flexDirection:'row', 
         alignItems:'center',
     },
     listContainer: {
         width: '100%', 
         height: 50, 
-        backgroundColor: 'white', 
+        backgroundColor: '#fffa', 
         flexDirection:'row', 
         alignItems:'center',
+        borderRadius: 5,
     },
     ScrollViewContainer: {
 
