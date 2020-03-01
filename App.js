@@ -32,6 +32,7 @@ const AuthNavigator = () => (
     </Stack.Navigator>
 )
 
+
 const MainTabNavigator = () => (
   <Tab.Navigator 
     initialRouteName='Home'
@@ -73,6 +74,8 @@ const ChatNavigator =()=>(
     <Chat.Screen name='ChatRoom' component={ChatRoomScreen}/>
   </Chat.Navigator>
 )
+
+
 
 
 function AppNavigator() {

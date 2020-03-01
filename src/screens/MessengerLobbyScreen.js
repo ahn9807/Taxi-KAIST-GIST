@@ -1,12 +1,13 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Text, FlatList } from "react-native";
-import { Button, ListItem, ButtonGroup } from "react-native-elements";
+import { StyleSheet, View, Text, ScrollView, FlatList } from "react-native";
+import { Button, ListItem, Icon, ButtonGroup } from "react-native-elements";
 import { TextInput, TouchableWithoutFeedback } from "react-native-gesture-handler";
 import firebase from 'firebase'
 import 'firebase/firestore'
 import * as Messenger from '../Networking/Messenger'
 import Modal from "react-native-modal"
 import * as Reservation from "../Networking/Reservation"
+import { NavigationEvents } from 'react-navigation';
 
 export default class MessengerLobbyScreen extends Component {
     constructor(props) {
@@ -15,7 +16,8 @@ export default class MessengerLobbyScreen extends Component {
             username: '',
             roomname: 'room',
             makename: '',
-            chatList: [],
+            availableChatList: [],
+            calculationChatList: [], //두 개로 분리했는데 하나의 jsonobject 형태로 짜도 됨. 추후 논의 
             isModalVisible: false,
             modalChatId: '',
             modalChatName: ''
@@ -31,23 +33,43 @@ export default class MessengerLobbyScreen extends Component {
                 this.setState({ username: user.data().displayName })
                 console.log("test")
                 // console.log(this.state.name)
-
-
             }.bind(this)
             );
 
         Messenger.setRegion('KAIST')
         Messenger.fetchReservationData().then(function (res, err) {
-            this.setState({ chatList: Messenger.getChatRoomName() })
+            this.setState({
+                availableChatList: Messenger.getAvailableChatRoomName(),
+                calculationChatList: Messenger.getCalculationChatRoomName()
+            })
         }.bind(this)
         )
+
+
     }
 
     // shouldComponentUpdate(nextProps, nextState) { //고쳐야
     //     return this.state.chatList != nextState.chatList;
     // }
 
+
+    handleReloadPress = () => { //arrow func로 해야 에러 안나는 이유?
+        // console.log("reload")
+        console.log(this.state.availableChatList)
+        console.log(this.state.calculationChatList)
+        Messenger.setRegion('KAIST')
+        Messenger.fetchReservationData().then(function (res, err) {
+            this.setState({
+                availableChatList: Messenger.getAvailableChatRoomName(),
+                calculationChatList: Messenger.getCalculationChatRoomName()
+            })
+        }.bind(this)
+        )
+    }
+
+
     componentDidMount() {
+        console.log("와싸")
 
     }
 
@@ -64,69 +86,167 @@ export default class MessengerLobbyScreen extends Component {
 
     }
 
-    openModal=(data)=> {
+    openModal = (data) => {
         console.log("tm")
-        this.setState({ isModalVisible: !this.state.isModalVisible,
-                        modalChatId: data.id,
-                        modalChatName: data.title
+        this.setState({
+            isModalVisible: !this.state.isModalVisible,
+            modalChatId: data.id,
+            modalChatName: data.title
         });
     }
 
-    closeModal=()=>{
+    closeModal = () => {
         this.setState({ isModalVisible: !this.state.isModalVisible });
     }
 
-    leaveReservation=()=>{
-
-        Reservation.removeReservation(this.state.modalChatId, firebase.auth().currentUser.uid)
-        temp=this.state.chatList
-        const index= temp.findIndex(v => v.id === this.state.modalChatId)
-        if(index!= undefined){
-            temp.splice(index, 1);
+    leaveReservation = () => {
+        
+        Reservation.removeReservationById(this.state.modalChatId)
+        if(availbleChatList.includes(this.state.modalChatId)){
+            temp = this.state.availableChatList
+            const index = temp.findIndex(v => v.id === this.state.modalChatId)
+            if (index != undefined) {
+                temp.splice(index, 1);
+            }
+            this.setState({ availableChatList: temp })
+    
+        }else{
+            temp = this.state.calculationChatList
+            const index = temp.findIndex(v => v.id === this.state.modalChatId)
+            if (index != undefined) {
+                temp.splice(index, 1);
+            }
+            this.setState({ calculationChatList: temp })
+    
         }
-        this.setState({chatList: temp})
+
         this.setState({ isModalVisible: !this.state.isModalVisible });
     }
+
+    keyExtractor = (item, index) => index.toString()
+
+    renderItem = ({ item }) => (
+        <View>
+        <ListItem
+            // key={i}
+            subtitle={'  ' + FormattedDate(item.startTime) + ' ~ ' + FormattedDate(item.endTime)}
+            title={' ' + item.source + ' -> ' + item.dest + ' '}
+            rightIcon={{ name: 'chevron-right' }}
+            bottomDivider
+            badge={{ value: ' ' + item.users.length + ' ' }}
+            onPress={() => this.GoChat(item.id)}
+            onLongPress={() => this.openModal({
+                title: '  ' + FormattedDate(item.startTime) + ' 부터' + '          ' + FormattedDate(item.endTime) + ' 까지',
+                id: item.id
+            })}
+
+        />
+        <Button title='정산하기'></Button>
+        </View>
+
+    )
+
+
+
 
 
     render() {
         return (
+
+
             <View style={styles.container}>
-                 
-                <View style={styles.chatList}>
+
+                <FlatList
+                        data={this.state.availableChatList}
+                    keyExtractor={this.keyExtractor}
+            
+                    renderItem={this.renderItem}
+                />
+
+                {/* 
+                <NavigationEvents
+                    onDidFocus={()=> {this.handleReloadPress}}
+                /> */}
+                <ScrollView style={{marginTop: 100}}>
+                    <View style={styles.chatList}>
+
                     <Text>
-                            내 택시팟 목록
+                        정산 중인 택시팟 목록
                     </Text>
-                    {
-                        this.state.chatList.map((l, i) => (
+                        {
+                            this.state.calculationChatList.map((l, i) => (
 
-                            <ListItem
-                                key={i}
-                                title={'  ' + FormattedDate(l.startTime) + ' 부터' + '          ' + FormattedDate(l.endTime) + ' 까지'}
-                                rightIcon={{ name: 'chevron-right' }}
-                                bottomDivider
-                                badge={{ value: ' ' + l.users.length + ' ' }}
-                                onPress={() => this.GoChat(l.id)}
-                                onLongPress={() => this.openModal({
-                                    title:'  ' + FormattedDate(l.startTime) + ' 부터' + '          ' + FormattedDate(l.endTime) + ' 까지',
-                                    id: l.id
-                                })}
-                            >
+                                <ListItem
+                                    key={i}
+                                    subtitle={'  ' + FormattedDate(l.startTime) + ' ~ ' + FormattedDate(l.endTime)}
+                                    title={' ' + l.source + ' -> ' + l.dest + ' '}
+                                    rightIcon={{ name: 'chevron-right' }}
+                                    bottomDivider
+                                    badge={{ value: ' ' + l.users.length + ' ' }}
+                                    onPress={() => this.GoChat(l.id)}
+                                    onLongPress={() => this.openModal({
+                                        title: '  ' + FormattedDate(l.startTime) + ' 부터' + '          ' + FormattedDate(l.endTime) + ' 까지',
+                                        id: l.id
+                                    })}
 
-                            </ListItem>
-                        ))
-                    }
+                                >
+                                </ListItem>
+                            ))
+                        }  
+                        <Text>
+                            탑승 예정 택시팟 목록
+                    </Text>
 
-                    <Modal isVisible={this.state.isModalVisible}>
-                        <View style={{ flex: 1 }}>
-                            <Text>  {this.state.modalChatName} </Text>
-                            <Button title="수정"> </Button>
-                            <Button title="방 나가기" onPress={this.leaveReservation}></Button>
-                            <Button title="닫기" onPress={this.closeModal} />
-                        </View>
-                    </Modal>
+                        {
+                            this.state.availableChatList.map((l, i) => (
 
-                </View>
+                                <ListItem
+                                    key={i}
+                                    subtitle={'  ' + FormattedDate(l.startTime) + ' ~ ' + FormattedDate(l.endTime)}
+                                    title={' ' + l.source + ' -> ' + l.dest + ' '}
+                                    rightIcon={{ name: 'chevron-right' }}
+                                    bottomDivider
+                                    badge={{ value: ' ' + l.users.length + ' ' }}
+                                    onPress={() => this.GoChat(l.id)}
+                                    onLongPress={() => this.openModal({
+                                        title: '  ' + FormattedDate(l.startTime) + ' 부터' + '          ' + FormattedDate(l.endTime) + ' 까지',
+                                        id: l.id
+                                    })}
+                                    // buttonGroup={
+                                    //     <View>
+                                    //     <ButtonGroup
+                                    //         buttons={['정산하기']}
+                                    //         />
+                                    //         </View>
+                                    // }
+                                    // render={<Button title='fff'>우와오아와</Button>} 
+                                >
+                    
+                                </ListItem>
+                            ))
+                        }
+
+                        <Modal isVisible={this.state.isModalVisible}>
+                            <View style={{ flex: 1 }}>
+                                <Text>  {this.state.modalChatName} </Text>
+                                <Button title="수정"> </Button>
+                                <Button title="방 나가기" onPress={this.leaveReservation}></Button>
+                                <Button title="닫기" onPress={this.closeModal} />
+                            </View>
+                        </Modal>
+
+                    </View>
+                </ScrollView>
+
+                <Button type='clear'
+
+                    icon={<Icon name='cached'
+                        color='#5d5d5d'
+                        onPress={this.handleReloadPress}>
+                    </Icon>}>
+
+                </Button>
+
                 <View style={styles.con}>
 
                     <Text>
@@ -148,6 +268,7 @@ const styles = StyleSheet.create({
     chatList: {
         flex: 2,
         justifyContent: 'center'
+
     },
     con: {
         flex: 1,
@@ -157,9 +278,10 @@ const styles = StyleSheet.create({
 });
 
 function FormattedDate(date) {
-    var d = new Date(date)
-    var h = d.getHours()
-    var m = d.getMinutes()
+    var f = new Date(date)
+    var d = f.getDate()
+    var h = f.getHours()
+    var m = f.getMinutes()
 
-    return '' + h + ':' + m
+    return d + '일 ' + h + ':' + m
 }

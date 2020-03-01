@@ -14,7 +14,6 @@ export function setRegion(name) {
 }
 
 //일단은 여기서 시간이 지난 데이터를 삭제하도록 하자...
-// db에서 삭제하는건 아닌거?
 export function fetchReservationData() {
     return new Promise(function (resolve, reject) {
         firebase.firestore()
@@ -22,11 +21,11 @@ export function fetchReservationData() {
         .get()
         .then(function(doc) {
             internalDocumentation = doc
-            internalDocumentation.forEach(doc => {
-                if(doc.data().endTime < Date.now()) {
-                    doc.ref.delete()
-                }
-            })
+            // internalDocumentation.forEach(doc => {
+            //     if(doc.data().endTime < Date.now()) {
+            //         doc.ref.delete()
+            //     }
+            // })
 
             resolve(doc)
         })

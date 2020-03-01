@@ -24,6 +24,7 @@ export default class ChatRoomScreen extends Component {
   componentDidMount() {
     console.log("did")
     this.on(message => {
+      // console.log(message);
       this.setState(previousState => ({
         messages: GiftedChat.append(previousState.messages, message)
       }))
@@ -64,7 +65,6 @@ export default class ChatRoomScreen extends Component {
     console.log(roomname)
     return firebase.firestore().collection('ChatRooms')
       .doc(roomname).collection('messages');
-    //roomname 확인해주어야 함.
   }
 
   uid() {
@@ -88,14 +88,15 @@ export default class ChatRoomScreen extends Component {
   parse = message => {
     const { createdAt, text, user } = message.data();
     const { id: _id } = message; //무슨 의미지...
-
-    return { _id, createdAt: Date(createdAt), text, user }
+    return { _id, createdAt: createdAt, text, user }
   }
 
   send = messages => {
     for (let i = 0; i < messages.length; i++) {
       const { text, user } = messages[i];
-      const message = { text, user, createdAt: new Date() };
+      const message = { text, user, createdAt: Date() };
+      //new date로 하면 안된다. giftedchat에서 요구하는게 그런듯....
+      console.log(message)
       this.append(message)
     }
   };
@@ -111,8 +112,9 @@ export default class ChatRoomScreen extends Component {
           messages={this.state.messages}
           onSend={this.send}
           user={this.user}
+          // renderTime={(props)=> props.currentMessage.createdAt.toDate()}
         ></GiftedChat>
-        <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={10} />
+        <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={50} />
       </View>
     )
   }
@@ -124,3 +126,11 @@ const styles = StyleSheet.create({
     flex: 1
   }
 });
+
+function FormattedDate(date) {
+  var d = new Date(date)
+  var h = d.getHours()
+  var m = d.getMinutes()
+
+  return '' + h + ':' + m
+}
