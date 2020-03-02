@@ -28,6 +28,8 @@ export function fetchReservationData() {
             // })
 
             resolve(doc)
+        }).catch(function(err) {
+            alert(err.message)
         })
     })
 }
@@ -81,6 +83,58 @@ export function getReservationByDate(year, month, day, offset=0) {
     })
 }
 
+export function getReservationByDateAndSource(date_, source) {
+    var tempArray = []
+    var returnArray = []
+    var date = new Date(date_).setHours(0,0,0,0)
+    internalDocumentation.forEach(function(doc) {
+        if(doc.data().source == source && doc.data().endTime > Date.now()) {
+            tempArray.push(doc.data())
+        }
+    })
+
+    tempArray.forEach(function(doc) {
+        if((doc.endTime > date && doc.endTime <= date + 86400000) || (doc.startTime > date && doc.startTime <= date + 86400000)) {
+            returnArray.push(doc)
+        }
+    })
+
+    return SortByEndTime(returnArray)
+}
+
+export function getReservationByDateAndDest(date_, dest) {
+    var tempArray = []
+    var returnArray = []
+    var date = new Date(date_).setHours(0,0,0,0)
+    internalDocumentation.forEach(function(doc) {
+        if(doc.data().dest == dest && doc.data().endTime > Date.now()) {
+            tempArray.push(doc.data())
+        }
+    })
+
+    tempArray.forEach(function(doc) {
+        if((doc.endTime > date && doc.endTime <= date + 86400000) || (doc.startTime > date && doc.startTime <= date + 86400000)) {
+            returnArray.push(doc)
+        }
+    })
+
+    return SortByEndTime(returnArray)
+}
+
+export function SortByStartTime(inputArray) {
+    return inputArray.sort((a,b) => {
+        if(a.startTime == b.startTime){ return 0 }
+        return a.startTime > b.startTime ? 1 : -1
+    })
+}
+
+export function SortByEndTime(inputArray) {
+    return inputArray.sort((a,b) => {
+        if(a.endTime == b.endTime){ return 0 }
+        return a.endTime > b.endTime ? 1 : -1
+    })
+}
+
 export function getMarkerBySource(source) {
     var returnArray = []
     internalDocumentation.forEach(function(doc) {
@@ -111,6 +165,17 @@ export function makeReservation(item, index = 0) {
     var endTime = item.endTime
     var marker = item.marker
     var userUid = firebase.auth().currentUser.uid
+
+    if(startTime.getTime != undefined) {
+        console.log(startTime.getTime())
+        startTime = startTime.getTime()
+        item.startTime = startTime
+    }
+    if(endTime.getTime != undefined) {
+        endTime = endTime.getTime()
+        item.endTime = endTime
+    }
+
     return new Promise(function(resolve, reject) {
         var docRef = firebase.firestore()
         .collection(regionName)
@@ -221,6 +286,12 @@ export function removeReservationById(reservationId) {
         .collection(regionName)
         .doc(reservationId)
 
+        //채팅방도 삭제할게요
+
+        var chatDoc=firebase.firestore()
+            .collection('ChatRooms')
+            .doc(reservationId)
+
         var userUid = firebase.auth().currentUser.uid
     
         docRef.get().then(function(doc) {
@@ -238,6 +309,7 @@ export function removeReservationById(reservationId) {
                     //만약 아무도 가입하지 않은 예약이면 예약을 삭제한다
                     if(tempArray.length == 0) {
                         docRef.delete()
+                        chatDoc.delete()
                     }
                     //누군가 가입한 방이면 예약을 삭제하지 않는다 
                     else {

@@ -12,6 +12,8 @@ import SlidingUpPanel from 'rn-sliding-up-panel'
 import { Badge, Overlay, Button } from "react-native-elements";
 import Details from "../components/Details";
 import { SafeAreaView } from "react-native-safe-area-context";
+import DateTimePicker from "react-native-modal-datetime-picker";
+import FormattedDate from "../tools/FormattedDate";
 
 var reservationInfo
 
@@ -29,6 +31,9 @@ export default class HomeScreen extends Component {
             reservationInfo: {
                 target: '마법부',
             },
+            showTimePicker: false,
+            selectedTime: new Date(),
+            detailsNumber: 0,
         }
 
         Reservation.setRegion(this.state.initialRegionName)
@@ -95,25 +100,35 @@ export default class HomeScreen extends Component {
                 reservationInfo: {
                     target: reservationInfo.target,
                     marker: reservationInfo.marker
-                }
+                },
             })
         }).done(function(res) {
-            if(Platform.OS == 'ios') {
-                this._panel.show()
-            } else {
-                this.handleOnReservationPressed()
-            }
+            this._panel.show()
 
+            InteractionManager.runAfterInteractions(() =>{
+                if(this.state.targetToRegion) {
+                    this.setState({
+                        detailsNumber: Reservation.getReservationByDateAndSource(this.state.selectedTime.getTime(), reservationInfo.target).length
+                    })
+                } else {
+                    this.setState({
+                        detailsNumber: Reservation.getReservationByDateAndDest(this.state.selectedTime.getTime(), reservationInfo.target).length
+                    })
+                }
+
+            })
         }.bind(this))
     }
 
     handleOnReservationPressed = () => {
-        console.log("Sdf")
-        this.props.navigation.navigate('Reservation',{
-            targetToRegion: this.state.targetToRegion,
-            regionName: this.state.initialRegionName,
-            targetName: this.state.reservationInfo.target,
-            marker: this.state.reservationInfo.marker,
+        setTimeout(() => {
+            this.props.navigation.navigate('Reservation',{
+                targetToRegion: this.state.targetToRegion,
+                regionName: this.state.initialRegionName,
+                targetName: this.state.reservationInfo.target,
+                marker: this.state.reservationInfo.marker,
+                today: this.state.selectedTime,
+            })
         })
     }
 
@@ -158,12 +173,16 @@ export default class HomeScreen extends Component {
                             ref={c=> this._panel = c}
                             backdropOpacity={0.5}
                             friction={0.7}
+                            allowDragging={Platform.OS == 'android' ? false : true}
                         >
                             <Details 
                                 title={'조회하기'}
-                                target={this.state.reservationInfo.target} 
-                                description={[this.state.reservationInfo.target+' 출발' + '  ➲  ' + this.state.initialRegionName + ' 도착']}
+                                selectedDate = {this.state.selectedTime}
+                                dateCallback={()=>{this.setState({showTimePicker: true})}}
+                                source={this.state.reservationInfo.target}
+                                dest={this.state.initialRegionName}
                                 reservationButton={this.handleOnReservationPressed}
+                                reservationInfo={this.state.detailsNumber}
                             />
                         </SlidingUpPanel>
                     </View>
@@ -207,14 +226,34 @@ export default class HomeScreen extends Component {
                             ref={c=> this._panel = c}
                             backdropOpacity={0.5}
                             friction={0.7}
+                            allowDragging={Platform.OS == 'android' ? false : true}
                         >
                             <Details 
                                 title={'조회하기'}
-                                target={this.state.reservationInfo.target} 
-                                description={[this.state.initialRegionName+' 출발'+ '  ➲  ' + this.state.reservationInfo.target + ' 도착']}
+                                selectedDate = {this.state.selectedTime}
+                                dateCallback={()=>{this.setState({showTimePicker: true})}}
+                                source={this.state.initialRegionName}
+                                dest={this.state.reservationInfo.target}
                                 reservationButton={this.handleOnReservationPressed}
+                                reservationInfo={this.state.detailsNumber}
                             />
                         </SlidingUpPanel>
+                        <DateTimePicker
+                            isVisible={this.state.showTimePicker}
+                            mode='date'
+                            onCancel={()=>this.setState({ showTimePicker: false })}
+                            locale='ko_KR'
+                            onConfirm={(date)=>{
+                                    this.setState({
+                                        selectedTime: date,
+                                        showTimePicker: false,
+                                        detailsNumber: this.state.targetToRegion ?
+                                            Reservation.getReservationByDateAndSource(date, this.state.reservationInfo.target).length :
+                                            Reservation.getReservationByDateAndDest(date, this.state.reservationInfo.target).length
+                                    })
+                                }
+                            }
+                        />
                     </View>
                 )
             }
@@ -234,8 +273,6 @@ export default class HomeScreen extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
     },
     mapStyle: {
         width: Dimensions.get('window').width,

@@ -5,27 +5,10 @@ import SlidingUpPanel from 'rn-sliding-up-panel';
 import tabBarHeight from '../tools/TabBarHeight'
 import HorizontalList from './HorizontalList';
 
-const Details = ({ source, dest, dateCallback, selectedDate, reservationInfo, reservationButton }) => (
+const ReservationDetails = ({ startTime, endTime, startTimeButton, endTimeButton, bottomButtonCallback }) => (
     <View style={styles.container}>
         <View style={styles.pricingCardContainer}>
-            <TouchableOpacity style={styles.sdContainer} onPress={dateCallback}>
-                <View>
-                    <Avatar
-                        rounded
-                        icon={{name:'date-range', color:'black'}}
-                        overlayContainerStyle={{backgroundColor: 'white'}}
-                    />
-                    <Badge
-                        status="success"
-                        value={reservationInfo}
-                        containerStyle={{ position: 'absolute', top: -3, right: -6 }}
-                    />
-                </View>
-                <Text style={{color: '#fff', textAlign: 'center', fontWeight:'500', fontSize: 25}}>
-                    {'  '+selectedDate.getFullYear() + '년 ' + (selectedDate.getMonth() + 1) + '월 ' + selectedDate.getDate() + '일'}
-                </Text>
-            </TouchableOpacity>
-            <View style={styles.sdContainer}>
+            <TouchableOpacity style={styles.sdContainer} onPress={startTimeButton}>
                 <View>
                     <Avatar
                         rounded
@@ -34,10 +17,10 @@ const Details = ({ source, dest, dateCallback, selectedDate, reservationInfo, re
                     />
                 </View>
                 <Text style={{color: '#fff', textAlign: 'center', fontWeight:'500', fontSize: 25}}>
-                    {'  '+source}
+                    {startTime == null ? '  터치해서 시간 선택' : '  출발 시작  '+FormattedDate(new Date(startTime), true)}
                 </Text>
-            </View>
-            <View style={styles.sdContainer}>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.sdContainer} onPress={endTimeButton}>
                 <View>
                     <Avatar
                         rounded
@@ -46,15 +29,13 @@ const Details = ({ source, dest, dateCallback, selectedDate, reservationInfo, re
                     />
                 </View>
                 <Text style={{color: '#fff', textAlign: 'center', fontWeight:'500', fontSize: 25}}>
-                    {'  '+dest}
+                    {endTime == null ? '  터치해서 시간 선택' : '  출발 마감  '+FormattedDate(new Date(endTime), true)}
                 </Text>
-            </View>
-            <Divider></Divider>
-
+            </TouchableOpacity>
             <Button 
-                title={"예약하기"}
+                title="예약하기"
                 titleStyle={{ textAlign:'center', fontWeight: 'bold'}}
-                onPress={reservationButton}
+                onPress={bottomButtonCallback}
                 buttonStyle={{borderRadius: 30, width:250 }}
                 containerStyle={{marginBottom: 20, marginTop: 10}}
                 icon={{name: 'local-taxi', color: 'white'}}
@@ -63,7 +44,7 @@ const Details = ({ source, dest, dateCallback, selectedDate, reservationInfo, re
     </View>
 )
 
-export default Details;
+export default ReservationDetails;
 
 const styles = StyleSheet.create({
     container: {
@@ -101,3 +82,28 @@ const styles = StyleSheet.create({
     }
 
 })
+
+function FormattedDate(date, line = false) {
+    var d = new Date(date)
+    var h = d.getHours()
+    var m = d.getMinutes()
+    var cvt = 12
+    var str = '오전'
+
+    if(h >= 12) {
+        str='오후'
+    }
+
+    if(h == 12) {
+        cvt = 12
+    } else {
+        cvt = h % 12
+    }
+    
+    if(line ==false) {
+        return str + '\n' + cvt + ':' + m
+    } else {
+        return str + ' ' + cvt + ':' + m
+    }
+
+}
