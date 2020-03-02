@@ -150,7 +150,7 @@ export function getMarkerBySource(source) {
 export function getMarkerByDest(dest) {
     var returnArray = []
     internalDocumentation.forEach(function(doc) {
-        if(doc.data().source == dest && doc.data().endTime > Date.now() && doc.data().marker != undefined) {
+        if(doc.data().dest == dest && doc.data().endTime > Date.now() && doc.data().marker != undefined) {
             returnArray.push(doc.data().marker)
         }
     })

@@ -31,7 +31,7 @@ export default class HomeScreen extends Component {
             reservationInfo: {
                 target: '마법부',
             },
-            showTimePicker: false,
+            showDatePicker: false,
             selectedTime: new Date(),
             detailsNumber: 0,
         }
@@ -53,10 +53,12 @@ export default class HomeScreen extends Component {
         } = geometry
         this.setState({
             destination: {
-                latitude: latitude,
-                longitude: longitude,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
+                latlng: {
+                    latitude: latitude,
+                    longitude: longitude,
+                    latitudeDelta: 0.01,
+                    longitudeDelta: 0.01,
+                },
                 title: data.structured_formatting.main_text,
             },
             location: {
@@ -121,6 +123,10 @@ export default class HomeScreen extends Component {
     }
 
     handleOnReservationPressed = () => {
+        if(this.state.reservationInfo.target == '마법부') {
+            alert('머글은 마법부에 가지 못합니다.')
+            return
+        }
         setTimeout(() => {
             this.props.navigation.navigate('Reservation',{
                 targetToRegion: this.state.targetToRegion,
@@ -149,8 +155,8 @@ export default class HomeScreen extends Component {
                                 pinPressedCallback={(this.handleOnPinPressed)}
                             />
                             <Markers 
-                                markers={removeDupulicatedMarkers(Reservation.getMarkerBySource('KAIST'), this.state.region.defaultMarkers)} 
-                                pinColor ='blue' description='카이스트로 출발 / 클릭해서 예약하기'
+                                markers={removeDupulicatedMarkers(Reservation.getMarkerByDest('KAIST'), this.state.region.defaultMarkers)} 
+                                pinColor ='lightred' description='카이스트로 출발 / 클릭해서 예약하기'
                                 calloutPressedCallback={this.handleOnPinCalloutPressed}
                                 pinPressedCallback={this.handleOnPinPressed}
                             />
@@ -178,7 +184,7 @@ export default class HomeScreen extends Component {
                             <Details 
                                 title={'조회하기'}
                                 selectedDate = {this.state.selectedTime}
-                                dateCallback={()=>{this.setState({showTimePicker: true})}}
+                                dateCallback={()=>{this.setState({showDatePicker: true})}}
                                 source={this.state.reservationInfo.target}
                                 dest={this.state.initialRegionName}
                                 reservationButton={this.handleOnReservationPressed}
@@ -202,8 +208,8 @@ export default class HomeScreen extends Component {
                                 pinPressedCallback={this.handleOnPinPressed}
                             />
                             <Markers 
-                                markers={removeDupulicatedMarkers(Reservation.getMarkerByDest('KAIST'), this.state.region.defaultMarkers)}
-                                pinColor ='blue' description='카이스트에서 도착 / 클릭해서 예약하기'
+                                markers={removeDupulicatedMarkers(Reservation.getMarkerBySource('KAIST'), this.state.region.defaultMarkers)}
+                                pinColor ='lightred' description='카이스트에서 도착 / 클릭해서 예약하기'
                                 calloutPressedCallback={this.handleOnPinCalloutPressed}
                                 pinPressedCallback={this.handleOnPinPressed}
                             />
@@ -231,7 +237,7 @@ export default class HomeScreen extends Component {
                             <Details 
                                 title={'조회하기'}
                                 selectedDate = {this.state.selectedTime}
-                                dateCallback={()=>{this.setState({showTimePicker: true})}}
+                                dateCallback={()=>{this.setState({showDatePicker: true})}}
                                 source={this.state.initialRegionName}
                                 dest={this.state.reservationInfo.target}
                                 reservationButton={this.handleOnReservationPressed}
@@ -239,14 +245,14 @@ export default class HomeScreen extends Component {
                             />
                         </SlidingUpPanel>
                         <DateTimePicker
-                            isVisible={this.state.showTimePicker}
+                            isVisible={this.state.showDatePicker}
                             mode='date'
-                            onCancel={()=>this.setState({ showTimePicker: false })}
+                            onCancel={()=>this.setState({ showDatePicker: false })}
                             locale='ko_KR'
                             onConfirm={(date)=>{
                                     this.setState({
                                         selectedTime: date,
-                                        showTimePicker: false,
+                                        showDatePicker: false,
                                         detailsNumber: this.state.targetToRegion ?
                                             Reservation.getReservationByDateAndSource(date, this.state.reservationInfo.target).length :
                                             Reservation.getReservationByDateAndDest(date, this.state.reservationInfo.target).length
