@@ -12,7 +12,7 @@ export default class CalculationScreen extends Component {
         super(props)
         this.state = {
             calculationList: [],
-            hostList: [],
+            hostList: [], 
             sendList: []
         }
 
