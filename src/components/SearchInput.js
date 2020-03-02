@@ -17,7 +17,7 @@ const SearchInput = ({ onLocationSelected, rightButtonCallback, focusedOnSource 
     <GooglePlacesAutocomplete
       minLength={2}
       autoFocus={true}
-      placeholder={focusedOnSource ? '학교로 도착' : '학교에서 출발'}
+      placeholder={focusedOnSource ? '선택 지점 ➤ 학교' : '학교 ➤ 선택 지점'}
       onPress={onLocationSelected}
       autoFocus={false}
       query={query}
@@ -32,7 +32,7 @@ const SearchInput = ({ onLocationSelected, rightButtonCallback, focusedOnSource 
         autoCorrect: false,
       }}
       renderDescription={row => {
-          if(row.terms[1].value == undefined) {
+          if(row.terms[1] == undefined) {
             return row.structured_formatting.main_text
           }
           return row.terms[1].value + ' ' + row.structured_formatting.main_text

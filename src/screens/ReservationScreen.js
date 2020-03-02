@@ -25,11 +25,11 @@ export default class ReservationScreen extends Component {
                 endTime: 0,
             },
             makeNewReservation: false,
-            selectedDate: new Date(),
             showTimePicker: false,
             selectedStartTime: null,
             selectedEndTime: null,
             focusOnStart: true,
+            showDatePicker: false,
         }
         Reservation.setRegion(this.state.regionName)
         Reservation.fetchReservationData().then(function(res, err) {
@@ -172,12 +172,14 @@ export default class ReservationScreen extends Component {
                                 onPress={()=> {this.setState({ today: new Date(-86400000 + +new Date(this.state.today))}); this.handleReloadPress();}}
                             />
                             <View style={{flex: 1, alignItems: 'center'}}>
-                                <Text h5 style={{color: 'black', textAlign: 'center', fontWeight:'bold'}}>
-                                    {new Date(this.state.today).getFullYear() + '년 ' + (new Date(this.state.today).getMonth() + 1) + '월 ' + new Date(this.state.today).getDate() + '일'}
-                                </Text>
-                                <Text h5 style={{color: 'black', textAlign: 'center', fontWeight:'bold', paddingTop: 2}}>
-                                    {week[new Date(this.state.today).getDay()]}
-                                </Text>
+                                <TouchableOpacity onPress={()=>this.setState({ showDatePicker: true })}>
+                                    <Text h5 style={{color: 'black', textAlign: 'center', fontWeight:'bold'}}>
+                                        {new Date(this.state.today).getFullYear() + '년 ' + (new Date(this.state.today).getMonth() + 1) + '월 ' + new Date(this.state.today).getDate() + '일'}
+                                    </Text>
+                                    <Text h5 style={{color: 'black', textAlign: 'center', fontWeight:'bold', paddingTop: 2}}>
+                                        {week[new Date(this.state.today).getDay()]}
+                                    </Text>
+                                </TouchableOpacity>
                             </View>
                             <Button 
                                 type='outline'
@@ -230,6 +232,7 @@ export default class ReservationScreen extends Component {
                         ref={c=> this._panelExist = c}
                         backdropOpacity={0.5}
                         friction={0.7}
+                        allowDragging={Platform.OS == 'android' ? false : true}
                     >
                         <ReservationDetails
                             startTime={this.state.selectedStartTime}
@@ -256,6 +259,19 @@ export default class ReservationScreen extends Component {
                                         showTimePicker: false,
                                     })
                                 }
+                            }
+                        }
+                    />
+                    <DateTimePicker
+                        isVisible={this.state.showDatePicker}
+                        mode='date'
+                        onCancel={()=>this.setState({ showDatePicker: false })}
+                        locale='ko_KR'
+                        onConfirm={(date)=>{
+                                this.setState({
+                                    today: date,
+                                    showDatePicker: false,
+                                })
                             }
                         }
                     />
