@@ -166,6 +166,7 @@ export function makeReservation(item, index = 0) {
     var endTime = item.endTime
     var marker = item.marker
     var userUid = firebase.auth().currentUser.uid
+    var comment = item.comment
 
     if(startTime.getTime != undefined) {
         console.log(startTime.getTime())
@@ -226,6 +227,7 @@ export function makeReservation(item, index = 0) {
                     startTime: startTime,
                     endTime: endTime,
                     marker: marker,
+                    comment: comment,
                     users: [userUid],
                 })
                 alert('가입되었습니다')

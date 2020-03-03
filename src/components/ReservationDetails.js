@@ -1,13 +1,30 @@
 import React from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
-import { PricingCard, Card, Button, Text, Badge, Divider, ListItem, Avatar } from 'react-native-elements';
+import { PricingCard, Card, Button, Text, Badge, Divider, ListItem, Avatar, Input } from 'react-native-elements';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import tabBarHeight from '../tools/TabBarHeight'
 import HorizontalList from './HorizontalList';
 
-const ReservationDetails = ({ startTime, endTime, startTimeButton, endTimeButton, bottomButtonCallback }) => (
+const ReservationDetails = ({ startTime, endTime, startTimeButton, comment, endTimeButton, bottomButtonCallback }) => (
     <View style={styles.container}>
         <View style={styles.pricingCardContainer}>
+            <View style={styles.sdContainer} onPress={startTimeButton}>
+                <View>
+                    <Avatar
+                        rounded
+                        icon={{name:'flight-takeoff', color:'black'}}
+                        overlayContainerStyle={{backgroundColor: 'white'}}
+                    />
+                </View>
+                <Input
+                    placeholder=' Password'
+                    onChangeText={text => this.setState({ password: text })}
+                    value={'test'}
+                    secureTextEntry={true}
+                    inputStyle={{color:'white'}}
+                    autoCapitalize='none'
+                />
+            </View>
             <TouchableOpacity style={styles.sdContainer} onPress={startTimeButton}>
                 <View>
                     <Avatar
