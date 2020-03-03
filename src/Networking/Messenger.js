@@ -22,17 +22,37 @@ export function fetchReservationData() {
     })
 }
 
-export function getChatRoomName() {
+export function getAvailableChatRoomName() {
     var returnArray = []
     const uid = firebase.auth().currentUser.uid
     internalDocumentation.forEach(function (doc) {
-        if (doc.data().users.includes(uid)) {
+        if (doc.data().users.includes(uid) && (doc.data().endTime >= Date.now()) ) {
             var result= Object.assign(doc.data(), {id: doc.id})
             returnArray.push(result)
             // 제대로 하려면 reservation id를 따로 만들어주어야 한다. 
-
         }
+    
+        
     })
+    console.log(returnArray)
+    returnArray.sort((a, b)=>{
+        return a['endTime']-b['endTime']
+    })
+    return returnArray
+}
 
+export function getCalculationChatRoomName() {
+    var returnArray = []
+    const uid = firebase.auth().currentUser.uid
+    internalDocumentation.forEach(function (doc) {
+        if (doc.data().users.includes(uid) && (doc.data().endTime < Date.now())) {
+            var result= Object.assign(doc.data(), {id: doc.id})
+            returnArray.push(result)
+        }
+        
+    })
+    returnArray.sort((a, b)=>{
+        return a['endTime']-b['endTime']
+    })
     return returnArray
 }

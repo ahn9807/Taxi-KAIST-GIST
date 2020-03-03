@@ -14,7 +14,6 @@ export function setRegion(name) {
 }
 
 //일단은 여기서 시간이 지난 데이터를 삭제하도록 하자...
-// db에서 삭제하는건 아닌거? = db 에서도 삭제됨
 export function fetchReservationData() {
     return new Promise(function (resolve, reject) {
         firebase.firestore()
@@ -22,11 +21,11 @@ export function fetchReservationData() {
         .get()
         .then(function(doc) {
             internalDocumentation = doc
-            internalDocumentation.forEach(doc => {
-                if(doc.data().endTime < Date.now()) {
-                    doc.ref.delete()
-                }
-            })
+            // internalDocumentation.forEach(doc => {
+            //     if(doc.data().endTime < Date.now()) {
+            //         doc.ref.delete()
+            //     }
+            // })
 
             resolve(doc)
         }).catch(function(err) {
@@ -289,6 +288,12 @@ export function removeReservationById(reservationId) {
         .collection(regionName)
         .doc(reservationId)
 
+        //채팅방도 삭제할게요
+
+        var chatDoc=firebase.firestore()
+            .collection('ChatRooms')
+            .doc(reservationId)
+
         var userUid = firebase.auth().currentUser.uid
     
         docRef.get().then(function(doc) {
@@ -306,6 +311,7 @@ export function removeReservationById(reservationId) {
                     //만약 아무도 가입하지 않은 예약이면 예약을 삭제한다
                     if(tempArray.length == 0) {
                         docRef.delete()
+                        chatDoc.delete()
                     }
                     //누군가 가입한 방이면 예약을 삭제하지 않는다 
                     else {

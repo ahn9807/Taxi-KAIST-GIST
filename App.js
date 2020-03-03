@@ -15,6 +15,7 @@ import SettingScreen from './src/screens/SettingScreen'
 import MessengerLobbyScreen from './src/screens/MessengerLobbyScreen'
 import EmailAuthScreen from './src/screens/EmailAuthScreen'
 import ReservationScreen from './src/screens/ReservationScreen'
+import CalculationScreen from './src/screens/CalculationScreen'
 
 import ChatRoomScreen from './src/screens/ChatRoomScreen'
 import { SafeAreaProvider } from 'react-native-safe-area-view';
@@ -31,6 +32,7 @@ const AuthNavigator = () => (
         <Stack.Screen name='EmailAuth' component={EmailAuthScreen}/>
     </Stack.Navigator>
 )
+
 
 const MainTabNavigator = () => (
   <Tab.Navigator 
@@ -56,6 +58,14 @@ const MainTabNavigator = () => (
         )
       }}
     />
+    <Tab.Screen name='Calculation' component={CalculationScreen}
+      options={{
+        tabBarLabel: '정산하기',
+        tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons name='cash-multiple' color={color} size={size} />
+        )
+      }}
+    />
     <Tab.Screen name='Setting' component={SettingScreen}
       options={{
         tabBarLabel: '설정',
@@ -73,6 +83,8 @@ const ChatNavigator =()=>(
     <Chat.Screen name='ChatRoom' component={ChatRoomScreen}/>
   </Chat.Navigator>
 )
+
+
 
 
 function AppNavigator() {
