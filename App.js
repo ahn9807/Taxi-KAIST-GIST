@@ -19,10 +19,41 @@ import CalculationScreen from './src/screens/CalculationScreen'
 
 import ChatRoomScreen from './src/screens/ChatRoomScreen'
 import { SafeAreaProvider } from 'react-native-safe-area-view';
+import SS_Account from './src/screens/SettingScreens/SS_Account';
+import SS_Announcement from './src/screens/SettingScreens/SS_Announcement';
+import SS_ETC from './src/screens/SettingScreens/SS_ETC';
+import SS_Help from './src/screens/SettingScreens/SS_Help';
+import SS_History from './src/screens/SettingScreens/SS_History';
+import SS_Information from './src/screens/SettingScreens/SS_Information';
+import SS_Messenger from './src/screens/SettingScreens/SS_Messenger';
+import SS_Profile from './src/screens/SettingScreens/SS_Profile';
+import SS_ServiceCenter from './src/screens/SettingScreens/SS_ServiceCenter';
+import SS_Theme from './src/screens/SettingScreens/SS_Theme';
+import SS_Wallet from './src/screens/SettingScreens/SS_Wallet';
+import SS_Notice from './src/screens/SettingScreens/SS_Notice';
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
 const Chat = createStackNavigator()
+const Setting = createStackNavigator()
+
+const SettingNavigator = () => (
+  <Setting.Navigator headerMode='none' initialRouteName='SettingScreen'>
+    <Stack.Screen name='SettingScreen' component={SettingScreen}/>
+    <Stack.Screen name='Announcement' component={SS_Announcement}/>
+    <Stack.Screen name='Account' component={SS_Account}/>
+    <Stack.Screen name='ETC' component={SS_ETC}/>
+    <Stack.Screen name='Help' component={SS_Help}/>
+    <Stack.Screen name='History' component={SS_History}/>
+    <Stack.Screen name='Information' component={SS_Information}/>
+    <Stack.Screen name='Messenger' component={SS_Messenger}/>
+    <Stack.Screen name='Profile' component={SS_Profile}/>
+    <Stack.Screen name='ServiceCenter' component={SS_ServiceCenter}/>
+    <Stack.Screen name='Theme' component={SS_Theme}/>
+    <Stack.Screen name='Wallet' component={SS_Wallet}/>
+    <Stack.Screen name='Notice' component={SS_Notice}/>
+  </Setting.Navigator>
+)
 
 const AuthNavigator = () => (
     <Stack.Navigator headerMode='none' initialRouteName='Welcome'>
@@ -66,7 +97,7 @@ const MainTabNavigator = () => (
         )
       }}
     />
-    <Tab.Screen name='Setting' component={SettingScreen}
+    <Tab.Screen name='Setting' component={SettingNavigator}
       options={{
         tabBarLabel: '설정',
         tabBarIcon: ({ color, size }) => (

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, StyleSheet, ActivityIndicator, ScrollView, DatePickerIOS, ImageBackground, TouchableOpacity } from "react-native";
+import { View, StyleSheet, ActivityIndicator, ScrollView, DatePickerIOS, ImageBackground, TouchableOpacity, KeyboardAvoidingView } from "react-native";
 import { Header, Button, Icon, ListItem, Card, Divider, Overlay, Text, Badge, Avatar } from "react-native-elements";
 import * as Reservation from '../Networking/Reservation'
 import SlidingUpPanel from "rn-sliding-up-panel";
@@ -30,6 +30,8 @@ export default class ReservationScreen extends Component {
             selectedEndTime: null,
             focusOnStart: true,
             showDatePicker: false,
+            comment: '',
+            enableComment: false,
         }
         Reservation.setRegion(this.state.regionName)
         Reservation.fetchReservationData().then(function(res, err) {
@@ -71,7 +73,10 @@ export default class ReservationScreen extends Component {
     }
 
     handleOnMakeReservation = () => {
-        if(this.state.selectedStartTime > this.state.selectedEndTime) {
+        if(this.state.selectedEndTime == null || this.state.selectedStartTime == null) {
+            alert('시작 시간 및 종료 시간을 입력해 주세요')
+        }
+        else if(this.state.selectedStartTime > this.state.selectedEndTime) {
             alert('시작 시간은 종료 시간을 넘을 수 없습니다.')
         } else {
             if(!this.state.targetToRegion) {
@@ -81,6 +86,7 @@ export default class ReservationScreen extends Component {
                 startTime: this.state.selectedStartTime,
                 endTime: this.state.selectedEndTime,
                 marker: this.state.currentMarker,
+                comment: this.state.comment,
             }).then(function(res,err) {
                 if(res == false) {
                     console.log('failed')
@@ -112,6 +118,8 @@ export default class ReservationScreen extends Component {
         this.setState({
             selectedStartTime: null,
             selectedEndTime: null,
+            comment: null,
+            enableComment: true,
         })
         this._panelExist.show()
     }
@@ -120,6 +128,8 @@ export default class ReservationScreen extends Component {
         this.setState({
             selectedStartTime: item.startTime,
             selectedEndTime: item.endTime,
+            comment: item.comment,
+            enableComment: false,
         })
         this._panelExist.show()
     }
@@ -240,6 +250,9 @@ export default class ReservationScreen extends Component {
                             bottomButtonCallback={this.handleOnMakeReservation}
                             startTimeButton={()=>{this.setState({ showTimePicker: true, focusOnStart: true})}}
                             endTimeButton={()=>{this.setState({ showTimePicker: true, focusOnStart: false})}}
+                            commentCallback={(text)=>this.setState({comment:text})}
+                            enableComment={this.state.enableComment}
+                            comment={this.state.comment}
                         />
                     </SlidingUpPanel>
                     <DateTimePicker
