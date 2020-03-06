@@ -1,6 +1,25 @@
 import React, { Component } from "react";
 import { ImageBackground, StyleSheet, View } from "react-native";
 import { Icon, Button, Header, Text, Divider } from "react-native-elements";
+import SettingListView from "../../components/SettingListView";
+
+const sections = [
+    {
+      data: [
+        {
+          title: '기본 산뜻 테마',
+          subTitle:'현재 사용중인 테마',
+          hideChevron: true,
+          icon: 'ios-home',
+          backgroundColor: '#8E8E93',
+        },
+      ],
+    },
+    
+    // Space at the bottom
+    { data: [] },
+  ];
+
 
 export default class SS_Theme extends Component {
     render() {
@@ -12,9 +31,7 @@ export default class SS_Theme extends Component {
                     containerStyle={{backgroundColor:'white'}}
                 />
                 <Divider></Divider>
-                <View style={styles.container}>
-
-                </View>
+                <SettingListView sections={sections}/>
             </View>
         )
     }

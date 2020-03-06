@@ -12,6 +12,15 @@ const GREY = '#8E8E93';
 const PURPLE = '#5856D6';
 const TEAL_BLUE = '#5AC8FA';
 
+/* 기타 메뉴 일단 필요 없어서 제거함 
+      {
+        title: '기타',
+        backgroundColor: RED,
+        icon: 'ios-more',
+        navigation: 'ETC',
+      },
+*/
+
 const sections = [
   {
     data: [
@@ -83,12 +92,6 @@ const sections = [
         backgroundColor: RED,
         icon: 'ios-brush',
         navigation: 'Theme',
-      },
-      {
-        title: '기타',
-        backgroundColor: RED,
-        icon: 'ios-more',
-        navigation: 'ETC',
       },
     ],
     },
@@ -180,6 +183,6 @@ const styles = StyleSheet.create({
     marginLeft: 58,
   },
   headerSection: {
-    height: 30,
+    height: 15,
   },
 });

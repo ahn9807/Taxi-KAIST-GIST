@@ -1,8 +1,28 @@
 import React, { Component } from "react";
-import { ImageBackground, StyleSheet, View } from "react-native";
+import { ImageBackground, StyleSheet, View, ActivityIndicator } from "react-native";
 import { Icon, Button, Header, Text, Divider } from "react-native-elements";
+import SettingListView from "../../components/SettingListView";
+import { fetchAnnoucement, getAnnoucement } from "../../Networking/Annoucement";
 
 export default class SS_Announcement extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            loading: true,
+            sections: null,
+        }
+        fetchAnnoucement().then(function(res) {
+            var sections = [{
+                data: getAnnoucement(),
+            }]
+            this.setState({
+                loading: false,
+                sections: sections,
+            })
+            console.log(sections)
+        }.bind(this))
+    }
+
     render() {
         return(
             <View>
@@ -12,9 +32,12 @@ export default class SS_Announcement extends Component {
                     containerStyle={{backgroundColor:'white'}}
                 />
                 <Divider></Divider>
-                <View style={styles.container}>
-
-                </View>
+                {this.state.loading && 
+                    <ActivityIndicator
+                        style={styles.spinner}
+                    />
+                }
+                <SettingListView sections={this.state.sections}/>
             </View>
         )
     }
@@ -36,4 +59,7 @@ const styles = StyleSheet.create({
         height: '10%',
         justifyContent: 'flex-end'
     },
+    spinner: {
+        marginTop: 200
+    }
 })
