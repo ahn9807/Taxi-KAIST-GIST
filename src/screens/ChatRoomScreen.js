@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import { GiftedChat } from "react-native-gifted-chat";
 import firebase from 'firebase'
+import { Header , Button, Icon} from 'react-native-elements'
 import 'firebase/firestore'
 import Fire from '../config/Firebase'
 
@@ -9,20 +10,28 @@ import Fire from '../config/Firebase'
 export default class ChatRoomScreen extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+      messages: [],
+      roomname: this.props.route.params.id,
+      // tabBarVisible: false,
+    }
+  
+    // console.log(this.props.route)
+
+  }
  
-  }
-  state = {
-    messages: [],
-    roomname: this.props.route.params.id
-  }
 
 
-  static navigationOptions = ({ props }) => {
-    // title: (props.navigation.state.params || {}).name,
-  };
+  static navigationOptions = ({ props }) => ({
+    title: (props.navigation.state.params || {}).name,
+    
+  }
+  );
 
   componentDidMount() {
-    console.log("did")
+
+
+
     this.on(message => {
       // console.log(message);
       this.setState(previousState => ({
@@ -30,9 +39,6 @@ export default class ChatRoomScreen extends Component {
       }))
     })
 
-    const { navigation } = this.props
-    console.log("why?")
-    // console.log(navigation)
 
   }
 
@@ -63,6 +69,7 @@ export default class ChatRoomScreen extends Component {
       .params.roomname;
 
     console.log(roomname)
+    this.setState({roomname: roomname})
     return firebase.firestore().collection('ChatRooms')
       .doc(roomname).collection('messages');
   }
@@ -104,17 +111,31 @@ export default class ChatRoomScreen extends Component {
 
   append = message => this.refm().add(message)
 
+  handleOnOpenMenu=()=> {
+    console.log(this.state.roomname)
+  } 
+
+  handleBackPress = () => {
+    this.props.navigation.navigate('ChatNavigator')
+  }
 
   render() {
     return (
       <View style={styles.chat}>
+        <Header
+          containerStyle={{ backgroundColor: '#fffa', borderBottomColor: 'transparent' }}
+          leftComponent={<Button type='clear' icon={<Icon name='keyboard-arrow-left' color='black' onPress={this.handleBackPress}></Icon>}></Button>}
+          rightComponent={<Button type='clear' titleStyle={{ color: 'black' }} icon={<Icon name='menu' type='feather' color='black' onPress={this.handleOnOpenMenu}></Icon>}></Button>}
+          centerComponent={{ text: this.state.roomname, style: { color: 'black', fontWeight: 'bold' } }}
+        />
         <GiftedChat
           messages={this.state.messages}
           onSend={this.send}
           user={this.user}
+
           // renderTime={(props)=> props.currentMessage.createdAt.toDate()}
         ></GiftedChat>
-        <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={50} />
+        <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={0} />
       </View>
     )
   }

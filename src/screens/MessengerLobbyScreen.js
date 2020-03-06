@@ -92,15 +92,17 @@ export default class MessengerLobbyScreen extends Component {
 
     }
 
-    GoChat = (id) => {
+    GoChat = (id, roomname) => {
         console.log(id)
         console.log("gochat")
         // console.log(this.state.name)
         const { navigation } = this.props
+        // console.log()
+
 
         navigation.navigate('ChatRoom', {
             username: this.state.username,
-            roomname: id
+            roomname: roomname
         })
 
     }
@@ -168,11 +170,11 @@ export default class MessengerLobbyScreen extends Component {
                     // key={i}
                     style={styles.chatList}
                     subtitle={'  ' + FormattedDate(item.startTime) + ' ~ ' + FormattedDate(item.endTime)}
-                    title={' ' + item.source + ' -> ' + item.dest + ' '}
+                    title={' ' + item.source + ' ➤ ' + item.dest + ' '}
                     // rightIcon={{ name: 'chevron-right' }}
                     bottomDivider
                     badge={{ value: ' ' + item.users.length + ' ' }}
-                    onPress={() => this.GoChat(item.id)}
+                    onPress={() => this.GoChat(item.id, ' ' + item.source + ' ➤ ' + item.dest + ' ')}
                     onLongPress={() => this.openModal({
                         title: '  ' + FormattedDate(item.startTime) + ' 부터' + '          ' + FormattedDate(item.endTime) + ' 까지',
                         id: item.id

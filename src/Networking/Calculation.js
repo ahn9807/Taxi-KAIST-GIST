@@ -87,7 +87,7 @@ export function searchCalculationHostByUId(uid) {
             returnArray.push(doc.data())
         }
     })
-    console.log(returnArray+ "312312")
+
     return returnArray
 }
 
@@ -99,7 +99,6 @@ export function searchCalculationSendByUId(uid) {
             returnArray.push(doc.data())
         }
     })
-    console.log(returnArray+ "312312")
     return returnArray
 }
 
@@ -109,6 +108,7 @@ export function searchCalculationSendByUId(uid) {
 export function completeCalculation(){
     //history로 보내기, reservationdata에서도 없애야 함... 후 
     //내일 준호랑 cost에 대해 이야기 해보고 만들자.
+
 
 
 }
