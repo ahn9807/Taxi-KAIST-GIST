@@ -108,15 +108,14 @@ const MainTabNavigator = () => (
   </Tab.Navigator>
 )
 
+//일단 채팅을 앱으로 뺐다.... 좋은 코드는 아니지만 탭네이게이터 안의 스택네이게이터에서 탭을 컨트롤 하는 방법 찾아봐야. 
 const ChatNavigator =()=>(
-  <Chat.Navigator headerMode='none' initialRouteName='MessengerLobby'>
+  <Chat.Navigator headerMode='none' initialRouteName='MessengerLobby'  >
     <Chat.Screen name='MessengerLobby' component={MessengerLobbyScreen}/>
-    <Chat.Screen name='ChatRoom' component={ChatRoomScreen}/>
+  
+    
   </Chat.Navigator>
 )
-
-
-
 
 function AppNavigator() {
     return(
@@ -125,6 +124,7 @@ function AppNavigator() {
                 <Stack.Screen name='Auth' component={AuthNavigator} options={{gesturesEnabled: false}}/>
                 <Stack.Screen name='Main' component={MainTabNavigator} options={{gesturesEnabled: false}}/>
                 <Stack.Screen name='Reservation' component={ReservationScreen} options={{gestureEnabled: false}}/>
+                <Stack.Screen name='ChatRoom' component={ChatRoomScreen} options={{gestureEnabled: false}}/>
             </Stack.Navigator>
         </NavigationContainer>
     )
