@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Text, ScrollView, FlatList, TouchableOpacity, InteractionManager, KeyboardAvoidingView } from "react-native";
+import { StyleSheet, View, Text, ScrollView, FlatList, TouchableOpacity, InteractionManager, KeyboardAvoidingView,
+        ActivityIndicator } from "react-native";
 import { Button, ListItem, Icon, ButtonGroup } from "react-native-elements";
 import firebase from 'firebase'
 import 'firebase/firestore'
@@ -17,6 +18,8 @@ export default class MessengerLobbyScreen extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            isLoadingChat: true,
+            isLoadingCalculation: true,
             username: '',
             roomname: 'room',
             makename: '',
@@ -46,63 +49,72 @@ export default class MessengerLobbyScreen extends Component {
                 // console.log(user.data().displayName)
                 this.setState({ username: user.data().displayName,
                                 userInfo: user.data() })
-                console.log("test")
+
                 // console.log(this.state.name)
             }.bind(this)
             );
 
-        Messenger.setRegion('KAIST')
-        Messenger.fetchReservationData().then(function (res, err) {
-            this.setState({
-                availableChatList: Messenger.getAvailableChatRoomName(),
-                calculationChatList: Messenger.getCalculationChatRoomName()
-            })
-        }.bind(this)
-        )
-        
-        // 여기서 정산 리스트를 뽑아야 하는가.... 성능 문제 ㄴ?
-        Calculation.fetchCalculationData().then(function(res, err){
-            this.setState({
-                calculationIdList: Calculation.searchCalculationIdsByUId(firebase.auth().currentUser.uid)
-            })
-        }.bind(this))
-        
+        this.handleReloadPress()
 
-    }
-
-    // shouldComponentUpdate(nextProps, nextState) { //고쳐야
-    //     return this.state.chatList != nextState.chatList;
-    // }
-
+   }
 
     handleReloadPress = () => { //arrow func로 해야 에러 안나는 이유?
+
+        this.setState({
+            isLoadingCalculation: true,
+            isLoadingChat: true
+        })
+        
         Messenger.setRegion('KAIST')
         Messenger.fetchReservationData().then(function (res, err) {
             this.setState({
                 availableChatList: Messenger.getAvailableChatRoomName(),
-                calculationChatList: Messenger.getCalculationChatRoomName()
+                calculationChatList: Messenger.getCalculationChatRoomName(),
+                isLoadingChat: false
             })
         }.bind(this)
         )
+
+
+
+        Calculation.fetchCalculationData().then(function(res, err){
+            this.setState({
+                calculationIdList: Calculation.searchCalculationIdsByUId(firebase.auth().currentUser.uid),
+                isLoadingCalculation: false
+            })
+        }.bind(this))
     }
 
 
     componentDidMount() {
         console.log("와싸")
-
+        this.onLoad();
     }
+
+    // componentWillMount(){
+    //     // this.navigationWillFocusListener.remove()
+    //     this.onLoad()
+    // }
+
+    onLoad = () => {
+        console.log("onload")
+        this.props.navigation.addListener('focus', () => {
+          this.handleReloadPress();
+        });
+      };
 
     GoChat = (id, roomname) => {
         console.log(id)
         console.log("gochat")
-        // console.log(this.state.name)
+   
         const { navigation } = this.props
-        // console.log()
+
 
 
         navigation.navigate('ChatRoom', {
+            chatId: id,
             username: this.state.username,
-            roomname: roomname
+            roomname: roomname,
         })
 
     }
@@ -121,17 +133,18 @@ export default class MessengerLobbyScreen extends Component {
     }
 
     leaveReservation = () => {
-        
         Reservation.removeReservationById(this.state.modalChatId).then(
             Messenger.fetchReservationData().then(function (res, err) {
                 this.setState({
                     availableChatList: Messenger.getAvailableChatRoomName(),
                     calculationChatList: Messenger.getCalculationChatRoomName()
                 })
+                this.handleReloadPress()
             }.bind(this)
             )
+         
         )
-
+    
         this.setState({ isModalVisible: !this.state.isModalVisible });
     }
 
@@ -139,20 +152,29 @@ export default class MessengerLobbyScreen extends Component {
 
     calculationOnPress = (item) => {
 
-        // console.log("sdgeeh")
-
         InteractionManager.runAfterInteractions(() => {
             this.setState({ calculationInfo: item })
         }).done(function (res) {
-            console.log("fasd")
             console.log(item.users.length)
             if (item.users.length > 0) { //나중에 1로 고치면됨.
                 this._panel.show()
             } else {
-                console.log("두 명 이상 타야 정산이 가능합니다.")
+                alert("두 명 이상 타야 정산이 가능합니다.")
             }
         }.bind(this)
         )
+    }
+    
+    onCalculation=()=>{
+        console.log("oncalculation")
+        this.setState({isLoadingCalculation: true})
+        
+        Calculation.fetchCalculationData().then(function(res, err){
+            this.setState({
+                calculationIdList: Calculation.searchCalculationIdsByUId(firebase.auth().currentUser.uid),
+                isLoadingCalculation: false
+            })
+        }.bind(this))
     }
 
     offSlidingPanel=()=>{
@@ -160,11 +182,11 @@ export default class MessengerLobbyScreen extends Component {
         this._panel.hide()
     }
 
+    
+    renderItem = ({ item, index }) => (
 
-    renderItem = ({ item }) => (
-
-        
-        <View style={styles.flatList}>
+        //간격 수정요함
+        <View style={[{flex: 1, justifyContent: 'center'}, index%2==0 ? { marginTop: 10 } : { marginTop: 10 } ]}> 
             <View style={styles.elem}>
                 <ListItem
                     // key={i}
@@ -172,7 +194,7 @@ export default class MessengerLobbyScreen extends Component {
                     subtitle={'  ' + FormattedDate(item.startTime) + ' ~ ' + FormattedDate(item.endTime)}
                     title={' ' + item.source + ' ➤ ' + item.dest + ' '}
                     // rightIcon={{ name: 'chevron-right' }}
-                    bottomDivider
+                    // bottomDivider
                     badge={{ value: ' ' + item.users.length + ' ' }}
                     onPress={() => this.GoChat(item.id, ' ' + item.source + ' ➤ ' + item.dest + ' ')}
                     onLongPress={() => this.openModal({
@@ -185,21 +207,50 @@ export default class MessengerLobbyScreen extends Component {
                 {item.endTime < Date.now() ?
                 
                         // 정산 상태, 채팅방 인원에 따라 style 변경 해줄거임!
-                    <TouchableOpacity style={this.state.calculationIdList.includes(item.id)?
-                        styles.buttonDisabled : styles.button}
-
-                        onPress={() => this.calculationOnPress(item)}
-                        disabled={this.state.calculationIdList.includes(item.id)}
-                    >
+                    <View style={{backgroundColor: "#FFF", position:'absolute', top: '30%', right:'2.5%'}}>
                         {
                             this.state.calculationIdList.includes(item.id)
-                                ? 
-                                <Text> 정산 중</Text>
-                                :
-                                <Text> 정산하기 </Text>
+                            ?
+                            <Button 
+                            type='outline'
+                            title='정산 중'
+                            titleStyle={{fontSize: 15, fontWeight: '500'}}
+                            disabled={true}
+                            containerStyle={{paddingLeft: 20}}
+                            buttonStyle={{borderRadius: 30, padding: 3, borderWidth: 2}}
+                            onPress={()=> {}}
+                        />    
+                            :
+                            <Button 
+                            type='outline'
+                            title='정산 하기'
+                            titleStyle={{fontSize: 15, fontWeight: '500'}}
+                            // disabled={true}
+                            containerStyle={{paddingLeft: 20}}
+                            buttonStyle={{borderRadius: 30, padding: 3, borderWidth: 2}}
+                            onPress={()=> {this.calculationOnPress(item)}}
+                        />   
 
                         }
-                    </TouchableOpacity>
+
+                    </View>
+
+
+                    // <TouchableOpacity style={this.state.calculationIdList.includes(item.id)?
+                    //     styles.buttonDisabled : styles.button}
+
+                    //     onPress={() => this.calculationOnPress(item)}
+                    //     disabled={this.state.calculationIdList.includes(item.id)}
+                    // >
+                    //     {
+                    //         this.state.calculationIdList.includes(item.id)
+                    //             ? 
+                    //             <Text> 정산 중</Text>
+                    //             :
+                    //             <Text> 정산하기 </Text>
+
+                    //     }
+                    // </TouchableOpacity>
                     : null
                 }
             </View>
@@ -207,37 +258,71 @@ export default class MessengerLobbyScreen extends Component {
     )
 
     render() {
-        console.log("434")
         // console.log(this.state.calculationList.includes({c}))
         return (
+      
+                <View style={styles.container}>
 
-            <View style={styles.container}>
 
-
-                {/* 
+                    {/* 
                 <NavigationEvents
                     onDidFocus={()=> {this.handleReloadPress}}
                 /> */}
-                <ScrollView style={{ marginTop: 100 }}>
+
+                    {/* <NavigationEvents
+                    onWillFocus={() => { this.handleReloadPress
+                        //Call whatever logic or dispatch redux actions and update the screen!
+                    }}
+                /> */}
+                    <ScrollView style={{ marginTop: 100 }}>
 
 
-                    <Text>
-                        정산 중인 택시팟 목록
-                    </Text>
-                    <FlatList
-                        data={this.state.calculationChatList}
-                        keyExtractor={this.keyExtractor}
-                        renderItem={this.renderItem}
-                    />
-
-                    <Text>
-                        탑승 예정 택시팟 목록
-                    </Text>
-                        <FlatList
-                            data={this.state.availableChatList}
+                        <Text style={{ color: '#000', fontWeight: 'bold', fontSize: 16 }}>
+                            정산 중인 택시팟 목록
+                        </Text>
+                        {this.state.isLoadingChat || this.state.isLoadingCalculation ?
+                            <View>
+                                <ActivityIndicator
+                                    style={styles.spinner}
+                                    size='large'
+                                />
+                            </View>
+                            :
+                            !this.state.calculationChatList.length ?
+                            <Text>
+                            정산 중인 팟이 없네용
+                            </Text>
+                            :
+                            <FlatList
+                            data={this.state.calculationChatList}
                             keyExtractor={this.keyExtractor}
                             renderItem={this.renderItem}
+
                         />
+                        }
+                    
+                        <Text style={{ color: '#000', fontWeight: 'bold', fontSize: 16 }}>
+                            탑승 예정 택시팟 목록
+                        </Text>
+                        {this.state.isLoadingChat?
+                        <View>
+                                <ActivityIndicator
+                                    style={styles.spinner}
+                                    size='large'
+                                />
+                        </View>
+                        :
+                        !this.state.availableChatList.length ?
+                            <Text>
+                                탑승 예정 택시팟이 없네용
+                        </Text>
+                            :
+                            <FlatList
+                                data={this.state.availableChatList}
+                                keyExtractor={this.keyExtractor}
+                                renderItem={this.renderItem}
+                            />
+                        }
           
                         <Modal isVisible={this.state.isModalVisible}>
                             <View style={{ flex: 1 }}>
@@ -247,8 +332,6 @@ export default class MessengerLobbyScreen extends Component {
                                 <Button title="닫기" onPress={this.closeModal} />
                             </View>
                         </Modal>
-
-
 
                 </ScrollView>
 
@@ -266,13 +349,14 @@ export default class MessengerLobbyScreen extends Component {
                     backdropOpacity={0.5}
                     friction={0.7}
                     allowDragging={Platform.OS == 'android' ? false : true}
-
+                    
                 >
 
                     <CalculationDetail
                         calculationInfo={this.state.calculationInfo}
                         userInfo={this.state.userInfo}
                         offSlidingPanel={this.offSlidingPanel}
+                        onSubmit={this.onCalculation}
                     />
                     <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={30}/>
                 </SlidingUpPanel>

@@ -1,18 +1,21 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView } from 'react-native';
+import { View, StyleSheet, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 import { GiftedChat } from "react-native-gifted-chat";
 import firebase from 'firebase'
-import { Header , Button, Icon} from 'react-native-elements'
+import { Header , Button, Icon, Text, Tooltip, Divider} from 'react-native-elements'
 import 'firebase/firestore'
 import Fire from '../config/Firebase'
-
+import * as Reservation from "../Networking/Reservation"
+// import PopoverTooltip from 'react-native-popover-tooltip';
+// import ReactNativeTooltipMenu from 'react-native-tooltip-menu';
 
 export default class ChatRoomScreen extends Component {
   constructor(props) {
     super(props)
     this.state = {
       messages: [],
-      roomname: this.props.route.params.id,
+      roomname: '',
+
       // tabBarVisible: false,
     }
   
@@ -65,13 +68,19 @@ export default class ChatRoomScreen extends Component {
     const roomname = this.props.navigation
       .dangerouslyGetState()
       .routes
-      .find(v => v.name==='ChatRoom')
+      .find(v => v.name === 'ChatRoom')
       .params.roomname;
 
+    const chatId = this.props.navigation
+      .dangerouslyGetState()
+      .routes
+      .find(v => v.name === 'ChatRoom')
+      .params.chatId;
+
     console.log(roomname)
-    this.setState({roomname: roomname})
+    this.setState({ roomname: roomname })
     return firebase.firestore().collection('ChatRooms')
-      .doc(roomname).collection('messages');
+      .doc(chatId).collection('messages');
   }
 
   uid() {
@@ -119,13 +128,53 @@ export default class ChatRoomScreen extends Component {
     this.props.navigation.navigate('ChatNavigator')
   }
 
+  leaveReservation = () => {
+
+    const chatId = this.props.navigation
+    .dangerouslyGetState()
+    .routes
+    .find(v => v.name === 'ChatRoom')
+    .params
+    .chatId;
+
+    Reservation.removeReservationById(chatId).then(function(){
+      
+      setTimeout(()=> {this.props.navigation.navigate('ChatNavigator')}, 300)
+       // 리얼 개야매코드 이러면 안되는데 ㅠㅠㅠㅠㅠㅠㅠ
+    }.bind(this)
+    );
+}
+
   render() {
     return (
       <View style={styles.chat}>
         <Header
           containerStyle={{ backgroundColor: '#fffa', borderBottomColor: 'transparent' }}
           leftComponent={<Button type='clear' icon={<Icon name='keyboard-arrow-left' color='black' onPress={this.handleBackPress}></Icon>}></Button>}
-          rightComponent={<Button type='clear' titleStyle={{ color: 'black' }} icon={<Icon name='menu' type='feather' color='black' onPress={this.handleOnOpenMenu}></Icon>}></Button>}
+          rightComponent={
+            <Tooltip
+              // style={styles.tooltip}
+              backgroundColor={'#fff'}
+              width={100}
+              height={100}
+              containerStyle={styles.tooltip}
+              popover={
+                <View style={{width: '100%'}}> 
+                  <TouchableOpacity style={styles.menuComponent}
+                    onPress={()=> {this.leaveReservation()}}
+                  >
+                    <Text style={{color: '#000', textAlign: 'center', fontWeight:'bold', fontSize: 16}}> 방 나가기 </Text>
+                  </TouchableOpacity>
+                  <Divider/>
+                  <TouchableOpacity style={styles.menuComponent}>
+                    <Text style={{color: '#000', textAlign: 'center', fontWeight:'bold', fontSize: 16}}> 신고하기 </Text>
+                  </TouchableOpacity>
+                </View>
+              }>
+              <Icon name='menu' color='black'  ></Icon>
+            </Tooltip>
+          }
+
           centerComponent={{ text: this.state.roomname, style: { color: 'black', fontWeight: 'bold' } }}
         />
         <GiftedChat
@@ -145,6 +194,15 @@ export default class ChatRoomScreen extends Component {
 const styles = StyleSheet.create({
   chat: {
     flex: 1
+  },
+  tooltip:{
+    backgroundColor: '#FFFFFF',
+  
+  },
+  menuComponent:{
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+    height: 50
   }
 });
 

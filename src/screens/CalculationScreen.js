@@ -28,6 +28,16 @@ export default class CalculationScreen extends Component {
 
     }
 
+    componentDidMount(){
+        this.onLoad();
+    }
+
+    onLoad = () => {
+        this.props.navigation.addListener('focus', () => {
+          this.handleReloadPress();
+        });
+      };
+
 
     handleReloadPress = () => { //arrow func로 해야 에러 안나는 이유?
         console.log(this.state.hostList)
@@ -45,7 +55,7 @@ export default class CalculationScreen extends Component {
     _head(item) {
         return (
             <Separator bordered style={{ alignItems: 'center' }}>
-                <Text>{' ' + item.source + ' -> ' + item.dest + ' '}</Text>
+                <Text>{' ' + item.source + ' ➤ ' + item.dest + ' '}</Text>
             </Separator>
         );
     }
@@ -63,7 +73,7 @@ export default class CalculationScreen extends Component {
     }
 
     render() {
-        console.log(this.state.calculationList)
+        // console.log(this.state.calculationList)
         return (
             <View style={styles.container}>
 

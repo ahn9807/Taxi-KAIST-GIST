@@ -54,5 +54,8 @@ export function getCalculationChatRoomName() {
     returnArray.sort((a, b)=>{
         return a['endTime']-b['endTime']
     })
+    console.log("calchat ")
+    console.log(returnArray)
+    console.log("end")
     return returnArray
 }

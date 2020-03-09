@@ -67,11 +67,14 @@ export default class CalculationDetail extends Component { //클래스형 컴포
             if(res == false) {
                 console.log('failed')
             } else {
+                this.props.onSubmit()   
+                this.props.offSlidingPanel()
+              
                 console.log('success')
             }
         }.bind(this))
-         
-        this.props.offSlidingPanel()
+
+
 
     }
 
