@@ -288,7 +288,7 @@ export function removeReservationById(reservationId) {
         .collection(regionName)
         .doc(reservationId)
 
-        //채팅방도 삭제할게요
+        // 사람 없는 채팅방도 삭제
 
         var chatDoc=firebase.firestore()
             .collection('ChatRooms')
@@ -325,12 +325,12 @@ export function removeReservationById(reservationId) {
                         }, { merge: true })
                     }
                     
-                    resolve()
+                    resolve(false)
                 }
             }
         })
 
-        resolve()
+        resolve(false)
     })
 }
 

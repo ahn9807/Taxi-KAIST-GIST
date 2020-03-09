@@ -1,5 +1,6 @@
 import firebase from 'firebase'
 import 'firebase/firestore'
+// import * as Reservation from "./Reservation"
 
 // var regionName
 var internalDocumentation
@@ -108,10 +109,47 @@ export function deleteCalculation(){
 }
 
 //받을 때 보낼 때 나누자...
-export function completeCalculation(){
+export function completeCalculation(calculationId){
     //history로 보내기, reservationdata에서도 없애야 함... 후 
     //내일 준호랑 cost에 대해 이야기 해보고 만들자.
+    return new Promise(function(resolve, reject) {
+        var docRef = firebase.firestore()
+        .collection('Calculation')
+        .doc(calculationId)
+        
+        var resDoc=firebase.firestore()
+        .collection('KAIST') //아직 kaist. regionName도 받아와야겠지
+        .doc(calculationId)
+
+        docRef.get().then(function(doc) {
+  
+            if(doc.exists){
+                const data=doc.data()
+
+                firebase.firestore()
+                    .collection('History')
+                    .doc('KAIST')
+                    .collection('Data')
+                    .doc(calculationId)
+                    .set({
+                        source: data.source,
+                        dest: data.dest,
+                        startTime: data.startTime,
+                        endTime: data.endTime,
+                        hostId: data.hostId,
+                        users: data.users,
+                        accountBank: data.accountBank,
+                        accountNumber: data.accountNumber,
+                        charge: data.charge
+                    })
+
+                docRef.delete()
+                resDoc.delete()
 
 
+            }
+        })
+        resolve(false)
+    })
 
 }

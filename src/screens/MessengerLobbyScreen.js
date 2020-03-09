@@ -235,22 +235,6 @@ export default class MessengerLobbyScreen extends Component {
 
                     </View>
 
-
-                    // <TouchableOpacity style={this.state.calculationIdList.includes(item.id)?
-                    //     styles.buttonDisabled : styles.button}
-
-                    //     onPress={() => this.calculationOnPress(item)}
-                    //     disabled={this.state.calculationIdList.includes(item.id)}
-                    // >
-                    //     {
-                    //         this.state.calculationIdList.includes(item.id)
-                    //             ? 
-                    //             <Text> 정산 중</Text>
-                    //             :
-                    //             <Text> 정산하기 </Text>
-
-                    //     }
-                    // </TouchableOpacity>
                     : null
                 }
             </View>
@@ -258,22 +242,10 @@ export default class MessengerLobbyScreen extends Component {
     )
 
     render() {
-        // console.log(this.state.calculationList.includes({c}))
         return (
       
                 <View style={styles.container}>
 
-
-                    {/* 
-                <NavigationEvents
-                    onDidFocus={()=> {this.handleReloadPress}}
-                /> */}
-
-                    {/* <NavigationEvents
-                    onWillFocus={() => { this.handleReloadPress
-                        //Call whatever logic or dispatch redux actions and update the screen!
-                    }}
-                /> */}
                     <ScrollView style={{ marginTop: 100 }}>
 
 
