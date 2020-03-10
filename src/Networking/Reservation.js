@@ -288,10 +288,14 @@ export function removeReservationById(reservationId) {
         .collection(regionName)
         .doc(reservationId)
 
-        //채팅방도 삭제할게요
+        // 사람 없는 채팅방도 삭제
 
         var chatDoc=firebase.firestore()
             .collection('ChatRooms')
+            .doc(reservationId)
+        
+        var calDoc= firebase.firestore()
+            .collection('Calculation')
             .doc(reservationId)
 
         var userUid = firebase.auth().currentUser.uid
@@ -312,6 +316,7 @@ export function removeReservationById(reservationId) {
                     if(tempArray.length == 0) {
                         docRef.delete()
                         chatDoc.delete()
+                        calDoc.delete()
                     }
                     //누군가 가입한 방이면 예약을 삭제하지 않는다 
                     else {
@@ -328,3 +333,4 @@ export function removeReservationById(reservationId) {
         resolve(false)
     })
 }
+
