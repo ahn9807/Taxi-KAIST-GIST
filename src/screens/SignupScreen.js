@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { ActivityIndicator, StyleSheet, TextInput, View, Picker, ImageBackground } from "react-native";
+import { ActivityIndicator, StyleSheet, TextInput, View, Picker, ImageBackground, KeyboardAvoidingView } from "react-native";
 import firebase from 'firebase'
 import 'firebase/firestore'
 import { Input, Text, Button, Header, Icon, Card, Divider, Overlay } from "react-native-elements";
@@ -90,7 +90,7 @@ export default class SignupScreen extends Component {
                     centerComponent={<Text style={{color:'white', fontWeight:'bold'}}>회원가입</Text>}
                     containerStyle={{backgroundColor:'transparent'}}
                 />
-                <View style={styles.container}>
+                <KeyboardAvoidingView style={styles.container} behavior='padding'>
                     <View style={styles.titleContainer}>
                         <Text h3 style={{color: 'white', marginTop: 15, textAlign: 'justify'}}>
                             {'우리들의 택시 승강장 \n지금 택시 승강장을\n시작해보세요.'}
@@ -163,7 +163,7 @@ export default class SignupScreen extends Component {
                     <View style={styles.footerContainer}>
 
                     </View>
-                </View>
+                </KeyboardAvoidingView>
                 <Overlay
                         visible={this.state.showPanel}
                         height='auto'

@@ -29,7 +29,7 @@ const ReservationDetails = ({ startTime, endTime, startTimeButton, commentCallba
                         returnKeyType='done'
                         inputContainerStyle={{borderBottomColor:'transparent', borderBottomWidth: 0}}
                         inputStyle={{color: '#fff', fontWeight:'500', fontSize:20}}
-                        multiline={!enableComment}
+                        multiline={true}
                         editable={enableComment}
                     />
                 </View>
