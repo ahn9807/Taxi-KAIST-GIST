@@ -69,7 +69,7 @@ const MainTabNavigator = () => (
   <Tab.Navigator 
     initialRouteName='Home'
     tabBarOptions={{
-      keyboardHidesTabBar: true,
+      keyboardHidesTabBar: false,
       activeBackgroundColor: '#eeea'
     }}
   >

@@ -6,6 +6,7 @@ import SlidingUpPanel from "rn-sliding-up-panel";
 import Details from "../components/Details";
 import DateTimePicker from 'react-native-modal-datetime-picker'
 import ReservationDetails from "../components/ReservationDetails";
+import { KeyboardAccessoryNavigation } from 'react-native-keyboard-accessory'
 
 var week = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일']
 
@@ -289,6 +290,7 @@ export default class ReservationScreen extends Component {
                         }
                     />
                 </View>
+                <KeyboardAccessoryNavigation></KeyboardAccessoryNavigation>
             </ImageBackground>
         )
     }

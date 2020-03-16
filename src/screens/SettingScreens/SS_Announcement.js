@@ -19,7 +19,6 @@ export default class SS_Announcement extends Component {
                 loading: false,
                 sections: sections,
             })
-            console.log(sections)
         }.bind(this))
     }
 

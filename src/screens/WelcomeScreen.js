@@ -8,7 +8,7 @@ export default class WelcomeScreen extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            isLoading: false,
+            isLoading: true,
             email: '',
             password: '',
         }
@@ -22,8 +22,10 @@ export default class WelcomeScreen extends Component {
         const emailVerified= await AsyncStorage.getItem('@loggedInUserID:emailVerified') 
         if(
             id != null &&
+            id != '' &&
             id.length > 0 &&
             password != null &&
+            password != '' &&
             password.length > 0
         ) {
             firebase.auth()
@@ -38,13 +40,19 @@ export default class WelcomeScreen extends Component {
                         .then(function(user) {
                             if(user.exists) {
                                 if(user.data().emailVerified){
+                                    this.setState({
+                                        isLoading: false
+                                    })
                                     navigation.navigate('Main', user.data())
                                 }
                                 else{
+                                    this.setState({
+                                        isLoading: false
+                                    })
                                     navigation.navigate('EmailAuth', user.data())
                                 }
                             }
-                        })
+                        }.bind(this))
                         .catch(function(err) {
                             alert(err.message)
                             this.setState({
@@ -96,7 +104,6 @@ export default class WelcomeScreen extends Component {
                             } else {
                                 navigation.navigate('EmailAuth', user.data())
                             }
-
                         } else {
                             alert('로그인 실패하였습니다. 다시 한번 시도해 보세요')
                             this.setState({
