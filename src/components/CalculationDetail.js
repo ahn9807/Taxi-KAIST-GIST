@@ -3,6 +3,7 @@ import {
     TouchableOpacity,
     StyleSheet,
     View,
+    KeyboardAvoidingView
 
 } from 'react-native';
 import { Button, Input, Text, Icon, Divider } from 'react-native-elements'
@@ -101,7 +102,7 @@ export default class CalculationDetail extends Component { //클래스형 컴포
         // form을 써도 좋을 듯
         return (
          
-            <View style={styles.container}>
+            <KeyboardAvoidingView style={styles.container} behavior='padding'>
     
                     <View style={styles.pricingCardContainer}>
   
@@ -181,7 +182,7 @@ export default class CalculationDetail extends Component { //클래스형 컴포
                         />
                     </View>
         
-            </View>
+           </KeyboardAvoidingView>
    
 
         )

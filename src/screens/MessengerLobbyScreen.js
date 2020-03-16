@@ -209,7 +209,7 @@ export default class MessengerLobbyScreen extends Component {
                 <ListItem
                     // key={i}
                     style={styles.chatList}
-                    subtitle={'  ' + FormattedDate(item.startTime) + ' ~ ' + FormattedDate(item.endTime)}
+                    subtitle={<Text style={{color: '#0078CD'}}>{' ' + FormattedDate(item.startTime) + ' ~ ' + FormattedDate(item.endTime)}</Text>}
                     title={' ' + item.source + ' ➤ ' + item.dest + ' '}
                     // rightIcon={{ name: 'chevron-right' }}
                     // bottomDivider
@@ -234,7 +234,7 @@ export default class MessengerLobbyScreen extends Component {
                             title='정산 중'
                             titleStyle={{fontSize: 15, fontWeight: '500'}}
                             disabled={true}
-                            containerStyle={{paddingLeft: 20}}
+                            containerStyle={{paddingLeft: 20, width: 90}}
                             buttonStyle={{borderRadius: 30, padding: 3, borderWidth: 2}}
                             onPress={()=> {}}
                         />    
@@ -244,7 +244,7 @@ export default class MessengerLobbyScreen extends Component {
                             title='정산 하기'
                             titleStyle={{fontSize: 15, fontWeight: '500'}}
                             // disabled={true}
-                            containerStyle={{paddingLeft: 20}}
+                            containerStyle={{paddingLeft: 20, width: 90}}
                             buttonStyle={{borderRadius: 30, padding: 3, borderWidth: 2}}
                             onPress={()=> {this.calculationOnPress(item)}}
                         />   
@@ -296,6 +296,7 @@ export default class MessengerLobbyScreen extends Component {
                             </Text>
                             :
                             <FlatList
+                            style={styles.flatlist}
                             data={this.state.calculationChatList}
                             keyExtractor={this.keyExtractor}
                             renderItem={this.renderItem}
@@ -359,7 +360,7 @@ export default class MessengerLobbyScreen extends Component {
                         offSlidingPanel={this.offSlidingPanel}
                         onSubmit={this.onCalculation}
                     />
-                    <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={30}/>
+                    {/* <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={0}/> */}
                 </SlidingUpPanel>
 
             </View>
@@ -377,7 +378,9 @@ const styles = StyleSheet.create({
     flatlist:{
         flex:1, 
         // flexDirection: 'row',
-        justifyContent: 'center'
+        // justifyContent: 'center'
+        // borderRadius: 3,
+        // borderColor: '#0FBCFF'
 
     },
 
