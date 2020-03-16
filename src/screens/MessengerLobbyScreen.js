@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, View, Text, ScrollView, FlatList, TouchableOpacity, InteractionManager, KeyboardAvoidingView,
         ActivityIndicator } from "react-native";
-import { Button, ListItem, Icon, ButtonGroup } from "react-native-elements";
+import { Button, ListItem, Icon, ButtonGroup, Header } from "react-native-elements";
 import firebase from 'firebase'
 import 'firebase/firestore'
 import * as Messenger from '../Networking/Messenger'
@@ -36,12 +36,11 @@ export default class MessengerLobbyScreen extends Component {
                 accountNum: ""
             },
             calculationIdList: [], //이건 진짜 정산중인 방. 이름 다시 지어야 할 듯.
-            disabled: false
+            disabled: false,
+            chatPreview:[]
         };
-        // this.longPress = this.longPress.bind(this)
-        // this.calculationOnPress=this.calculationOnPress.bind(this)
-
-        firebase.firestore() //분명히 state 관리를 통해 이 코드를 쓰지 않을 수 있을 것. 고쳐야함
+ 
+        firebase.firestore() 
             .collection('users')
             .doc(firebase.auth().currentUser.uid)
             .get()
@@ -50,16 +49,13 @@ export default class MessengerLobbyScreen extends Component {
                 this.setState({ username: user.data().displayName,
                                 userInfo: user.data() })
 
-                // console.log(this.state.name)
             }.bind(this)
             );
 
         this.handleReloadPress()
-
    }
 
     handleReloadPress = () => { //arrow func로 해야 에러 안나는 이유?
-
         this.setState({
             isLoadingCalculation: true,
             isLoadingChat: true
@@ -72,29 +68,48 @@ export default class MessengerLobbyScreen extends Component {
                 calculationChatList: Messenger.getCalculationChatRoomName(),
                 isLoadingChat: false
             })
+            // this.previewLoad()
         }.bind(this)
         )
-
-
-
         Calculation.fetchCalculationData().then(function(res, err){
             this.setState({
                 calculationIdList: Calculation.searchCalculationIdsByUId(firebase.auth().currentUser.uid),
                 isLoadingCalculation: false
             })
         }.bind(this))
+        
+  
     }
 
 
     componentDidMount() {
         console.log("와싸")
         this.onLoad();
+
+       
     }
 
-    // componentWillMount(){
-    //     // this.navigationWillFocusListener.remove()
-    //     this.onLoad()
-    // }
+    previewLoad=() =>{
+        console.log("reviewvir")
+        var rooms = []
+        console.log(this.state.availableChatList)
+        // Messenger.subscribeData(this.state.availableChatList).then(
+        this.setState({
+            chatPreview: Messenger.subscribeData(this.state.availableChatList)
+        })
+        // )
+
+
+        console.log("preview")
+        console.log(this.state.chatPreview)
+
+    }
+
+    componentWillMount(){
+
+        // this.navigationWillFocusListener.remove()
+        // Messenger.unSubscribeData(this.state.availableChatList);
+    }
 
     onLoad = () => {
         console.log("onload")
@@ -181,8 +196,11 @@ export default class MessengerLobbyScreen extends Component {
         console.log("hide")
         this._panel.hide()
     }
-
     
+    messengerLobbyMenu(){
+
+    }
+
     renderItem = ({ item, index }) => (
 
         //간격 수정요함
@@ -241,16 +259,28 @@ export default class MessengerLobbyScreen extends Component {
         </View>
     )
 
+
+
+
     render() {
         return (
       
                 <View style={styles.container}>
+                    
+                    <Header
+                        placement='left'
+                        containerStyle={{backgroundColor:'#fffa', borderBottomColor: 'transparent'}}
+                        // leftComponent={<Button type='clear' icon={<Icon name='keyboard-arrow-left' color='black' onPress={this.handleBackPress}></Icon>}></Button>}
+                        rightComponent={<Button type='clear' titleStyle={{color:'black'}} icon={<Icon name='menu' type='feather' color='black' onPress={this.messengerLobbyMenu}></Icon>}></Button>}
+                        leftComponent={{ text: ' 내 택시 팟', style: {color: 'black', fontWeight:'bold', fontSize: 23, }}}
+                    />
 
-                    <ScrollView style={{ marginTop: 100 }}>
+
+                    <ScrollView style={{ marginTop: 30 }}>
 
 
-                        <Text style={{ color: '#000', fontWeight: 'bold', fontSize: 16 }}>
-                            정산 중인 택시팟 목록
+                        <Text style={{ color: '#000', fontWeight: 'bold', fontSize: 16, marginBottom: 1 }}>
+                            {"  정산 중인 택시팟 목록"}
                         </Text>
                         {this.state.isLoadingChat || this.state.isLoadingCalculation ?
                             <View>
@@ -262,7 +292,7 @@ export default class MessengerLobbyScreen extends Component {
                             :
                             !this.state.calculationChatList.length ?
                             <Text>
-                            정산 중인 팟이 없네용
+                            {"    정산 중인 팟이 없네용"}
                             </Text>
                             :
                             <FlatList
@@ -273,8 +303,8 @@ export default class MessengerLobbyScreen extends Component {
                         />
                         }
                     
-                        <Text style={{ color: '#000', fontWeight: 'bold', fontSize: 16 }}>
-                            탑승 예정 택시팟 목록
+                        <Text style={{ color: '#000', fontWeight: 'bold', fontSize: 16, marginTop: 30, marginBottom: 1 }}>
+                          {"  탑승 예정 택시팟 목록"} 
                         </Text>
                         {this.state.isLoadingChat?
                         <View>
@@ -286,7 +316,7 @@ export default class MessengerLobbyScreen extends Component {
                         :
                         !this.state.availableChatList.length ?
                             <Text>
-                                탑승 예정 택시팟이 없네용
+                             {"    탑승 예정 택시팟이 없네용"}   
                         </Text>
                             :
                             <FlatList
@@ -321,7 +351,6 @@ export default class MessengerLobbyScreen extends Component {
                     backdropOpacity={0.5}
                     friction={0.7}
                     allowDragging={Platform.OS == 'android' ? false : true}
-                    
                 >
 
                     <CalculationDetail

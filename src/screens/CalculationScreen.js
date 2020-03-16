@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, View, ActivityIndicator } from "react-native";
 import * as Calculation from "../Networking/Calculation"
-import { ListItem, Button, Icon, Text } from "react-native-elements"
+import { ListItem, Button, Icon, Text, Header } from "react-native-elements"
 import firebase from 'firebase'
 import 'firebase/firestore'
 import { AccordionList } from "accordion-collapse-react-native";
@@ -74,10 +74,26 @@ export default class CalculationScreen extends Component {
 
     }
 
+    deleteCalculation =(calculationId)=>{
+        Calculation.deleteCalculation(calculationId).then(
+            Calculation.fetchCalculationData().then(function (res, err) { //function
+                const uid = firebase.auth().currentUser.uid
+                this.setState({
+                    hostList: Calculation.searchCalculationHostByUId(uid),
+                    sendList: Calculation.searchCalculationSendByUId(uid)
+                })
+                this.handleReloadPress()
+            }.bind(this))
+        )
+    }
+
     _head(item) {
         return (
-            <Separator bordered style={{ alignItems: 'center' }}>
-                <Text >{' ' + item.source + ' ➤ ' + item.dest + ' '}</Text>
+            <Separator bordered style={{ alignItems: 'flex-start', marginBottom: 5 }}>
+                <View style={styles.header}>
+                    <Text style={{fontSize: 20}}
+                    >{' ' + item.source + ' ➤ ' + item.dest + ' '}</Text>
+                </View>
             </Separator>
         );
     }
@@ -85,25 +101,52 @@ export default class CalculationScreen extends Component {
     _body = (item) => {
         return (
             <View style={{ padding: 10, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ textAlign: 'center' }}>{item.charge} 원</Text>
+                <Text style={{ textAlign: 'center' }}>인당 {item.charge}원</Text>
                 <Text style={{ textAlign: 'center' }}>계좌 정보: {item.accountBank} {item.accountNumber}</Text>
+            <View style={styles.buttonGroup}> 
+                <Button title="정산 취소"
+                    titleStyle={{ textAlign: 'center', fontWeight: 'bold', color: 'black'}}
+                    onPress={() => { this.deleteCalculation(item.calculationId) }}
+                    buttonStyle={{ borderRadius: 30, width: 150, backgroundColor: "#fff"}}
+                    containerStyle={{ marginBottom: 20, marginTop: 10, marginRight: 10 }}
+                    icon={{ name: 'local-taxi', color: 'black' }}
+                    
+                ></Button>
 
                 <Button title="정산 완료!"
                     titleStyle={{ textAlign: 'center', fontWeight: 'bold' }}
                     onPress={() => { this.completeCalculation(item.calculationId) }}
-                    buttonStyle={{ borderRadius: 30, width: 250 }}
+                    buttonStyle={{ borderRadius: 30, width: 150 }}
                     containerStyle={{ marginBottom: 20, marginTop: 10 }}
                     icon={{ name: 'local-taxi', color: 'white' }}
                 ></Button>
             </View>
 
+            </View>
+
         );
+    }
+
+    calculationMenu(){
+
     }
 
     render() {
         return (
             <View style={styles.container}>
-                <Text style={{ marginTop: 100, fontSize: 25 }}> 받을 목록 </Text>
+
+                <Header
+                    placement='left'
+                    containerStyle={{ backgroundColor: '#fffa', borderBottomColor: 'transparent' }}
+                    // leftComponent={<Button type='clear' icon={<Icon name='keyboard-arrow-left' color='black' onPress={this.handleBackPress}></Icon>}></Button>}
+                    rightComponent={<Button type='clear' titleStyle={{ color: 'black' }} icon={<Icon name='menu' type='feather' color='black' onPress={this.calculationMenu}></Icon>}></Button>}
+                    leftComponent={{ text: ' 정산하기', style: { color: 'black', fontWeight: 'bold', fontSize: 23, } }}
+                />
+
+                <View style={{ alignItems: "flex-start" }}>
+
+                    <Text style={{ marginTop: 30, marginBotton: 5, fontSize: 25, }}> 받을 목록 </Text>
+                </View>
                 {this.state.isLoadingHost ?
                     <View>
                         <ActivityIndicator
@@ -113,12 +156,13 @@ export default class CalculationScreen extends Component {
                     </View>
                     :
                     !this.state.hostList.length ?
-                        <View>
+                        <View style={{justifyContent: "center", alignItems: "flex"}}>
                             <Text> 없어용 </Text>
                         </View>
                         :
-
+             
                         <AccordionList
+                            
                             marginTop={10}
                             style={styles.accordion}
                             list={this.state.hostList}
@@ -126,8 +170,9 @@ export default class CalculationScreen extends Component {
                             body={this._body}
                             width='80%'
                         />
+                   
                 }
-                <Text style={{ marginTop: 50, fontSize: 25 }}> 보낼 목록 </Text>
+                <Text style={{ marginBottom: 100, fontSize: 25 }}> 보낼 목록 </Text>
                 {this.state.isLoadingSend ?
                     <View>
                         <ActivityIndicator
@@ -172,10 +217,22 @@ const styles = StyleSheet.create({
     },
     accordion: {
         flex: 1,
+        // justifyContent: "center"
+        // alignItems: "center"
 
 
     },
+    header:{
+        height: 150,
+        justifyContent: 'center',
+        // alignItems: 'flex-start'
+        
+        
+    },
     spinner: {
         marginTop: 200
+    },
+    buttonGroup:{
+        flexDirection: "row",
     }
 })

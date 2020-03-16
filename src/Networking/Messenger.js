@@ -5,7 +5,7 @@ import 'firebase/firestore'
 
 var regionName
 var internalDocumentation
-
+var chatDocumentation
 export function setRegion(name) {
     regionName = name
 }
@@ -21,6 +21,72 @@ export function fetchReservationData() {
             })
     })
 }
+
+export function chatDocumentationData(){
+    return new Promise(function(resolve, reject){
+        firebase.firestore()
+        .collection("Chatrooms")
+        .get()
+        .then(function (doc) {
+            chatDocumentation = doc
+            resolve(doc)
+        })
+    })
+}
+
+export function unSubscribeData(list){
+    list.forEach((i) => {
+        firebase.firestore().collection("Chatrooms")
+            .doc(i.id)
+            .collection("messages")
+            .onSnapshot(function(){
+                console.log("whatwhat")
+            })
+    })
+}
+
+export function subscribeData(list) {
+    var preview = []
+    console.log("???")
+    console.log(list)
+    console.log("^^^")
+
+    
+    list.forEach((i) => {
+        console.log("fr")
+        console.log(i.id)
+        firebase.firestore().collection("Chatrooms")
+            .doc(i.id)
+            .collection("messages")
+            .orderBy('createdAt', 'asc')
+            .onSnapshot(
+                function(snapshot){
+                    console.log("?!!!")               
+                    snapshot.docChanges().forEach(function(change){
+                        if(change.type==='added'){
+                            console.log(change.doc.data())
+                            preview.push(change.doc.data())
+                            console.log("gg")
+                        }
+                        else{
+                            console.log("nono")
+                        }
+                    })
+                }
+                    
+                    // preview.push() 
+
+            )
+
+    }
+
+    )
+    console.log(preview)
+    
+    return preview
+
+}
+
 
 export function getAvailableChatRoomName() {
     var returnArray = []
@@ -41,6 +107,8 @@ export function getAvailableChatRoomName() {
     return returnArray
 }
 
+
+
 export function getCalculationChatRoomName() {
     var returnArray = []
     const uid = firebase.auth().currentUser.uid
@@ -54,8 +122,8 @@ export function getCalculationChatRoomName() {
     returnArray.sort((a, b)=>{
         return a['endTime']-b['endTime']
     })
-    console.log("calchat ")
-    console.log(returnArray)
-    console.log("end")
+    // console.log("calchat ")
+    // console.log(returnArray)
+    // console.log("end")
     return returnArray
 }

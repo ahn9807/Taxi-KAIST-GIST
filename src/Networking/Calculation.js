@@ -103,9 +103,23 @@ export function searchCalculationSendByUId(uid) {
     return returnArray
 }
 
-export function deleteCalculation(){
+export function deleteCalculation(calculationId) {
     //일단 reservation에서 1명일때 데이터 처리를 위한 삭제 옵션 만들었다
     //. 정산 데이터는 임의 삭제 안되게 할듯? 
+    return new Promise(function (resolve, reject) {
+        var docRef = firebase.firestore()
+            .collection('Calculation')
+            .doc(calculationId)
+
+        docRef.get().then(function (doc) {
+
+            if (doc.exists) {
+
+                docRef.delete()
+            }
+        })
+        resolve(false)
+    })
 }
 
 //받을 때 보낼 때 나누자...
