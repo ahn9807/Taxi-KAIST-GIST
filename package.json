@@ -17,6 +17,8 @@
     "@react-navigation/stack": "^5.0.1",
     "accordion-collapse-react-native": "^0.2.8",
     "expo": "~36.0.0",
+    "expo-image-picker": "^8.0.2",
+    "expo-permissions": "^8.0.0",
     "firebase": "^7.8.1",
     "native-base": "^2.13.8",
     "react": "~16.9.0",

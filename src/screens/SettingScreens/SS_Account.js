@@ -8,9 +8,10 @@ export default class SS_Account extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            email: 'testemail@gist.ac.kr',
-            fullname: '안준호',
-            origin:'GiSt',
+            isLoading: true,
+            email: '',
+            emailVerfied: false,
+            origin:' ',
             displayName:'귀여미',
             image_uri: 'http://emal.iptime.org/nextcloud/index.php/s/amL2tr7AY2jij5K/preview',
         }
@@ -31,7 +32,35 @@ export default class SS_Account extends Component {
     }
 
     async tryToSetProfileFirst() {
+        var email
+        var emailVerified
+        var origin
 
+        var user_uid = firebase.auth().currentUser.uid;
+
+        firebase.firestore()
+        .collection('users')
+        .doc(user_uid)
+        .get()
+        .then(function(user) {
+            if(user.exists) {
+                email = user.data().email;
+                emailVerified = user.data().emailVerified;
+                origin = user.data().origin;
+                this.setState({
+                    email: email,
+                    emailVerfied: emailVerified,
+                    origin: origin,
+                    isLoading: false,
+                })
+            }
+        }.bind(this))
+        .catch(function(err) {
+            alert(err.message)
+            this.setState({
+                isLoading: true,
+            })
+        })
     }
 
     changeProfileImage() {
@@ -43,7 +72,7 @@ export default class SS_Account extends Component {
             <>
                 <Header
                     leftComponent={<Button type='clear' onPress={()=>this.props.navigation.pop()} icon={<Icon name='keyboard-arrow-left' color='black'></Icon>}></Button>}
-                    centerComponent={<Text style={{color:'black', fontWeight:'bold'}}>프로필</Text>}
+                    centerComponent={<Text style={{color:'black', fontWeight:'bold'}}>계정 정보 및 수정</Text>}
                     containerStyle={{backgroundColor:'white'}}
                 />
                 <Divider></Divider>
@@ -52,15 +81,49 @@ export default class SS_Account extends Component {
 
                     </View>
                     <View style={styles.buttonContainer}>
-                        <Text h3 style={{color: 'black', marginTop: 15, textAlign: 'center'}}>
-                            {this.state.email}
-                        </Text>
-                        <Text h3 style={{color: 'black', marginTop: 15, textAlign: 'center'}}>
-                            {this.state.fullname}
-                        </Text>
-                        <Text h3 style={{color: 'black', marginTop: 15, textAlign: 'center'}}>
-                            {this.state.origin.toUpperCase()}
-                        </Text>
+                        <Input
+                            placeholder='잠시만 기다려 주세요...'
+                            autoCompleteType='off'
+                            containerStyle={{paddingTop: 20}}
+                            returnKeyType='done'
+                            onChangeText={text => this.setState({displayName: text})}
+                            value={this.state.email}
+                            inputStyle={{color:'black'}}
+                            label={'이메일'}
+                            autoCompleteType='name'
+                            autoCapitalize='none'
+                            maxLength={19}
+                            editable={false}
+                        />
+                        <Input
+                            placeholder=''
+                            autoCompleteType='off'
+                            containerStyle={{paddingTop: 20}}
+                            returnKeyType='done'
+                            onChangeText={text => this.setState({displayName: text})}
+                            value={this.state.origin.toUpperCase()}
+                            inputStyle={{color:'black'}}
+                            label={'소속'}
+                            autoCompleteType='name'
+                            autoCapitalize='none'
+                            maxLength={19}
+                            editable={false}
+                        />
+                        <Input
+                            placeholder=''
+                            autoCompleteType='off'
+                            containerStyle={{paddingTop: 20}}
+                            returnKeyType='done'
+                            onChangeText={text => this.setState({displayName: text})}
+                            value={this.state.emailVerfied ? '인증되었습니다' : '인증되지 않은 사용자 입니다.'}
+                            inputStyle={{color:'black'}}
+                            label={'이메일 인증 여부'}
+                            autoCompleteType='name'
+                            autoCapitalize='none'
+                            maxLength={19}
+                            editable={false}
+                        />
+
                     </View>
                     <View style={styles.footerContainer}>
                         <Button 
