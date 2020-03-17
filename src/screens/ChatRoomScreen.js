@@ -33,8 +33,6 @@ export default class ChatRoomScreen extends Component {
 
   componentDidMount() {
 
-
-
     this.on(message => {
       // console.log(message);
       this.setState(previousState => ({
@@ -58,9 +56,17 @@ export default class ChatRoomScreen extends Component {
       .params
       .username;
 
+    const avatarUri = this.props.navigation
+      .dangerouslyGetState()
+      .routes
+      .find(v => v.name === 'ChatRoom')
+      .params
+      .avatarUri;
+
     return {
-      username: username,
-      _id: this.uid()
+      name: username,
+      _id: this.uid(),
+      avatar: avatarUri
     }
   }
 
@@ -76,6 +82,8 @@ export default class ChatRoomScreen extends Component {
       .routes
       .find(v => v.name === 'ChatRoom')
       .params.chatId;
+
+
 
     console.log(roomname)
     this.setState({ roomname: roomname })
@@ -112,7 +120,7 @@ export default class ChatRoomScreen extends Component {
       const { text, user } = messages[i];
       const message = { text, user, createdAt: Date() };
       //new date로 하면 안된다. giftedchat에서 요구하는게 그런듯....
-      console.log(message)
+      // console.log(message)
       this.append(message)
     }
   };
@@ -181,7 +189,8 @@ export default class ChatRoomScreen extends Component {
           messages={this.state.messages}
           onSend={this.send}
           user={this.user}
-
+          renderUsernameOnMessage={true}
+          showUserAvatar={true}
           // renderTime={(props)=> props.currentMessage.createdAt.toDate()}
         ></GiftedChat>
         <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={0} />

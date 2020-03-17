@@ -3,6 +3,7 @@ import {
     TouchableOpacity,
     StyleSheet,
     View,
+    KeyboardAvoidingView
 
 } from 'react-native';
 import { Button, Input, Text, Icon, Divider } from 'react-native-elements'
@@ -31,6 +32,18 @@ export default class CalculationDetail extends Component { //클래스형 컴포
     }
     //추후 사용자 체크박스 추가 
     //arrow function 이어야 this.setstate를 쓸 수 있는 이유가 뭐지
+
+    // componentWillMount(){
+    //     this._animatedValue.resetAnimation()
+    // }
+
+    componentWillReceiveProps(nextProps){
+        console.log("recive")
+        this.setState({
+            accountNumber: nextProps.userInfo.accountNumber
+        })
+    }
+
     selectBankModal=()=>{
         console.log(13333)
         this.setState({isModalVisible: !this.state.isModalVisible})
@@ -89,7 +102,7 @@ export default class CalculationDetail extends Component { //클래스형 컴포
         // form을 써도 좋을 듯
         return (
          
-            <View style={styles.container}>
+            <KeyboardAvoidingView style={styles.container} behavior='padding'>
     
                     <View style={styles.pricingCardContainer}>
   
@@ -133,10 +146,12 @@ export default class CalculationDetail extends Component { //클래스형 컴포
                             />
 
                             <Input
-                                // placeholder={userInfo.accountNumber}
-                                // defaultValue={userInfo.accountNumber} ???
+                                placeholder={userInfo.accountNumber}
+                              
                                 onChangeText={text => this.setState({ accountNumber: text })}
-                                value={this.state.accountNumber}
+                                value={this.state.accountNumber} 
+                                defaultValue={userInfo.accountNumber}
+                       
                                 inputStyle={{ color: 'black' }}
                                 leftIcon={{ name: 'attach-money', color: 'white' }}
                                 autoCapitalize='none'
@@ -167,7 +182,7 @@ export default class CalculationDetail extends Component { //클래스형 컴포
                         />
                     </View>
         
-            </View>
+           </KeyboardAvoidingView>
    
 
         )
