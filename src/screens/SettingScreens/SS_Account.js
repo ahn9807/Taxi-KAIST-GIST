@@ -24,6 +24,8 @@ export default class SS_Account extends Component {
         AsyncStorage.setItem("@loggedInUserID:uid", '')
         AsyncStorage.setItem("@loggedInUserID:email", '')
         AsyncStorage.setItem("@loggedInUserID:password", '')
+        AsyncStorage.setItem("@loggedInUserID:emailVerified", false)
+        AsyncStorage.setItem("@loggedInUserID:origin", '')
         this.props.navigation.navigate('Welcome')
     }
 
@@ -32,39 +34,48 @@ export default class SS_Account extends Component {
     }
 
     async tryToSetProfileFirst() {
-        var email
-        var emailVerified
-        var origin
+        var email = await AsyncStorage.getItem("@loggedInUserID:email")
+        var emailVerified = await AsyncStorage.getItem("@loggedInUserID:emailVerified")
+        var origin = await AsyncStorage.getItem("@loggedInUserID:origin")
 
-        var user_uid = firebase.auth().currentUser.uid;
-
-        firebase.firestore()
-        .collection('users')
-        .doc(user_uid)
-        .get()
-        .then(function(user) {
-            if(user.exists) {
-                email = user.data().email;
-                emailVerified = user.data().emailVerified;
-                origin = user.data().origin;
-                this.setState({
-                    email: email,
-                    emailVerfied: emailVerified,
-                    origin: origin,
-                    isLoading: false,
-                })
-            }
-        }.bind(this))
-        .catch(function(err) {
-            alert(err.message)
+        if(email != undefined && emailVerified != undefined && origin != undefined) {
             this.setState({
-                isLoading: true,
+                email: email,
+                emailVerfied: emailVerified,
+                origin: origin,
+                isLoading: false,
             })
-        })
-    }
+        } else {
+            var user_uid = firebase.auth().currentUser.uid;
 
-    changeProfileImage() {
-        alert('change profile image')
+            firebase.firestore()
+            .collection('users')
+            .doc(user_uid)
+            .get()
+            .then(function(user) {
+                if(user.exists) {
+                    email = user.data().email;
+                    emailVerified = user.data().emailVerified;
+                    origin = user.data().origin;
+                    this.setState({
+                        email: email,
+                        emailVerfied: emailVerified,
+                        origin: origin,
+                        isLoading: false,
+                    })
+
+                    AsyncStorage.setItem("@loggedInUserID:email", user.data().email)
+                    AsyncStorage.setItem("@loggedInUserID:emailVerified", user.data().emailVerfied ? 'true' : 'false')
+                    AsyncStorage.setItem("@loggedInUserID:origin", user.data().origin)
+                }
+            }.bind(this))
+            .catch(function(err) {
+                alert(err.message)
+                this.setState({
+                    isLoading: true,
+                })
+            })
+        }
     }
 
     render() {

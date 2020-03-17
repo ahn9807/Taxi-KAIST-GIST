@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { ImageBackground, StyleSheet, View, StatusBar, ActivityIndicator } from "react-native";
-import { Icon, Button, Header, Text, Divider, Input, Avatar } from "react-native-elements";
+import { ImageBackground, StyleSheet, View, StatusBar, ActivityIndicator, AsyncStorage } from "react-native";
+import { Icon, Button, Header, Text, Divider, Input, Avatar, Overlay } from "react-native-elements";
 import * as ImagePicker from 'expo-image-picker'
 import * as Permissions from 'expo-permissions'
 import firebase from 'firebase'
@@ -131,6 +131,8 @@ export default class SS_Profile extends Component {
     }
 
     changeProfileNickName = () => {
+        AsyncStorage.setItem("@displayName:아직 설정하지 않았습니다", this.state.displayName)
+
         firebase.firestore().
         collection('users')
         .doc(firebase.auth().currentUser.uid)
@@ -140,6 +142,10 @@ export default class SS_Profile extends Component {
         }).catch(function(e) {
             alert(e.message)
         }.bind(this))
+    }
+
+    onClickProfileImage = () => {
+
     }
 
     render() {

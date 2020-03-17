@@ -32,13 +32,30 @@ export default class SS_Wallet extends Component {
     }
 
     async tryToSetAccountFirst() {
-        const bankAccount = await AsyncStorage.getItem("@bankAccount:account")
-        const bankName = await AsyncStorage.getItem("@bankName:name", this.state.bankName)
+        const bankAccount = await AsyncStorage.getItem('@loggedInUserID:backAccount')
+        const bankName = await AsyncStorage.getItem('@loggedInUserID:bankName')
         if(bankAccount != null && bankName !=null) {
             this.setState({
                 bankAccount: bankAccount,
                 bankName: bankName,
             })
+        } else {
+            var user_uid = firebase.auth().currentUser.uid
+            firebase.firestore()
+            .collection('users')
+            .doc(user_uid)
+            .get()
+            .then(function(user) {
+                if(user.exists) {
+                    var bankAccount = user.data().bankAccount
+                    var backName = user.data().bankName
+
+                    this.setState({
+                        backName: backName,
+                        bankAccount: bankAccount,
+                    })
+                }
+            }.bind(this))
         }
     }
 
@@ -61,8 +78,8 @@ export default class SS_Wallet extends Component {
             alert('인터넷 접속을 확인해 주세요')
         })
 
-        AsyncStorage.setItem('@bankAccount:account', this.state.bankAccount)
-        AsyncStorage.setItem('@bankName:name',this.state.bankName)
+        AsyncStorage.setItem('@loggedInUserID:backAccount', this.state.bankAccount)
+        AsyncStorage.setItem('@loggedInUserID:bankName',this.state.bankName)
     }
 
     render() {
