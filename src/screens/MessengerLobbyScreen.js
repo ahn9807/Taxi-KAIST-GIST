@@ -21,6 +21,7 @@ export default class MessengerLobbyScreen extends Component {
             isLoadingChat: true,
             isLoadingCalculation: true,
             username: '',
+            avatarUri: '', //이거 userinfo랑 합쳐도 된다.
             roomname: 'room',
             makename: '',
             availableChatList: [],
@@ -35,7 +36,7 @@ export default class MessengerLobbyScreen extends Component {
                 accountBank: "",
                 accountNum: ""
             },
-            calculationIdList: [], //이건 진짜 정산중인 방. 이름 다시 지어야 할 듯.
+            calculationIdList: [], 
             disabled: false,
             chatPreview:[]
         };
@@ -47,6 +48,7 @@ export default class MessengerLobbyScreen extends Component {
             .then(function (user) {
                 // console.log(user.data().displayName)
                 this.setState({ username: user.data().displayName,
+                                avatarUri: user.data().profileUri,
                                 userInfo: user.data() })
 
             }.bind(this)
@@ -129,6 +131,7 @@ export default class MessengerLobbyScreen extends Component {
         navigation.navigate('ChatRoom', {
             chatId: id,
             username: this.state.username,
+            avatarUri: this.state.avatarUri,
             roomname: roomname,
         })
 

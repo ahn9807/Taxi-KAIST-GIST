@@ -161,7 +161,7 @@ export default class SS_Profile extends Component {
                             onEditPress={this.changeProfileImage}
                             showEditButton
                             source={{uri: this.state.image_uri == '' ? undefined : this.state.image_uri, cache: 'force-cache'}}
-                            renderPlaceholderContent={this.state.image_uri == undefined ? 'title' : <ActivityIndicator size='large'></ActivityIndicator>}
+                            renderPlaceholderContent={this.state.image_uri == undefined ? <Text>title</Text> : <ActivityIndicator size='large'></ActivityIndicator>}
                         />
                     </View>
                     <View style={styles.buttonContainer}>

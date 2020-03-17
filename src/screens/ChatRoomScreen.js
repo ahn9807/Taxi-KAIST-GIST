@@ -56,9 +56,17 @@ export default class ChatRoomScreen extends Component {
       .params
       .username;
 
+    const avatarUri = this.props.navigation
+      .dangerouslyGetState()
+      .routes
+      .find(v => v.name === 'ChatRoom')
+      .params
+      .avatarUri;
+
     return {
       name: username,
-      _id: this.uid()
+      _id: this.uid(),
+      avatar: avatarUri
     }
   }
 
@@ -74,6 +82,8 @@ export default class ChatRoomScreen extends Component {
       .routes
       .find(v => v.name === 'ChatRoom')
       .params.chatId;
+
+
 
     console.log(roomname)
     this.setState({ roomname: roomname })
@@ -180,6 +190,7 @@ export default class ChatRoomScreen extends Component {
           onSend={this.send}
           user={this.user}
           renderUsernameOnMessage={true}
+          showUserAvatar={true}
           // renderTime={(props)=> props.currentMessage.createdAt.toDate()}
         ></GiftedChat>
         <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={0} />
