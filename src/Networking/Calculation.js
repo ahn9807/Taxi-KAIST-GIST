@@ -140,9 +140,10 @@ export function completeCalculation(calculationId){
             if(doc.exists){
                 const data=doc.data()
 
-                firebase.firestore()
+                data.users.forEach((uid)=>{
+                    firebase.firestore()
                     .collection('History')
-                    .doc('KAIST')
+                    .doc(uid)
                     .collection('Data')
                     .doc(calculationId)
                     .set({
@@ -156,6 +157,8 @@ export function completeCalculation(calculationId){
                         accountNumber: data.accountNumber,
                         charge: data.charge
                     })
+                    
+                })
 
                 docRef.delete()
                 resDoc.delete()

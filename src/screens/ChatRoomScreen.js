@@ -215,10 +215,14 @@ const styles = StyleSheet.create({
   }
 });
 
+function n(n){
+  return n > 9 ? "" + n: "0" + n;
+}
+
 function FormattedDate(date) {
   var d = new Date(date)
   var h = d.getHours()
   var m = d.getMinutes()
 
-  return '' + h + ':' + m
+  return '' + h + ':' + n(m)
 }
