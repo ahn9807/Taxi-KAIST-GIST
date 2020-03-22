@@ -156,7 +156,7 @@ export default class CalculationDetail extends Component { //클래스형 컴포
                                 leftIcon={{ name: 'attach-money', color: 'white' }}
                                 autoCapitalize='none'
                                 width='50%'
-                            />
+                            /> 
                             :
                             <Input
                                 placeholder={
