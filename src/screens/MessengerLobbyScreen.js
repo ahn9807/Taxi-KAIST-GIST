@@ -25,10 +25,11 @@ export default class MessengerLobbyScreen extends Component {
             roomname: 'room',
             makename: '',
             availableChatList: [],
-            calculationChatList: [], //두 개로 분리했는데 하나의 jsonobject 형태로 짜도 됨. 추후 논의 
+            calculationChatList: [], 
             isModalVisible: false,
             modalChatId: '',
             modalChatName: '',
+            modalChatTime:'',
             calculationInfo: {
                 users: []
             },
@@ -79,10 +80,7 @@ export default class MessengerLobbyScreen extends Component {
                 isLoadingCalculation: false
             })
         }.bind(this))
-        
-  
     }
-
 
     componentDidMount() {
         console.log("와싸")
@@ -109,8 +107,6 @@ export default class MessengerLobbyScreen extends Component {
 
     componentWillMount(){
 
-        // this.navigationWillFocusListener.remove()
-        // Messenger.unSubscribeData(this.state.availableChatList);
     }
 
     onLoad = () => {
@@ -142,7 +138,8 @@ export default class MessengerLobbyScreen extends Component {
         this.setState({
             isModalVisible: !this.state.isModalVisible,
             modalChatId: data.id,
-            modalChatName: data.title
+            modalChatName: data.title,
+            modalChatTime: data.time
         });
     }
 
@@ -160,9 +157,7 @@ export default class MessengerLobbyScreen extends Component {
                 this.handleReloadPress()
             }.bind(this)
             )
-         
-        )
-    
+        )   
         this.setState({ isModalVisible: !this.state.isModalVisible });
     }
 
@@ -219,14 +214,14 @@ export default class MessengerLobbyScreen extends Component {
                     badge={{ value: ' ' + item.users.length + ' ' }}
                     onPress={() => this.GoChat(item.id, ' ' + item.source + ' ➤ ' + item.dest + ' ')}
                     onLongPress={() => this.openModal({
-                        title: '  ' + FormattedDate(item.startTime) + ' 부터' + '          ' + FormattedDate(item.endTime) + ' 까지',
+                        title: ' ' + item.source + ' ➤ ' + item.dest + ' ',
+                        time: '  ' + FormattedDate(item.startTime) + ' 부터' + '  ' + FormattedDate(item.endTime) + ' 까지',
                         id: item.id
                     })}
 
                 />
 
                 {item.endTime < Date.now() ?
-                
                         // 정산 상태, 채팅방 인원에 따라 style 변경 해줄거임!
                     <View style={{backgroundColor: "#FFF", position:'absolute', top: '30%', right:'2.5%'}}>
                         {
@@ -330,13 +325,32 @@ export default class MessengerLobbyScreen extends Component {
                             />
                         }
           
-                        <Modal isVisible={this.state.isModalVisible}>
-                            <View style={{ flex: 1 }}>
-                                <Text>  {this.state.modalChatName} </Text>
-                                <Button title="수정"> </Button>
-                                <Button title="방 나가기" onPress={this.leaveReservation}></Button>
-                                <Button title="닫기" onPress={this.closeModal} />
-                            </View>
+                        <Modal isVisible={this.state.isModalVisible} backdropOpacity={0.2}
+                        >
+                            <TouchableOpacity style={styles.modalContainer}
+                                onPressOut={() => {this.closeModal}} //아직 나가기 안함
+                            >
+                                 <Text style={{fontSize: 25, fontWeight: '500', marginBottom: 20}}>
+                                 {this.state.modalChatName} 
+                                 </Text>
+                                <Text style={{fontSize: 15, fontWeight: '500', marginBottom: 40}}>
+                                 {this.state.modalChatTime} 
+                                 </Text>
+
+                                <Button title="정보 수정"
+                                 buttonStyle={styles.modalButton}
+                                 containerStyle={{width: 100}}
+                                 > </Button>
+                                <Button title="팟 나가기"
+                                 buttonStyle={styles.modalButton} 
+                                 onPress={this.leaveReservation}
+                                 containerStyle={{width: 100}}
+                                 ></Button>
+                                <Button title="닫기" 
+                                buttonStyle={styles.modalButton} 
+                                onPress={this.closeModal} 
+                                containerStyle={{width: 100}}/>
+                            </TouchableOpacity>
                         </Modal>
 
                 </ScrollView>
@@ -410,10 +424,30 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'grey'
+    },
+    modalContainer:{
+        // width: '70%',
+        height: '50%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        borderRadius: 20
+    },
+    modalButton:{
+        // width: '70%',
+        marginBottom: 20,
+        backgroundColor: '#29AEEC',
+        borderRadius: 3
+
     }
 
 
 });
+
+function n(n){
+    return n > 9 ? "" + n: "0" + n;
+}
+
 
 function FormattedDate(date) {
     var f = new Date(date)
@@ -421,5 +455,5 @@ function FormattedDate(date) {
     var h = f.getHours()
     var m = f.getMinutes()
 
-    return d + '일 ' + h + ':' + m
+    return d + '일 ' + n(h) + ':' + n(m)
 }
