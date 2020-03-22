@@ -12,6 +12,7 @@ export default class SS_Account extends Component {
             email: '',
             emailVerfied: false,
             origin:' ',
+            name: '',
             displayName:'귀여미',
             image_uri: 'http://emal.iptime.org/nextcloud/index.php/s/amL2tr7AY2jij5K/preview',
         }
@@ -37,12 +38,14 @@ export default class SS_Account extends Component {
         var email = await AsyncStorage.getItem("@loggedInUserID:email")
         var emailVerified = await AsyncStorage.getItem("@loggedInUserID:emailVerified")
         var origin = await AsyncStorage.getItem("@loggedInUserID:origin")
+        var name = await AsyncStorage.getItem("#loggedInUserId:fullName")
 
-        if(email != undefined && emailVerified != undefined && origin != undefined) {
+        if(email != undefined && emailVerified != undefined && origin != undefined && name != undefined) {
             this.setState({
                 email: email,
                 emailVerfied: emailVerified,
                 origin: origin,
+                name: name,
                 isLoading: false,
             })
         } else {
@@ -57,16 +60,23 @@ export default class SS_Account extends Component {
                     email = user.data().email;
                     emailVerified = user.data().emailVerified;
                     origin = user.data().origin;
+                    name = user.data().fullName;
+                    console.log(user.data())
                     this.setState({
                         email: email,
                         emailVerfied: emailVerified,
                         origin: origin,
+                        name: name,
                         isLoading: false,
                     })
 
-                    AsyncStorage.setItem("@loggedInUserID:email", user.data().email)
-                    AsyncStorage.setItem("@loggedInUserID:emailVerified", user.data().emailVerfied ? 'true' : 'false')
-                    AsyncStorage.setItem("@loggedInUserID:origin", user.data().origin)
+                    if(user.data().email != undefined && user.data().emailVerfied != undefined &&
+                    user.data().origin != undefined && user.data().fullName != undefined) {
+                        AsyncStorage.setItem("@loggedInUserID:email", user.data().email)
+                        AsyncStorage.setItem("@loggedInUserID:emailVerified", user.data().emailVerfied ? 'true' : 'false')
+                        AsyncStorage.setItem("@loggedInUserID:origin", user.data().origin)
+                        AsyncStorage.setItem("@loggedInUserID:fullName", user.data().fullName)
+                    }
                 }
             }.bind(this))
             .catch(function(err) {
@@ -98,9 +108,23 @@ export default class SS_Account extends Component {
                             containerStyle={{paddingTop: 20}}
                             returnKeyType='done'
                             onChangeText={text => this.setState({displayName: text})}
-                            value={this.state.email}
+                            value={this.state.email.toLowerCase()}
                             inputStyle={{color:'black'}}
                             label={'이메일'}
+                            autoCompleteType='name'
+                            autoCapitalize='none'
+                            maxLength={19}
+                            editable={false}
+                        />
+                        <Input
+                            placeholder='잠시만 기다려 주세요...'
+                            autoCompleteType='off'
+                            containerStyle={{paddingTop: 20}}
+                            returnKeyType='done'
+                            onChangeText={text => this.setState({displayName: text})}
+                            value={this.state.name}
+                            inputStyle={{color:'black'}}
+                            label={'이름'}
                             autoCompleteType='name'
                             autoCapitalize='none'
                             maxLength={19}
@@ -134,7 +158,6 @@ export default class SS_Account extends Component {
                             maxLength={19}
                             editable={false}
                         />
-
                     </View>
                     <View style={styles.footerContainer}>
                         <Button 

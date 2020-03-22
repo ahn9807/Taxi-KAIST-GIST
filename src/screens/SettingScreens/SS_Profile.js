@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { ImageBackground, StyleSheet, View, StatusBar, ActivityIndicator, AsyncStorage } from "react-native";
-import { Icon, Button, Header, Text, Divider, Input, Avatar, Overlay } from "react-native-elements";
+import { Icon, Button, Header, Text, Divider, Input, Avatar, Overlay, Image} from "react-native-elements";
 import * as ImagePicker from 'expo-image-picker'
 import * as Permissions from 'expo-permissions'
 import firebase from 'firebase'
 import 'firebase/firestore'
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default class SS_Profile extends Component {
     constructor(props) {
@@ -16,6 +17,7 @@ export default class SS_Profile extends Component {
             displayName:'',
             image_uri: '',
             nickNamePlaceHolder: '잠시만 기다려 주세요...',
+            overlay: undefined,
         }
 
         this.tryToSetProfileFirst()
@@ -144,10 +146,6 @@ export default class SS_Profile extends Component {
         }.bind(this))
     }
 
-    onClickProfileImage = () => {
-
-    }
-
     render() {
         return(
             <>
@@ -164,9 +162,9 @@ export default class SS_Profile extends Component {
                             rounded
                             title={this.state.image_uri == undefined ? '?' : this.state.displayName[0]}
                             size='xlarge'
-                            onEditPress={this.changeProfileImage}
                             showEditButton
-                            source={{uri: this.state.image_uri == '' ? undefined : this.state.image_uri, cache: 'force-cache'}}
+                            onPress={this.onClickProfileImage}
+                            source={{uri: this.state.image_uri}}
                             renderPlaceholderContent={this.state.image_uri == undefined ? <Text>title</Text> : <ActivityIndicator size='large'></ActivityIndicator>}
                         />
                     </View>

@@ -11,8 +11,9 @@ export default class SignupScreen extends Component {
         super(props)
         this.state = {
             isLoading: false,
-            displayName: '',
+            fullName: '',
             email: '',
+            nickName: '',
             password: '',
             confirmPassword: '',
             emailVerified: false,
@@ -22,9 +23,14 @@ export default class SignupScreen extends Component {
     }
 
     onRegister = () => {
-        const { email, password, confirmPassword } = this.state
+        const { fullName, nickName, email, origin, password, confirmPassword } = this.state
         if(password != confirmPassword) {
             alert('비밀번호가 일치하지 않습니다')
+            return
+        }
+
+        if(fullName == '' || nickName == '' || email == '' || origin == '') {
+            alert('모두 적절히 기입해 주세요')
             return
         }
 
@@ -32,10 +38,11 @@ export default class SignupScreen extends Component {
             .createUserWithEmailAndPassword(email, password)
             .then(response => {
                 const { navigation } = this.props
-                const { displayName, email, emailVerified, origin } = this.state
+                const { fullName, nickName, email, emailVerified, origin } = this.state
                 const data = {
                     email: email,
-                    displayName: displayName,
+                    fullName: fullName,
+                    displayName: nickName,
                     emailVerified: emailVerified,
                     appIdentifire: 'test app',
                     origin: origin 
@@ -103,10 +110,19 @@ export default class SignupScreen extends Component {
                         <Input
                             placeholder=' Full name'
                             onChangeText={text => this.setState({ displayName: text })}
-                            value={this.state.displayName}
+                            value={this.state.fullName}
                             inputStyle={{color:'white'}}
                             autoCompleteType='name'
                             leftIcon={{ name:'people', color:'white'}}
+                            autoCapitalize='none'
+                        />
+                        <Input
+                            placeholder=' Nick name'
+                            onChangeText={text => this.setState({ nickName: text })}
+                            value={this.state.nickName}
+                            inputStyle={{color:'white'}}
+                            autoCompleteType='name'
+                            leftIcon={{ name:'face', color:'white'}}
                             autoCapitalize='none'
                         />
                         <Input

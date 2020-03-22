@@ -5,6 +5,17 @@ import SettingListView from "../../components/SettingListView";
 
 const sections = [
     {
+        data: [
+            {
+              title: '기타문의 사항은 아래 메일로 부탁드립니다.',
+              subTitle:'taekseungfirebase@gmail.com',
+              hideChevron: true,
+              icon: 'ios-alert',
+              backgroundColor: '#8E8E93',
+            },
+          ],
+    },
+    {
       data: [
         {
           title: '상대방이 약속장소에 오지 않았어요',
