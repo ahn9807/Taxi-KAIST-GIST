@@ -92,7 +92,7 @@ export default class CalculationScreen extends Component {
 
     _head(item) {
         return (
-            <Separator bordered style={{ alignItems: 'flex-start', marginBottom: 5 }}>
+            <Separator bordered style={{  marginBottom: 5 }}>
                 <View style={styles.header}>
 
                     <Text style={{ fontSize: 20, fontWeight: 'bold' }}
@@ -109,7 +109,7 @@ export default class CalculationScreen extends Component {
                     <View style={{ marginRight: 10 }}>
                         <Avatar
                             rounded
-                            icon={{ name: 'attatch-money', color: 'black' }}
+                            icon={{ name: 'money', color: 'black', type: 'font-awesome' }}
                             overlayContainerStyle={{ backgroundColor: 'white' }}
                         />
                     </View>
@@ -232,7 +232,7 @@ export default class CalculationScreen extends Component {
 
                         <Avatar
                             rounded
-                            icon={{ name: 'check_circle', color: 'black' }}
+                            icon={{ name: 'get-pocket', color: '#007AFF', type: 'font-awesome' }}
                             overlayContainerStyle={{ backgroundColor: 'white' }}
                         />
                         <Text  style={{ textAlign: 'center', fontWeight: '500', fontSize: 25 }}> 받을 목록 </Text>
@@ -248,7 +248,7 @@ export default class CalculationScreen extends Component {
                         </View>
                         :
                         !this.state.hostList.length ?
-                            <View style={{ justifyContent: "center", alignItems: "flex" }}>
+                            <View style={{ justifyContent: "center"}}>
                                 <Text> 없어용 </Text>
                             </View>
                             :
@@ -271,11 +271,11 @@ export default class CalculationScreen extends Component {
                     <View style={styles.textContainer}>
                         <Avatar
                             rounded
-                            icon={{ name: 'check_circle_outline', color: 'black' }}
+                            icon={{ name: 'send', color: '#007AFF',type: 'font-awesome' }}
                             overlayContainerStyle={{ backgroundColor: 'white' }}
                         />
                         <Text style={{ textAlign: 'center', fontWeight: '500', fontSize: 25 }}>
-                            보낼 목록
+                            {" "}보낼 목록
                     </Text>
                     </View>
                     {this.state.isLoadingSend ?
@@ -300,13 +300,13 @@ export default class CalculationScreen extends Component {
 
                     }
 
-                    <Button type='clear'
+                    {/* <Button type='clear'
 
                         icon={<Icon name='cached'
                             color='#5d5d5d'
                             onPress={this.handleReloadPress}>
                         </Icon>}>
-                    </Button>
+                    </Button> */}
 
                 </ScrollView>
             </View>

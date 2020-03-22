@@ -340,7 +340,7 @@ export default class MessengerLobbyScreen extends Component {
                         </Modal>
 
                 </ScrollView>
-
+{/* 
                 <Button type='clear'
                     
                     icon={<Icon name='cached'
@@ -348,7 +348,7 @@ export default class MessengerLobbyScreen extends Component {
                         onPress={this.handleReloadPress}>
                     </Icon>}>
 
-                </Button>
+                </Button> */}
 
                 <SlidingUpPanel
                     ref={c => this._panel = c}

@@ -18,7 +18,11 @@ export default function FormattedDate(date, line = false) {
     if(line ==false) {
         return str + '\n' + cvt + ':' + m
     } else {
-        return str + ' ' + cvt + ':' + m
+        return str + ' ' + cvt + ':' + n(m)
     }
 
+}
+
+function n(n){
+    return n > 9 ? "" + n: "0" + n;
 }
