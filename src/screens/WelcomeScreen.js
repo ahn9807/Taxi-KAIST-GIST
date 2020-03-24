@@ -3,6 +3,7 @@ import { ActivityIndicator, StyleSheet, View, AsyncStorage, ImageBackground } fr
 import { Button, Image, Icon, Text, Divider, Input } from "react-native-elements";
 import firebase from 'firebase'
 import 'firebase/firestore'
+import { LocalNotification, AskPermission } from "../components/LocalNotification";
 
 export default class WelcomeScreen extends Component {
     constructor(props) {
@@ -70,6 +71,10 @@ export default class WelcomeScreen extends Component {
                 isLoading: false
             })
         }
+    }
+
+    componentDidMount() {
+        AskPermission()
     }
 
     onPressLogin = () => {

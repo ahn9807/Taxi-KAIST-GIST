@@ -14,9 +14,7 @@ export default class SS_History extends Component {
             tableData: [],
             tableHead: ['일자', '경로', '인원', '총 요금', '아낀 요금'],
             widthArr: [40, 80, 40, 40, 40],
-            moneySaved: 0
-
-
+            moneySaved: 0,
         }
 
         History.fetchHistoryDataById(firebase.auth().currentUser.uid)

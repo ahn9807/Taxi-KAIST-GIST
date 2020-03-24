@@ -1,15 +1,25 @@
 import React, { Component } from "react";
-import { ImageBackground, StyleSheet, View } from "react-native";
+import { ImageBackground, StyleSheet, View, AsyncStorage } from "react-native";
 import { Icon, Button, Header, Text, Divider } from "react-native-elements";
 import SettingListView from "../../components/SettingListView";
+import { Switch } from "react-native";
 
 const sections = [
     {
       data: [
         {
-          title: '알림 기능은 구현중 입니다',
-          subTitle:'베타 버전은 알림 기능이 제한됩니다',
+          icon:'ios-notifications',
+          backgroundColor: '#007AFF',
+          title: '알림 허용',
           hideChevron: true,
+          checkbox: true,
+        },
+        {
+            icon:'md-volume-high',
+            backgroundColor: '#4CD964',
+            title: '사운드',
+            hideChevron: true,
+            checkbox: true,
         },
       ],
     },

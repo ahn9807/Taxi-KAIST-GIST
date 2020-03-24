@@ -7,6 +7,7 @@ import Details from "../components/Details";
 import DateTimePicker from 'react-native-modal-datetime-picker'
 import ReservationDetails from "../components/ReservationDetails";
 import { KeyboardAccessoryNavigation } from 'react-native-keyboard-accessory'
+import { LocalNotification } from "../components/LocalNotification";
 
 var week = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일']
 
@@ -92,6 +93,9 @@ export default class ReservationScreen extends Component {
                 if(res == false) {
                     console.log('failed')
                 } else {
+                    LocalNotification(this.state.selectedEndTime - (1000 * 60 * 30), '택승', '택시타기 30분 전입니다')
+                    LocalNotification(this.state.selectedEndTime - (1000 * 60 * 10), '택승', '택시타기 10분 전입니다!!\n나갈 준비 해주세요~')
+                    LocalNotification(this.state.selectedEndTime - (1000 * 60 * 5), '택승', '택시타기 5분 전입니다!!')
                     console.log('success')
                     this.handleReloadPress()
                 }
@@ -107,6 +111,9 @@ export default class ReservationScreen extends Component {
                     if(res == false) {
                         console.log('failed')
                     } else {
+                        LocalNotification(this.state.selectedEndTime - (1000 * 60 * 30), '택승', '택시타기 30분 전입니다')
+                        LocalNotification(this.state.selectedEndTime - (1000 * 60 * 10), '택승', '택시타기 10분 전입니다!!\n나갈 준비 해주세요~')
+                        LocalNotification(this.state.selectedEndTime - (1000 * 60 * 5), '택승', '택시타기 5분 전입니다!!')
                         console.log('success')
                         this.handleReloadPress()
                     }
