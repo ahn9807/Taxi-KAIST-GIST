@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { StyleSheet, View, ActivityIndicator, ScrollView } from "react-native";
+import { StyleSheet, View, ActivityIndicator, ScrollView, Clipboard } from "react-native";
 import * as Calculation from "../Networking/Calculation"
 import { ListItem, Button, Icon, Text, Header, CheckBox, Avatar } from "react-native-elements"
 import firebase from 'firebase'
 import 'firebase/firestore'
 import { AccordionList } from "accordion-collapse-react-native";
 import { Separator } from 'native-base';
+import Toast from 'react-native-simple-toast';
 
 export default class CalculationScreen extends Component {
     constructor(props) {
@@ -166,7 +167,7 @@ export default class CalculationScreen extends Component {
                     <View style={{ marginRight: 10 }}>
                         <Avatar
                             rounded
-                            icon={{ name: 'money', color: 'black' }}
+                            icon={{ name: 'money', color: 'black', type: 'font-awesome'  }}
                             overlayContainerStyle={{ backgroundColor: 'white' }}
                         />
                     </View>
@@ -189,23 +190,34 @@ export default class CalculationScreen extends Component {
                 </View>
 
 
+                <View style={{ alignItems: "center" }}>
+                    <View style={styles.buttonGroup}>
+                        <Button title="계좌 복사"
+                            titleStyle={{ textAlign: 'center', fontWeight: 'bold' }}
+                            onPress={() => {
+                                Clipboard.setString(item.accountBank +' '+item.accountNumber)
+                                Toast.show('계좌가 복사되었습니당');
+                            }}
+                            buttonStyle={{ borderRadius: 30, width: 150 }}
+                            containerStyle={{ marginBottom: 20, marginTop: 10 }}
+                            icon={{ name: 'copy', color: 'white', type: 'font-awesome'  }}
+                        ></Button>
 
-                {/* <View style={{ marginTop: 20 }}> */}
-
-
-                {/* </View> */}
-                <CheckBox
-
-                    center
-                    title='보냈습니다!'
-                    checkedIcon='dot-circle-o'
-                    uncheckedIcon='circle-o'
-                    checked={this.state.checked}
-                    checkedColor='#0078CD'
-                    onPress={() => this.setState({ checked: !this.state.checked })}
-                />
+                        
+                        <CheckBox
+                            // style={{borderRadius: 10}}
+                            containerStyle={{borderRadius: 30, width: 150, marginBottom: 20, marginTop: 10 }}
+                            center
+                            title='보냄 체크!'
+                            checkedIcon='dot-circle-o'
+                            uncheckedIcon='circle-o'
+                            checked={this.state.checked}
+                            checkedColor='#0078CD'
+                            onPress={() => this.setState({ checked: !this.state.checked })}
+                        />
+                    </View>
+                </View>
             </View>
-
         );
     }
 
