@@ -20,7 +20,7 @@ export default class WelcomeScreen extends Component {
         const email = await AsyncStorage.getItem("@loggedInUserID:email")
         const password = await AsyncStorage.getItem('@loggedInUserID:password')
         const id = await AsyncStorage.getItem('@loggedInUserID:uid')
-        const emailVerified= await AsyncStorage.getItem('@loggedInUserID:emailVerified') 
+        const emailVerified= await AsyncStorage.getItem('@loggedInUserID:emailVerified')
         if(
             id != null &&
             id != '' &&

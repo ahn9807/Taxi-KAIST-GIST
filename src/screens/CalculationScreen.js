@@ -6,7 +6,6 @@ import firebase from 'firebase'
 import 'firebase/firestore'
 import { AccordionList } from "accordion-collapse-react-native";
 import { Separator } from 'native-base';
-import Toast from 'react-native-simple-toast';
 
 export default class CalculationScreen extends Component {
     constructor(props) {
@@ -196,7 +195,7 @@ export default class CalculationScreen extends Component {
                             titleStyle={{ textAlign: 'center', fontWeight: 'bold' }}
                             onPress={() => {
                                 Clipboard.setString(item.accountBank +' '+item.accountNumber)
-                                Toast.show('계좌가 복사되었습니당');
+                                alert('계좌가 복사되었습니당');
                             }}
                             buttonStyle={{ borderRadius: 30, width: 150 }}
                             containerStyle={{ marginBottom: 20, marginTop: 10 }}

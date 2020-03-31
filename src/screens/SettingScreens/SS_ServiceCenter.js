@@ -54,7 +54,6 @@ const sections = [
         },
       ],
     },
-    
     // Space at the bottom
     { data: [] },
   ];

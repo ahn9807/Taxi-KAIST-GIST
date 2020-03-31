@@ -3,7 +3,8 @@ import {
     TouchableOpacity,
     StyleSheet,
     View,
-    KeyboardAvoidingView
+    KeyboardAvoidingView,
+    AsyncStorage
 
 } from 'react-native';
 import { Button, Input, Text, Icon, Divider, Overlay } from 'react-native-elements'
@@ -20,8 +21,8 @@ export default class CalculationDetail extends Component { //클래스형 컴포
             dividedCharge: 0,
             index: 0,
             length: 0,
-            accountBank: '',
-            accountNumber: undefined,
+            bankAccount: undefined,
+            bankName: undefined,
             isModalVisible: false,
         }
 
@@ -30,6 +31,35 @@ export default class CalculationDetail extends Component { //클래스형 컴포
             accountBank: this.props.userInfo.accountBank
         })
 
+        this.tryToSetAccountFirst()
+    }
+
+    async tryToSetAccountFirst() {
+        const bankAccount = await AsyncStorage.getItem('@loggedInUserID:backAccount')
+        const bankName = await AsyncStorage.getItem('@loggedInUserID:bankName')
+        if(bankAccount != null && bankName !=null) {
+            this.setState({
+                bankAccount: bankAccount,
+                bankName: bankName,
+            })
+        } else {
+            var user_uid = firebase.auth().currentUser.uid
+            firebase.firestore()
+            .collection('users')
+            .doc(user_uid)
+            .get()
+            .then(function(user) {
+                if(user.exists) {
+                    var bankAccount = user.data().bankAccount
+                    var backName = user.data().bankName
+
+                    this.setState({
+                        backName: backName,
+                        bankAccount: bankAccount,
+                    })
+                }
+            }.bind(this))
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -58,7 +88,7 @@ export default class CalculationDetail extends Component { //클래스형 컴포
 
         const payment = this.state.charge / calculationInfo.users.length
         console.log(payment)
-        const { accountNumber } = this.state
+        const { bankName: accountNumber } = this.state
         console.log(accountNumber + "fsddffff")
 
         Calculation.makeCalculation({
@@ -72,8 +102,8 @@ export default class CalculationDetail extends Component { //클래스형 컴포
             hostId: firebase.auth().currentUser.uid,
             users: calculationInfo.users,
 
-            accountBank: this.state.accountBank, 
-            accountNumber: this.state.accountNumber,
+            accountBank: this.state.bankAccount, 
+            accountNumber: this.state.bankName,
             charge: payment
         }).then(function (res, err) {
             if (res == false) {
@@ -100,118 +130,56 @@ export default class CalculationDetail extends Component { //클래스형 컴포
         // modal/overlay select, 은행바꾸기 부분 구현 해야 함. 아마도 interactionmanager이해해서 state 다룰 수 있으면 할만할 듯.
         // form을 써도 좋을 듯
         return (
-
             <KeyboardAvoidingView style={styles.container} behavior='padding'>
-
                 <View style={styles.pricingCardContainer}>
-
                     <Text style={{ fontSize: 30, fontWeight: 'bold', marginBottom: 15 }} >
-                        {calculationInfo.source} 에서 {calculationInfo.dest}
+                        {calculationInfo.source} ➤ {calculationInfo.dest}
                     </Text>
-
                     <Text style={styles.textTemp}> 탑승인원: {calculationInfo.users.length} </Text>
-
                     <View style={styles.inputStyle}>
-                        <Text style={styles.textTemp} > 요금 </Text>
-
                         <Input
-                            placeholder='얼마가 나왔나요?'
+                            placeholder='택시 요금을 입력해 주세요'
+                            autoCompleteType='off'
+                            keyboardType='number-pad'
                             onChangeText={text => this.setState({ charge: text })}
                             value={this.state.charge}
-                            inputStyle={{ color: 'black' }}
-                            leftIcon={{ name: 'attach-money', color: 'white' }}
+                            inputStyle={{color:'black'}}
+                            label={'택시 요금'}
+                            returnKeyType='done'
+                            autoCompleteType='name'
                             autoCapitalize='none'
-                            width='50%'
+                            maxLength={19}
+                        />
+                        <Input
+                            placeholder='00000000000000'
+                            autoCompleteType='off'
+                            keyboardType='number-pad'
+                            containerStyle={{paddingTop: 20}}
+                            onChangeText={text => this._handlingCardNumber(text)}
+                            value={this.state.bankAccount}
+                            inputStyle={{color:'black'}}
+                            label={'계좌번호'}
+                            returnKeyType='done'
+                            autoCompleteType='name'
+                            autoCapitalize='none'
+                            maxLength={19}
+                            editable={false}
+                        />
+                        <Input
+                            placeholder='국민은행'
+                            autoCompleteType='off'
+                            containerStyle={{paddingTop: 20}}
+                            returnKeyType='done'
+                            onChangeText={text => this.setState({bankName: text})}
+                            value={this.state.bankName}
+                            inputStyle={{color:'black'}}
+                            label={'은행 정보'}
+                            autoCompleteType='name'
+                            autoCapitalize='none'
+                            maxLength={19}
+                            editable={false}
                         />
                     </View>
-                    <Text style={styles.textTemp2}> 수금 계좌 </Text>
-
-                    <View style={styles.inputStyle}>
-
-                 
-                            <Button title={this.state.accountBank}
-                                type="outline"
-                                icon={
-                                    <Icon
-                                        name="details"
-                                        size={20}
-
-                                    />
-                                }
-                                iconRight
-                                color="black"
-                                onPress={this.selectBankModal}
-
-                            />
-
-                        {userInfo.accountNumber != undefined ?
-                            <Input
-                                placeholder={
-                                    userInfo.accountNumber
-                                }
-                                onChangeText={text => this.setState({ accountNumber: text })}
-                                value={this.state.accountNumber}
-                                defaultValue={userInfo.accountNumber}
-                                inputStyle={{ color: 'black' }}
-                                leftIcon={{ name: 'attach-money', color: 'white' }}
-                                autoCapitalize='none'
-                                width='50%'
-                            /> 
-                            :
-                            <Input
-                                placeholder={
-                                    "계좌번호 입력"
-                                }
-                                onChangeText={text => this.setState({ accountNumber: text })}
-                                value={this.state.accountNumber}
-                                defaultValue={userInfo.accountNumber}
-                                inputStyle={{ color: 'black' }}
-                                leftIcon={{ name: 'attach-money', color: 'white' }}
-                                autoCapitalize='none'
-                                width='50%'
-                            />
-
-                        }
-
-
-                    </View>
-
-                    <Modal isVisible={this.state.isModalVisible} backdropOpacity={0.2}>
-                        <TouchableOpacity style={styles.modalContainer}
-                            onPressOut={() => { this.closeModal }} //아직 나가기 안함
-                        >
-                            <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 20 }}>
-                                수금 계좌 은행명을 입력해주세요
-                            </Text>
-                
-                            <Text style={{ fontSize: 15, fontWeight: '500', marginBottom: 20 }}>
-                                ex) 국민은행 => 국민 , 카카오뱅크 => 카카오
-                            </Text>
-                            <View style={{width: '38%', alignItems: 'center'}}>
-                            <Input
-                                placeholder={
-                                    "수금 계좌 은행명"
-                                }
-                                onChangeText={text => this.setState({ accountBank: text })}
-                                value={this.state.accountBank}
-                                inputStyle={{ color: 'black' }}
-                                // leftIcon={{ name: 'attach-money', color: 'white' }}
-                                autoCapitalize='none'
-                                width='50%'
-                            />
-                            </View>
-
-                
-                            <Button title="완료"
-                               buttonStyle={styles.modalButton}
-                               containerStyle={{ width: 100 }}
-                                onPress={this.closeBankModal}
-                            />
-                        </TouchableOpacity>
-                      
-
-                    </Modal>
-
                     <Divider />
 
                     <Button
@@ -253,8 +221,8 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 10,
     },
     inputStyle: {
-        width: '60%',
-        flexDirection: 'row',
+        width: '90%',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center'
     },

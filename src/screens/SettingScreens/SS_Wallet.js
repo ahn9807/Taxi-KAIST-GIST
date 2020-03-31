@@ -112,7 +112,7 @@ export default class SS_Wallet extends Component {
                             maxLength={19}
                         />
                         <Input
-                            placeholder='국민은행'
+                            placeholder='00은행'
                             autoCompleteType='off'
                             containerStyle={{paddingTop: 20}}
                             returnKeyType='done'

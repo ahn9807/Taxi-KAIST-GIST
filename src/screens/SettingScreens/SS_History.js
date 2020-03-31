@@ -33,7 +33,7 @@ export default class SS_History extends Component {
                 // console.log(doc.data())
 
             }.bind(this)
-            )
+        )
     }
 
 
@@ -47,21 +47,10 @@ export default class SS_History extends Component {
                     centerComponent={<Text style={{ color: 'black', fontWeight: 'bold' }}>이용내역</Text>}
                     containerStyle={{ backgroundColor: 'white' }}
                 />
-                <Divider></Divider>
                 <View style={styles.container}>
-                    <View style={{ alignItems: 'center', marginBottom: 70 }}>
-                        <Text style={{ textAlign: 'center', fontWeight: '500', fontSize: 25 }}>
-                            지금까지 아낀 택시비
-                        </Text>
-                        <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 35 }}>
-                            {this.state.moneySaved} 원
-                        </Text>
-                    </View>
-                    <View style={{ marginTop: 30 }}>
-
+                    <View style={{ marginTop: 0 }}>
                         <Table borderStyle={{ borderWidth: 1, borderColor: '#C1C0B9' }}>
                             <Row data={this.state.tableHead}  flexArr={[2,7,1.5,2,2]} style={styles.header} textStyle={styles.text} />
-
                             {
                                 this.state.tableData.map((rowData, index) => (
                                     <Row
@@ -78,7 +67,6 @@ export default class SS_History extends Component {
                     {/* </ScrollView> */}
                     {/* </ScrollView> */}
                 </View>
-
             </View>
         )
     }
@@ -87,7 +75,6 @@ export default class SS_History extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
     },
     titleContainer: {
         flex: 1,

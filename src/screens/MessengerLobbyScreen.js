@@ -12,6 +12,7 @@ import * as Calculation from "../Networking/Calculation"
 import { NavigationEvents } from 'react-navigation';
 import CalculationDetail from "../components/CalculationDetail"
 import SlidingUpPanel from 'rn-sliding-up-panel'
+import { Divider } from "react-native-paper";
 
 
 export default class MessengerLobbyScreen extends Component {
@@ -200,9 +201,8 @@ export default class MessengerLobbyScreen extends Component {
     }
 
     renderItem = ({ item, index }) => (
-
         //간격 수정요함
-        <View style={[{flex: 1, justifyContent: 'center'}, index%2==0 ? { marginTop: 10 } : { marginTop: 10 } ]}> 
+        <View style={[{flex: 1, justifyContent: 'center'}]}> 
             <View style={styles.elem}>
                 <ListItem
                     // key={i}
@@ -210,7 +210,7 @@ export default class MessengerLobbyScreen extends Component {
                     subtitle={<Text style={{color: '#0078CD'}}>{' ' + FormattedDate(item.startTime) + ' ~ ' + FormattedDate(item.endTime)}</Text>}
                     title={' ' + item.source + ' ➤ ' + item.dest + ' '}
                     // rightIcon={{ name: 'chevron-right' }}
-                    // bottomDivider
+                    //bottomDivider
                     badge={{ value: ' ' + item.users.length + ' ' }}
                     onPress={() => this.GoChat(item.id, ' ' + item.source + ' ➤ ' + item.dest + ' ')}
                     onLongPress={() => this.openModal({
@@ -218,7 +218,6 @@ export default class MessengerLobbyScreen extends Component {
                         time: '  ' + FormattedDate(item.startTime) + ' 부터' + '  ' + FormattedDate(item.endTime) + ' 까지',
                         id: item.id
                     })}
-
                 />
 
                 {item.endTime < Date.now() ?
@@ -229,7 +228,7 @@ export default class MessengerLobbyScreen extends Component {
                             ?
                             <Button 
                             type='outline'
-                            title='정산 중'
+                            title='정산중'
                             titleStyle={{fontSize: 15, fontWeight: '500'}}
                             disabled={true}
                             containerStyle={{paddingLeft: 20, width: 90}}
@@ -239,9 +238,9 @@ export default class MessengerLobbyScreen extends Component {
                             :
                             <Button 
                             type='outline'
-                            title='정산 하기'
+                            title='정산하기'
                             titleStyle={{fontSize: 15, fontWeight: '500'}}
-                            // disabled={true}
+                            disabled={false}
                             containerStyle={{paddingLeft: 20, width: 90}}
                             buttonStyle={{borderRadius: 30, padding: 3, borderWidth: 2}}
                             onPress={()=> {this.calculationOnPress(item)}}
@@ -262,9 +261,7 @@ export default class MessengerLobbyScreen extends Component {
 
     render() {
         return (
-      
                 <View style={styles.container}>
-                    
                     <Header
                         placement='left'
                         containerStyle={{backgroundColor:'#fffa', borderBottomColor: 'transparent'}}
@@ -272,88 +269,66 @@ export default class MessengerLobbyScreen extends Component {
                         rightComponent={<Button type='clear' titleStyle={{color:'black'}} icon={<Icon name='menu' type='feather' color='black' onPress={this.messengerLobbyMenu}></Icon>}></Button>}
                         leftComponent={{ text: ' 내 택시 팟', style: {color: 'black', fontWeight:'bold', fontSize: 23, }}}
                     />
-
-
-                    <ScrollView style={{ marginTop: 30 }}>
-
-
-                        <Text style={{ color: '#000', fontWeight: 'bold', fontSize: 16, marginBottom: 1 }}>
-                            {"  정산 중인 택시팟 목록"}
-                        </Text>
-                        {this.state.isLoadingChat || this.state.isLoadingCalculation ?
-                            <View>
-                                <ActivityIndicator
-                                    style={styles.spinner}
-                                    size='large'
-                                />
-                            </View>
-                            :
-                            !this.state.calculationChatList.length ?
-                            <Text>
-                            {"    정산 중인 팟이 없네용"}
-                            </Text>
-                            :
-                            <FlatList
-                            style={styles.flatlist}
-                            data={this.state.calculationChatList}
-                            keyExtractor={this.keyExtractor}
-                            renderItem={this.renderItem}
-
-                        />
-                        }
-                    
-                        <Text style={{ color: '#000', fontWeight: 'bold', fontSize: 16, marginTop: 30, marginBottom: 1 }}>
-                          {"  탑승 예정 택시팟 목록"} 
-                        </Text>
-                        {this.state.isLoadingChat?
-                        <View>
-                                <ActivityIndicator
-                                    style={styles.spinner}
-                                    size='large'
-                                />
+                    {this.state.isLoadingChat || this.state.isLoadingCalculation ? 
+                        <View style={{flex:1, alignItems:'center', marginTop: 200}}>
+                            <ActivityIndicator size='large'/>
                         </View>
                         :
-                        !this.state.availableChatList.length ?
-                            <Text>
-                             {"    탑승 예정 택시팟이 없네용"}   
-                        </Text>
-                            :
-                            <FlatList
-                                data={this.state.availableChatList}
+                        <ScrollView>
+                            <View style={{flex:1, backgroundColor:'white'}}>
+                                <Divider></Divider>
+                                <Text style={{ color: '#333', fontWeight:'bold', fontSize: 15, marginTop: 5, marginBottom: 5, marginLeft: 8}}>
+                                    {"  정산 중"}
+                                </Text>
+                            </View>
+                            {!this.state.isLoadingChat && !this.state.isLoadingCalculation && this.state.calculationChatList.length != 0 ?
+                                <FlatList
+                                style={styles.flatlist}
+                                data={this.state.calculationChatList}
                                 keyExtractor={this.keyExtractor}
                                 renderItem={this.renderItem}
-                            />
-                        }
-          
-                        <Modal isVisible={this.state.isModalVisible} backdropOpacity={0.2}
+                                />
+                                :
+                                <View>
+
+                                </View>
+                            }
+                        
+                            <View style={{flex:1, backgroundColor:'white'}}>
+                                <Divider></Divider>
+                                <Text style={{ color: '#333', fontWeight:'bold', fontSize: 15, marginTop: 5, marginBottom: 5, marginLeft: 8}}>
+                                    {"  탑승 예정"}
+                                </Text>
+                            </View>
+                        </ScrollView>
+                    }
+                    <Modal isVisible={this.state.isModalVisible} backdropOpacity={0.2}
+                    >
+                        <TouchableOpacity style={styles.modalContainer}
+                            onPressOut={() => {this.closeModal}} //아직 나가기 안함
                         >
-                            <TouchableOpacity style={styles.modalContainer}
-                                onPressOut={() => {this.closeModal}} //아직 나가기 안함
-                            >
-                                 <Text style={{fontSize: 25, fontWeight: '500', marginBottom: 20}}>
-                                 {this.state.modalChatName} 
-                                 </Text>
-                                <Text style={{fontSize: 15, fontWeight: '500', marginBottom: 40}}>
-                                 {this.state.modalChatTime} 
-                                 </Text>
+                                <Text style={{fontSize: 25, fontWeight: '500', marginBottom: 20}}>
+                                {this.state.modalChatName} 
+                                </Text>
+                            <Text style={{fontSize: 15, fontWeight: '500', marginBottom: 40}}>
+                                {this.state.modalChatTime} 
+                                </Text>
 
-                                <Button title="정보 수정"
-                                 buttonStyle={styles.modalButton}
-                                 containerStyle={{width: 100}}
-                                 > </Button>
-                                <Button title="팟 나가기"
-                                 buttonStyle={styles.modalButton} 
-                                 onPress={this.leaveReservation}
-                                 containerStyle={{width: 100}}
-                                 ></Button>
-                                <Button title="닫기" 
+                            <Button title="정보 수정"
+                                buttonStyle={styles.modalButton}
+                                containerStyle={{width: 100}}
+                                > </Button>
+                            <Button title="팟 나가기"
                                 buttonStyle={styles.modalButton} 
-                                onPress={this.closeModal} 
-                                containerStyle={{width: 100}}/>
-                            </TouchableOpacity>
-                        </Modal>
-
-                </ScrollView>
+                                onPress={this.leaveReservation}
+                                containerStyle={{width: 100}}
+                                ></Button>
+                            <Button title="닫기" 
+                            buttonStyle={styles.modalButton} 
+                            onPress={this.closeModal} 
+                            containerStyle={{width: 100}}/>
+                        </TouchableOpacity>
+                    </Modal>
 {/* 
                 <Button type='clear'
                     
