@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, View, ActivityIndicator, ScrollView, Clipboard } from "react-native";
 import * as Calculation from "../Networking/Calculation"
-import { ListItem, Button, Icon, Text, Header, CheckBox, Avatar } from "react-native-elements"
+import { ListItem, Button, Icon, Text, Header, CheckBox, Avatar, Divider } from "react-native-elements"
 import firebase from 'firebase'
 import 'firebase/firestore'
 import { AccordionList } from "accordion-collapse-react-native";
@@ -74,7 +74,6 @@ export default class CalculationScreen extends Component {
                 this.handleReloadPress()
             }.bind(this))
         )
-
     }
 
     deleteCalculation = (calculationId) => {
@@ -150,10 +149,9 @@ export default class CalculationScreen extends Component {
                             containerStyle={{ marginBottom: 20, marginTop: 10 }}
                             icon={{ name: 'local-taxi', color: 'white' }}
                         ></Button>
-                    </View></View>
-
+                    </View>
+                </View>
             </View>
-
         );
     }
 
@@ -228,7 +226,6 @@ export default class CalculationScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
-
                 <Header
                     placement='left'
                     containerStyle={{ backgroundColor: '#fffa', borderBottomColor: 'transparent' }}
@@ -236,17 +233,12 @@ export default class CalculationScreen extends Component {
                     rightComponent={<Button type='clear' titleStyle={{ color: 'black' }} icon={<Icon name='menu' type='feather' color='black' onPress={this.calculationMenu}></Icon>}></Button>}
                     leftComponent={{ text: ' 정산하기', style: { color: 'black', fontWeight: 'bold', fontSize: 23, } }}
                 />
-
                 <ScrollView style={{ marginTop: 0 }}>
-                    <View style={{marginTop: 30}}/>
-                    <View style={styles.textContainer}>
-
-                        <Avatar
-                            rounded
-                            icon={{ name: 'get-pocket', color: '#007AFF', type: 'font-awesome' }}
-                            overlayContainerStyle={{ backgroundColor: 'white' }}
-                        />
-                        <Text  style={{ textAlign: 'center', fontWeight: '500', fontSize: 25 }}> 받을 목록 </Text>
+                    <View style={{flex:1, backgroundColor:'white'}}>
+                        <Divider></Divider>
+                        <Text style={{ color: '#333', fontWeight:'bold', fontSize: 15, marginTop: 5, marginBottom: 5, marginLeft: 8}}>
+                            {"  받을 목록"}
+                        </Text>
                     </View>
 
                     {/* <View style={{}}> */}
@@ -265,29 +257,20 @@ export default class CalculationScreen extends Component {
                             :
 
                             <AccordionList
-
-                                marginTop={10}
                                 style={styles.accordion}
                                 list={this.state.hostList}
                                 header={this._head}
                                 body={this._body_1}
-                                // height='100%'
                                 width='100%'
                             />
 
                     }
                     {/* </View> */}
-                    <View style={{marginTop: 50}}/>
-                    
-                    <View style={styles.textContainer}>
-                        <Avatar
-                            rounded
-                            icon={{ name: 'send', color: '#007AFF',type: 'font-awesome' }}
-                            overlayContainerStyle={{ backgroundColor: 'white' }}
-                        />
-                        <Text style={{ textAlign: 'center', fontWeight: '500', fontSize: 25 }}>
-                            {" "}보낼 목록
-                    </Text>
+                    <View style={{flex:1, backgroundColor:'white'}}>
+                        <Divider></Divider>
+                        <Text style={{ color: '#333', fontWeight:'bold', fontSize: 15, marginTop: 5, marginBottom: 5, marginLeft: 8}}>
+                            {"  보낼 목록"}
+                        </Text>
                     </View>
                     {this.state.isLoadingSend ?
                         <View>
@@ -301,7 +284,6 @@ export default class CalculationScreen extends Component {
                             <Text> 없어용 </Text>
                             :
                             <AccordionList
-                                marginTop={10}
                                 style={styles.accordion}
                                 list={this.state.hostList} //실험
                                 header={this._head}
@@ -321,8 +303,6 @@ export default class CalculationScreen extends Component {
 
                 </ScrollView>
             </View>
-
-
         )
     }
 }
