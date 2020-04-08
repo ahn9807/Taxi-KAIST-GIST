@@ -1,19 +1,35 @@
 import React, { useState, useRef, Component } from "react";
-import { Text, View, AsyncStorage, StatusBar, StyleSheet, Dimensions, Alert, ActivityIndicator, InteractionManager, Platform } from "react-native";
+import {
+    Text,
+    View,
+    AsyncStorage,
+    StatusBar,
+    StyleSheet,
+    Dimensions,
+    Alert,
+    ActivityIndicator,
+    InteractionManager,
+    Platform,
+    BackHandler,
+    Animated
+} from "react-native";
 import { BaseRouter } from "@react-navigation/native";
 import firebase from '../config/Firebase'
 import MapView, { Marker } from 'react-native-maps';
 import findRegionByName from '../Region/Regions'
 import * as Reservation from '../Networking/Reservation'
 import SearchInput from "../components/SearchInput";
+import SearchCopy from "../components/SearchCopy";
+
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Markers, { removeDupulicatedMarkers } from '../components/Markers'
 import SlidingUpPanel from 'rn-sliding-up-panel'
-import { Badge, Overlay, Button } from "react-native-elements";
+import { Badge, Overlay, Button, Avatar } from "react-native-elements";
 import Details from "../components/Details";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import FormattedDate from "../tools/FormattedDate";
+// import Toast from "readc-native-simple-toast";
 
 var reservationInfo
 
@@ -34,7 +50,9 @@ export default class HomeScreen extends Component {
             showDatePicker: false,
             selectedTime: new Date(),
             detailsNumber: 0,
+            backClickCount: 0
         }
+
 
         Reservation.setRegion(this.state.initialRegionName)
         Reservation.fetchReservationData().then(function(doc) {
@@ -45,6 +63,36 @@ export default class HomeScreen extends Component {
             alert(err.message)
         })
     }
+
+    componentWillMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
+    }
+    
+    componentWillUnmount() {
+        this.exitApp = false;
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton.bind(this));
+    }
+    
+    handleBackButton = () => {
+        if (this.exitApp == undefined || !this.exitApp) {
+            this.exitApp = true;
+            console.log("한번 더 누르시면 종료")
+        // ToastAndroid.show('한번 더 누르시면 종료됩니다.', ToastAndroid.SHORT);
+            this.timeout = setTimeout(
+                () => {
+                    this.exitApp = false;
+                },
+                2000    // 2초
+            );
+        } else {
+            clearTimeout(this.timeout);
+
+            BackHandler.exitApp();  // 앱 종료
+        }
+        return true;
+
+    };
+
 
     handleOnLocationSelected = (data, { geometry }) => {
         console.log(data.structured_formatting.main_text)
@@ -139,6 +187,7 @@ export default class HomeScreen extends Component {
     }
 
     render() {
+
         if(this.state.isLoading == false) {
             if(this.state.targetToRegion) {
                 return(
@@ -150,13 +199,13 @@ export default class HomeScreen extends Component {
                         >
                             <Markers 
                                 markers={this.state.region.defaultMarkers} 
-                                pinColor='orange' description='추천 출발 지점 / 클릭해서 예약하기'
+                                pinColor='#007AFF' description='추천 출발 지점 / 클릭해서 예약하기'
                                 calloutPressedCallback={this.handleOnPinCalloutPressed}
                                 pinPressedCallback={(this.handleOnPinPressed)}
                             />
                             <Markers 
                                 markers={removeDupulicatedMarkers(Reservation.getMarkerByDest('KAIST'), this.state.region.defaultMarkers)} 
-                                pinColor ='lightred' description='카이스트로 출발 / 클릭해서 예약하기'
+                                pinColor ='#29AEEC' description='카이스트로 출발 / 클릭해서 예약하기'
                                 calloutPressedCallback={this.handleOnPinCalloutPressed}
                                 pinPressedCallback={this.handleOnPinPressed}
                             />
@@ -175,6 +224,7 @@ export default class HomeScreen extends Component {
                             focusedOnSource={this.state.targetToRegion}
                             rightButtonCallback={this.handleOnLocationChanged}
                         />
+                  
                         <SlidingUpPanel 
                             ref={c=> this._panel = c}
                             backdropOpacity={0.5}
@@ -196,6 +246,7 @@ export default class HomeScreen extends Component {
             } else {
                 return(
                     <View style={styles.container}>
+                
                         <MapView style={styles.mapStyle} 
                             initialRegion={this.state.region.initialRegion}
                             showsCompass={false}
@@ -203,13 +254,13 @@ export default class HomeScreen extends Component {
                         >
                             <Markers 
                                 markers={this.state.region.defaultMarkers} 
-                                pinColor='orange' description='추천 도착 지점 / 클릭해서 예약하기' 
+                                pinColor='#007AFF' description='추천 도착 지점 / 클릭해서 예약하기' 
                                 calloutPressedCallback={this.handleOnPinCalloutPressed}
                                 pinPressedCallback={this.handleOnPinPressed}
                             />
                             <Markers 
                                 markers={removeDupulicatedMarkers(Reservation.getMarkerBySource('KAIST'), this.state.region.defaultMarkers)}
-                                pinColor ='lightred' description='카이스트에서 도착 / 클릭해서 예약하기'
+                                pinColor ='#29AEEC' description='카이스트에서 도착 / 클릭해서 예약하기'
                                 calloutPressedCallback={this.handleOnPinCalloutPressed}
                                 pinPressedCallback={this.handleOnPinPressed}
                             />
@@ -223,11 +274,32 @@ export default class HomeScreen extends Component {
                                 </Marker>
                             }
                         </MapView>
+                        {/* <View style={styles.sdContainer}>
+                            <View>
+                                <Avatar
+                                    rounded
+                                    icon={{ name: 'flight-takeoff', color: 'black' }}
+                                    overlayContainerStyle={{ backgroundColor: 'white' }}
+                                />
+                            </View>
+                            <Text style={{ color: '#fff', textAlign: 'center', fontWeight: '500', fontSize: 25 }}>
+                                출발: KAIST
+                            </Text>
+                        </View> */}
                         <SearchInput 
                             onLocationSelected={this.handleOnLocationSelected} 
                             focusedOnSource={this.state.targetToRegion}
                             rightButtonCallback={this.handleOnLocationChanged}
                         />
+                        {/* <SearchCopy 
+                            onLocationSelected={this.handleOnLocationSelected} 
+                            focusedOnSource={this.state.targetToRegion}
+                            rightButtonCallback={this.handleOnLocationChanged}
+                        /> */}
+                        
+
+                        <Text> d?</Text>
+                        
                         <SlidingUpPanel 
                             ref={c=> this._panel = c}
                             backdropOpacity={0.5}
@@ -286,5 +358,18 @@ const styles = StyleSheet.create({
     },
     spinner: {
         marginTop: 200
+    },
+    sdContainer: {
+        flexDirection:'row', 
+        justifyContent:'flex-start', 
+        alignItems: 'center', 
+        width: '90%',
+        backgroundColor:'lightgrey', 
+        borderRadius: 5, 
+        padding: 5,
+        marginLeft: 50,
+        marginRight: 50, 
+        marginBottom: 2,
     }
+
 })

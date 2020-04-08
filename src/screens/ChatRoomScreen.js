@@ -14,7 +14,7 @@ export default class ChatRoomScreen extends Component {
     super(props)
     this.state = {
       messages: [],
-      roomname: '',
+      roomname: '', 
 
       // tabBarVisible: false,
     }

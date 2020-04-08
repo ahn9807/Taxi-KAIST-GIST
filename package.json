@@ -26,6 +26,7 @@
     "react": "~16.9.0",
     "react-dom": "~16.9.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-36.0.0.tar.gz",
+    "react-native-24h-timepicker": "^1.1.0",
     "react-native-bottom-action-sheet": "^2.0.1",
     "react-native-elements": "^1.2.7",
     "react-native-expo-image-cache": "^4.1.0",

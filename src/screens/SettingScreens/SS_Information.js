@@ -35,7 +35,7 @@ const sections = [
       },
       {
         title: '개발자',
-        subTitle: '안준호 ahn9807@gmail.com \n남경욱 경욱@kaist.ac.kr',
+        subTitle: '안준호 ahn9807@gmail.com \n남경욱 ruddnrdl@kaist.ac.kr',
         hideChevron: true,
       },
       {

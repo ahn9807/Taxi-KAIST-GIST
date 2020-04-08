@@ -25,7 +25,7 @@ export default class SS_Account extends Component {
         AsyncStorage.setItem("@loggedInUserID:uid", '')
         AsyncStorage.setItem("@loggedInUserID:email", '')
         AsyncStorage.setItem("@loggedInUserID:password", '')
-        AsyncStorage.setItem("@loggedInUserID:emailVerified", false)
+        AsyncStorage.setItem("@loggedInUserID:emailVerified", JSON.stringify(false))
         AsyncStorage.setItem("@loggedInUserID:origin", '')
         this.props.navigation.navigate('Welcome')
     }

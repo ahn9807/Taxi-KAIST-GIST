@@ -98,15 +98,21 @@ export default class WelcomeScreen extends Component {
                     .collection('users')
                     .doc(user_uid)
                     .get()
-                    .then(function (user) {
+                    .then( (user)=> {
                         if (user.exists) {
                             AsyncStorage.setItem("@loggedInUserID:uid", user_uid)
                             AsyncStorage.setItem("@loggedInUserID:email", email)
                             AsyncStorage.setItem("@loggedInUserID:password", password)
                             
                             if (user.data().emailVerified) {
+                                this.setState({
+                                    isLoading: false,  
+                                })
                                 navigation.navigate('Main', user.data())
                             } else {
+                                this.setState({
+                                    isLoading: false,
+                                })
                                 navigation.navigate('EmailAuth', user.data())
                             }
                         } else {

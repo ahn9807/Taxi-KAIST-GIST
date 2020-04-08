@@ -193,7 +193,7 @@ export default class CalculationScreen extends Component {
                             titleStyle={{ textAlign: 'center', fontWeight: 'bold' }}
                             onPress={() => {
                                 Clipboard.setString(item.accountBank +' '+item.accountNumber)
-                                alert('계좌가 복사되었습니당');
+                                alert('계좌가 복사되었습니당'); //toast
                             }}
                             buttonStyle={{ borderRadius: 30, width: 150 }}
                             containerStyle={{ marginBottom: 20, marginTop: 10 }}

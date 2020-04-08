@@ -1,4 +1,6 @@
 import React from  'react'
+import firebase from 'firebase'
+
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
@@ -31,6 +33,8 @@ import SS_ServiceCenter from './src/screens/SettingScreens/SS_ServiceCenter';
 import SS_Theme from './src/screens/SettingScreens/SS_Theme';
 import SS_Wallet from './src/screens/SettingScreens/SS_Wallet';
 import SS_Notice from './src/screens/SettingScreens/SS_Notice';
+
+
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -113,29 +117,52 @@ const ChatNavigator =()=>(
   <Chat.Navigator headerMode='none' initialRouteName='MessengerLobby'  >
     <Chat.Screen name='MessengerLobby' component={MessengerLobbyScreen}/>
   
-    
+
   </Chat.Navigator>
 )
 
 function AppNavigator() {
-    return(
+
+  // firebase.auth().onAuthStateChanged(function (user) {
+    // var user=firebase.auth().currentUser;
+    // if (user) {
+      return (
         <NavigationContainer>
+          
             <Stack.Navigator headerMode='none' initialRouteName='Auth'>
-                <Stack.Screen name='Auth' component={AuthNavigator} options={{gesturesEnabled: false}}/>
-                <Stack.Screen name='Main' component={MainTabNavigator} options={{gesturesEnabled: false}}/>
-                <Stack.Screen name='Reservation' component={ReservationScreen} options={{gestureEnabled: false}}/>
-                <Stack.Screen name='ChatRoom' component={ChatRoomScreen} options={{gestureEnabled: false}}/>
+              <Stack.Screen name='Auth' component={AuthNavigator} options={{ gesturesEnabled: false }} />
+              <Stack.Screen name='Main' component={MainTabNavigator} options={{ gesturesEnabled: false }} />
+              <Stack.Screen name='Reservation' component={ReservationScreen} options={{ gestureEnabled: false }} />
+              <Stack.Screen name='ChatRoom' component={ChatRoomScreen} options={{ gestureEnabled: false }} />
             </Stack.Navigator>
+          
         </NavigationContainer>
-    )
-}
+      )
+    }
+    // }
+    // else {
+    //   return (
+    //     <NavigationContainer >
+    //       {
+    //         <Stack.Navigator headerMode='none'>
+    //           <Stack.Screen name='Auth' component={AuthNavigator} options={{ gesturesEnabled: false }} />
+    //         </Stack.Navigator>
+    //       }
+    //     </NavigationContainer>
+    //   )
+    // }
+
+
 
 //const middleware = applyMiddleware(thunkMiddleware)
 //const store = createStore(appReducers, middleware)
 
 export default function App() {
+
   return (
-    <AppNavigator />
+    // <AppComponent/>
+      <AppNavigator />
+ 
   );
 }
 

@@ -15,7 +15,7 @@ export default class EmailAuthScreen extends Component {
         AsyncStorage.setItem("@loggedInUserID:uid", '')
         AsyncStorage.setItem("@loggedInUserID:email", '')
         AsyncStorage.setItem("@loggedInUserID:password", '')
-        AsyncStorage.setItem("@loggedInUserID:emailAuthed", false)
+        AsyncStorage.setItem("@loggedInUserID:emailAuthed", JSON.stringify(false))
         this.props.navigation.navigate('Welcome')
     }
 

@@ -2,9 +2,9 @@ export default KAIST = {
     regionName: 'KAIST',
     initialRegion: {
         latitude: 36.361251,
-        longitude: 127.349924,
-        latitudeDelta: 0.1,
-        longitudeDelta: 0.1,
+        longitude: 127.3839924,
+        latitudeDelta: 0.15,
+        longitudeDelta: 0.15,
     },
     defaultMarkers: [
         {

@@ -300,6 +300,20 @@ export default class MessengerLobbyScreen extends Component {
                                     {"  탑승 예정"}
                                 </Text>
                             </View>
+                            {!this.state.isLoadingChat && !this.state.isLoadingChat && this.state.availableChatList.length != 0 ?
+                                <FlatList
+                                style={styles.flatlist}
+                                data={this.state.availableChatList}
+                                keyExtractor={this.keyExtractor}
+                                renderItem={this.renderItem}
+                                />
+                                :
+                                <View>
+
+                                </View>
+                            }
+
+
                         </ScrollView>
                     }
                     <Modal isVisible={this.state.isModalVisible} backdropOpacity={0.2}

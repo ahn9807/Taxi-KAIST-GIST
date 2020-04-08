@@ -10,7 +10,7 @@ const query = {
   language: 'ko',
 };
 
-const SearchInput = ({ onLocationSelected, rightButtonCallback, focusedOnSource }) => {
+const SearchCopy = ({ onLocationSelected, rightButtonCallback, focusedOnSource }) => {
   const [searchFocused, setSearchFocused] = useState(false);
 
   return (
@@ -57,16 +57,16 @@ const SearchInput = ({ onLocationSelected, rightButtonCallback, focusedOnSource 
 };
 
 
-SearchInput.propTypes = {
+SearchCopy.propTypes = {
   onLocationSelected: PropTypes.func.isRequired,
 };
 
-SearchInput.defaultProps = {};
+SearchCopy.defaultProps = {};
 
 const style = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: getStatusBarHeight() + 14,
+    top: getStatusBarHeight() + 64,
     width: '100%',
   },
 
@@ -128,4 +128,4 @@ const style = StyleSheet.create({
   }
 })
 
-export default SearchInput;
+export default SearchCopy;

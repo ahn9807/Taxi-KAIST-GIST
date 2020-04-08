@@ -8,6 +8,7 @@ import DateTimePicker from 'react-native-modal-datetime-picker'
 import ReservationDetails from "../components/ReservationDetails";
 import { KeyboardAccessoryNavigation } from 'react-native-keyboard-accessory'
 import { LocalNotification } from "../components/LocalNotification";
+import DigitalTimePicker from "react-native-24h-timepicker"
 
 var week = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일']
 
@@ -34,6 +35,7 @@ export default class ReservationScreen extends Component {
             showDatePicker: false,
             comment: '',
             enableComment: false,
+            digitalTime: ""
         }
         Reservation.setRegion(this.state.regionName)
         Reservation.fetchReservationData().then(function(res, err) {
@@ -47,6 +49,23 @@ export default class ReservationScreen extends Component {
             })
         }.bind(this))
 
+    }
+
+    onCancelDigital() {
+        this.DigitalTimePicker.close();
+      }
+     
+    onConfirmDigital(hour, minute) {
+        this.setState({ time: `${hour}:${minute}` });
+        this.setState({
+            selectedStartTime: new Date(this.state.today).setHours(0,0,0,0) + (hour * 1000 * 60 * 60 + minute * 1000 * 60),
+        })
+        this.DigitalTimePicker.close();
+    }
+     
+    startTimeButton(){
+        this.DigitalTimePicker.open()
+        this.setState({focusOnStart: true})
     }
 
     handleBackPress = () => {
@@ -155,8 +174,17 @@ export default class ReservationScreen extends Component {
     }
 
     componentDidMount() {
+        // this.onLoad();
         this._panelExist.hide()
     }
+
+    
+    // onLoad = () => {
+    //     console.log("onload")
+    //     this.props.navigation.addListener('focus', () => {
+    //       this.handleReloadPress();
+    //     });
+    //   };
 
     render() {
         return(
@@ -256,13 +284,22 @@ export default class ReservationScreen extends Component {
                             startTime={this.state.selectedStartTime}
                             endTime={this.state.selectedEndTime}
                             bottomButtonCallback={this.handleOnMakeReservation}
-                            startTimeButton={()=>{this.setState({ showTimePicker: true, focusOnStart: true})}}
+                            // startTimeButton={()=>{this.setState({ showTimePicker: true, focusOnStart: true})}}
+                            startTimeButton={()=>this.startTimeButton()}
                             endTimeButton={()=>{this.setState({ showTimePicker: true, focusOnStart: false})}}
                             commentCallback={(text)=>this.setState({comment:text})}
                             enableComment={this.state.enableComment}
                             comment={this.state.comment}
                         />
                     </SlidingUpPanel>
+                    <DigitalTimePicker
+                        ref={ref => {
+                            this.DigitalTimePicker = ref;
+                        }}
+                        onCancel={() => this.onCancelDigital()}
+                        onConfirm={(hour, minute) => this.onConfirmDigital(hour, minute)}
+                        selec
+                    />
                     <DateTimePicker
                         isVisible={this.state.showTimePicker}
                         mode='time'
@@ -273,13 +310,17 @@ export default class ReservationScreen extends Component {
                                     this.setState({
                                         selectedStartTime: new Date(this.state.today).setHours(0,0,0,0) + (date.getHours() * 1000 * 60 * 60 + date.getMinutes() * 1000 * 60),
                                         showTimePicker: false,
+
                                     })
+                           
                                 } else {
                                     this.setState({
                                         selectedEndTime: new Date(this.state.today).setHours(0,0,0,0) + (date.getHours() * 1000 * 60 * 60 + date.getMinutes() * 1000 * 60),
                                         showTimePicker: false,
                                     })
+  
                                 }
+            
                             }
                         }
                     />
@@ -293,6 +334,7 @@ export default class ReservationScreen extends Component {
                                     today: date,
                                     showDatePicker: false,
                                 })
+                                this.handleReloadPress()
                             }
                         }
                     />

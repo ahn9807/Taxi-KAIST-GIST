@@ -109,7 +109,7 @@ export default class SignupScreen extends Component {
                         />
                         <Input
                             placeholder=' Full name'
-                            onChangeText={text => this.setState({ displayName: text })}
+                            onChangeText={text => this.setState({ fullName: text })}
                             value={this.state.fullName}
                             inputStyle={{color:'white'}}
                             autoCompleteType='name'
@@ -159,7 +159,7 @@ export default class SignupScreen extends Component {
                             type="clear"
                             titleStyle={{color:'white',}}
                             onPress={() => this.setState({
-                                origin: 'kaist', //기본값은 KAIST 로 설정되어 있음 
+                                origin: 'KAIST', //기본값은 KAIST 로 설정되어 있음 
                                 showPanel: true
                             })}
                             buttonStyle={{borderRadius: 30, width:'100%'}}
