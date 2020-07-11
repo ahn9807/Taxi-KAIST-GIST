@@ -4,7 +4,7 @@ import firebase from 'firebase'
 import 'firebase/firestore'
 import { Input, Text, Button, Header, Icon, Card, Divider, Overlay } from "react-native-elements";
 import SlidingUpPanel from "rn-sliding-up-panel";
-import KAIST from "../Region/KAIST";
+import KAIST from "../../Region/KAIST";
 
 export default class FindAuth extends Component {
     constructor(props) {
@@ -39,7 +39,7 @@ export default class FindAuth extends Component {
         if (this.state.isLoading == true) {
             return (
                 <ImageBackground
-                    source={require('../../images/testBackLogin.jpg')}
+                    source={require('../../../images/testBackLogin.jpg')}
                     style={{ width: '100%', height: '100%'}}
                     resizeMode='cover'
                 >
@@ -52,7 +52,7 @@ export default class FindAuth extends Component {
         }
         return (
             <ImageBackground
-                source={require('../../images/testBackLogin.jpg')}
+                source={require('../../../images/testBackLogin.jpg')}
                 style={{ width: '100%', height: '100%'}}
                 resizeMode='cover'
             >

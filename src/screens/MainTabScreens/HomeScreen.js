@@ -14,21 +14,21 @@ import {
     Animated
 } from "react-native";
 import { BaseRouter } from "@react-navigation/native";
-import firebase from '../config/Firebase'
+import firebase from '../../config/Firebase'
 import MapView, { Marker } from 'react-native-maps';
-import findRegionByName from '../Region/Regions'
-import * as Reservation from '../Networking/Reservation'
-import SearchInput from "../components/SearchInput";
-import SearchCopy from "../components/SearchCopy";
+import findRegionByName from '../../Region/Regions'
+import * as Reservation from '../../Networking/Reservation'
+import SearchInput from "../../components/SearchInput";
+import SearchCopy from "../../components/SearchCopy";
 
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import Markers, { removeDupulicatedMarkers } from '../components/Markers'
+import Markers, { removeDupulicatedMarkers } from '../../components/Markers'
 import SlidingUpPanel from 'rn-sliding-up-panel'
 import { Badge, Overlay, Button, Avatar } from "react-native-elements";
-import Details from "../components/Details";
+import Details from "../../components/Details";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from "react-native-modal-datetime-picker";
-import FormattedDate from "../tools/FormattedDate";
+import FormattedDate from "../../tools/FormattedDate";
 // import Toast from "readc-native-simple-toast";
 
 var reservationInfo

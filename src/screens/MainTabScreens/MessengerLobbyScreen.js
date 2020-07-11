@@ -4,13 +4,13 @@ import { StyleSheet, View, Text, ScrollView, FlatList, TouchableOpacity, Interac
 import { Button, ListItem, Icon, ButtonGroup, Header } from "react-native-elements";
 import firebase from 'firebase'
 import 'firebase/firestore'
-import * as Messenger from '../Networking/Messenger'
+import * as Messenger from '../../Networking/Messenger'
 import Modal from "react-native-modal"
-import * as Reservation from "../Networking/Reservation"
-import * as Calculation from "../Networking/Calculation"
+import * as Reservation from "../../Networking/Reservation"
+import * as Calculation from "../../Networking/Calculation"
 
 import { NavigationEvents } from 'react-navigation';
-import CalculationDetail from "../components/CalculationDetail"
+import CalculationDetail from "../../components/CalculationDetail"
 import SlidingUpPanel from 'rn-sliding-up-panel'
 import { Divider } from "react-native-paper";
 
@@ -19,7 +19,7 @@ export default class MessengerLobbyScreen extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            isLoadingChat: true,
+            isLoadingChat: true, 
             isLoadingCalculation: true,
             username: '',
             avatarUri: '', //이거 userinfo랑 합쳐도 된다.

@@ -3,7 +3,7 @@ import { ActivityIndicator, StyleSheet, View, AsyncStorage, ImageBackground } fr
 import { Button, Image, Icon, Text, Divider, Input } from "react-native-elements";
 import firebase from 'firebase'
 import 'firebase/firestore'
-import { LocalNotification, AskPermission } from "../components/LocalNotification";
+import { LocalNotification, AskPermission } from "../../components/LocalNotification";
 
 export default class WelcomeScreen extends Component {
     constructor(props) {
@@ -139,7 +139,7 @@ export default class WelcomeScreen extends Component {
         if(this.state.isLoading == true) {
             return(
                 <ImageBackground
-                source={require('../../images/testBackLogin.jpg')}
+                source={require('../../../images/testBackLogin.jpg')}
                 style={{ width: '100%', height: '100%'}}
                 resizeMode='cover'
                 >
@@ -153,7 +153,7 @@ export default class WelcomeScreen extends Component {
         {
             return(
                 <ImageBackground
-                    source={require('../../images/testBackLogin.jpg')}
+                    source={require('../../../images/testBackLogin.jpg')}
                     style={{ width: '100%', height: '100%'}}
                     resizeMode='cover'
                 >

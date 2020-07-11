@@ -73,7 +73,7 @@ export default class EmailAuthScreen extends Component {
     render() {
         return (
             <ImageBackground
-                source={require('../../images/testBackLogin.jpg')}
+                source={require('../../../images/testBackLogin.jpg')}
                 style={{ width: '100%', height: '100%'}}
                 resizeMode='cover'
             >

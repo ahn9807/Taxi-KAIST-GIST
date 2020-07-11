@@ -9,15 +9,15 @@ import { MaterialCommunityIcons } from 'react-native-vector-icons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { StyleSheet, Platform } from 'react-native';
 
-import FindAuthScreen from "./src/screens/FindAuthScreen";
-import SignupScreen from "./src/screens/SignupScreen";
-import WelcomeScreen from "./src/screens/WelcomeScreen";
-import HomeScreen from './src/screens/HomeScreen';
+import FindAuthScreen from "./src/screens/AuthScreens/FindAuthScreen";
+import SignupScreen from "./src/screens/AuthScreens/SignupScreen";
+import WelcomeScreen from "./src/screens/AuthScreens/WelcomeScreen";
+import HomeScreen from './src/screens/MainTabScreens/HomeScreen';
 import SettingScreen from './src/screens/SettingScreen'
-import MessengerLobbyScreen from './src/screens/MessengerLobbyScreen'
-import EmailAuthScreen from './src/screens/EmailAuthScreen'
+import MessengerLobbyScreen from './src/screens/MainTabScreens/MessengerLobbyScreen'
+import EmailAuthScreen from './src/screens/AuthScreens/EmailAuthScreen'
 import ReservationScreen from './src/screens/ReservationScreen'
-import CalculationScreen from './src/screens/CalculationScreen'
+import CalculationScreen from './src/screens/MainTabScreens/CalculationScreen'
 
 import ChatRoomScreen from './src/screens/ChatRoomScreen'
 import { SafeAreaProvider } from 'react-native-safe-area-view';

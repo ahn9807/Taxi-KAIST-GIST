@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { StyleSheet, View, ActivityIndicator, ScrollView, Clipboard } from "react-native";
-import * as Calculation from "../Networking/Calculation"
+import * as Calculation from "../../Networking/Calculation"
 import { ListItem, Button, Icon, Text, Header, CheckBox, Avatar, Divider } from "react-native-elements"
 import firebase from 'firebase'
 import 'firebase/firestore'
