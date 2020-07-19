@@ -165,12 +165,13 @@ export default class MessengerLobbyScreen extends Component {
     keyExtractor = (item, index) => index.toString()
 
     calculationOnPress = (item) => {
-
+        console.log("???")
         InteractionManager.runAfterInteractions(() => {
             this.setState({ calculationInfo: item })
         }).done(function (res) {
             console.log(item.users.length)
             if (item.users.length > 0) { //나중에 1로 고치면됨.
+                console.log("눌렀는데");
                 this._panel.show()
             } else {
                 alert("두 명 이상 타야 정산이 가능합니다.")

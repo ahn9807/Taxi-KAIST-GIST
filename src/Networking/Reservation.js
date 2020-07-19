@@ -121,6 +121,18 @@ export function getReservationByDateAndDest(date_, dest) {
     return SortByEndTime(returnArray)
 }
 
+// For new home screen - 전체 내역 시간순으로 가져오는 함수 
+export function getRecentReservation(){
+    // var tempArray = []
+    var returnArray = []
+    internalDocumentation.forEach((doc)=>{
+        // console.log(doc.data())
+        returnArray.push(doc.data())
+    })
+    return SortByStartTime(returnArray)
+}
+
+
 export function SortByStartTime(inputArray) {
     return inputArray.sort((a,b) => {
         if(a.startTime == b.startTime){ return 0 }

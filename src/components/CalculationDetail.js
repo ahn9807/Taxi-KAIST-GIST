@@ -163,7 +163,7 @@ export default class CalculationDetail extends Component { //클래스형 컴포
                             autoCompleteType='name'
                             autoCapitalize='none'
                             maxLength={19}
-                            editable={false}
+                            editable={true}
                         />
                         <Input
                             placeholder='국민은행'
@@ -177,7 +177,7 @@ export default class CalculationDetail extends Component { //클래스형 컴포
                             autoCompleteType='name'
                             autoCapitalize='none'
                             maxLength={19}
-                            editable={false}
+                            editable={true}
                         />
                     </View>
                     <Divider />
@@ -198,8 +198,6 @@ export default class CalculationDetail extends Component { //클래스형 컴포
         )
 
     }
-
-
 
 }
 

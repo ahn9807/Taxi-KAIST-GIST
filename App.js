@@ -13,6 +13,9 @@ import FindAuthScreen from "./src/screens/AuthScreens/FindAuthScreen";
 import SignupScreen from "./src/screens/AuthScreens/SignupScreen";
 import WelcomeScreen from "./src/screens/AuthScreens/WelcomeScreen";
 import HomeScreen from './src/screens/MainTabScreens/HomeScreen';
+import NewHomeScreen from './src/screens/MainTabScreens/NewHomeScreen';
+
+
 import SettingScreen from './src/screens/SettingScreen'
 import MessengerLobbyScreen from './src/screens/MainTabScreens/MessengerLobbyScreen'
 import EmailAuthScreen from './src/screens/AuthScreens/EmailAuthScreen'
@@ -68,7 +71,7 @@ const AuthNavigator = () => (
     </Stack.Navigator>
 )
 
-
+// Home <-> newhome
 const MainTabNavigator = () => (
   <Tab.Navigator 
     initialRouteName='Home'
@@ -77,7 +80,8 @@ const MainTabNavigator = () => (
       activeBackgroundColor: '#eeea'
     }}
   >
-    <Tab.Screen name='Home' component={HomeScreen}
+    
+    <Tab.Screen name='Home' component={NewHomeScreen}
       options={{
         tabBarLabel: '택시 찾기',
         tabBarIcon: ({ color, size }) => (
