@@ -14,7 +14,7 @@ import SignupScreen from "./src/screens/AuthScreens/SignupScreen";
 import WelcomeScreen from "./src/screens/AuthScreens/WelcomeScreen";
 import HomeScreen from './src/screens/MainTabScreens/HomeScreen';
 import NewHomeScreen from './src/screens/MainTabScreens/NewHomeScreen';
-
+import MakeReservation from './src/screens/MainTabScreens/MakeReservation';
 
 import SettingScreen from './src/screens/SettingScreen'
 import MessengerLobbyScreen from './src/screens/MainTabScreens/MessengerLobbyScreen'
@@ -38,11 +38,11 @@ import SS_Wallet from './src/screens/SettingScreens/SS_Wallet';
 import SS_Notice from './src/screens/SettingScreens/SS_Notice';
 
 
-
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
 const Chat = createStackNavigator()
 const Setting = createStackNavigator()
+const Home= createStackNavigator()
 
 const SettingNavigator = () => (
   <Setting.Navigator headerMode='none' initialRouteName='SettingScreen'>
@@ -81,7 +81,7 @@ const MainTabNavigator = () => (
     }}
   >
     
-    <Tab.Screen name='Home' component={NewHomeScreen}
+    <Tab.Screen name='Home' component={HomeNavigator}
       options={{
         tabBarLabel: '택시 찾기',
         tabBarIcon: ({ color, size }) => (
@@ -115,6 +115,13 @@ const MainTabNavigator = () => (
     />
   </Tab.Navigator>
 )
+
+const HomeNavigator = () =>(
+  <Home.Navigator headerMode='none' initialRouteName='NewHome'>
+    <Home.Screen name= 'NewHome' component={NewHomeScreen}/>
+    <Home.Screen name= 'MakeReservation' component={MakeReservation}/>
+  </Home.Navigator>
+  )
 
 //일단 채팅을 앱으로 뺐다.... 좋은 코드는 아니지만 탭네이게이터 안의 스택네이게이터에서 탭을 컨트롤 하는 방법 찾아봐야. 
 const ChatNavigator =()=>(

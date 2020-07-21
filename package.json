@@ -58,7 +58,7 @@
     "reanimated-bottom-sheet": "^1.0.0-alpha.19",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "rn-sliding-up-panel": "^2.4.0"
+    "rn-sliding-up-panel": "^2.4.3"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",

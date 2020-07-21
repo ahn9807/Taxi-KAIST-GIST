@@ -7,6 +7,7 @@ import { Text,
 
 } from "react-native"
 import { Button, ListItem } from "react-native-elements"
+import SlidingUpPanel from "rn-sliding-up-panel";
 
 import * as Reservation from '../../Networking/Reservation'
 
@@ -58,12 +59,17 @@ export default class NewHomeScreen extends Component{
     
     )
 
+    makeReservation= () =>{
+        console.log("make it")
+        this.props.navigation.navigate('MakeReservation')
+        
+    }
     
     render(){
         return(
         <View style={styles.container}>
             <Text style={{ color: '#000', marginTop: 30, marginBottom: 10, textAlign: 'center', fontWeight: '500', fontSize: 30 }}>
-                택시 탈 사람!!!! 
+                택시 탈 사람 ㅎㅎ
             </Text>
             
              <View style={styles.buttonGroup}>
@@ -79,6 +85,7 @@ export default class NewHomeScreen extends Component{
                 <Button
                     title='여정 추가'
                     containerStyle={{paddingLeft: 20, width: 90}}
+                    onPress={this.makeReservation}
                 />
                 
 
@@ -144,8 +151,8 @@ const styles = StyleSheet.create({
     },
     buttonGroup:{
         flexDirection: 'row',
-        alignItems: 'center'
-
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 
 })
