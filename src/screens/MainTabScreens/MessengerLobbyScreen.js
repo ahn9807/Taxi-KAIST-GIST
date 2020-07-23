@@ -276,25 +276,7 @@ export default class MessengerLobbyScreen extends Component {
                         </View>
                         :
                         <ScrollView>
-                            <View style={{flex:1, backgroundColor:'white'}}>
-                                <Divider></Divider>
-                                <Text style={{ color: '#333', fontWeight:'bold', fontSize: 15, marginTop: 5, marginBottom: 5, marginLeft: 8}}>
-                                    {"  정산 중"}
-                                </Text>
-                            </View>
-                            {!this.state.isLoadingChat && !this.state.isLoadingCalculation && this.state.calculationChatList.length != 0 ?
-                                <FlatList
-                                style={styles.flatlist}
-                                data={this.state.calculationChatList}
-                                keyExtractor={this.keyExtractor}
-                                renderItem={this.renderItem}
-                                />
-                                :
-                                <View>
 
-                                </View>
-                            }
-                        
                             <View style={{flex:1, backgroundColor:'white'}}>
                                 <Divider></Divider>
                                 <Text style={{ color: '#333', fontWeight:'bold', fontSize: 15, marginTop: 5, marginBottom: 5, marginLeft: 8}}>
@@ -314,6 +296,29 @@ export default class MessengerLobbyScreen extends Component {
                                 </View>
                             }
 
+
+
+
+                            <View style={{flex:1, backgroundColor:'white'}}>
+                                <Divider></Divider>
+                                <Text style={{ color: '#333', fontWeight:'bold', fontSize: 15, marginTop: 5, marginBottom: 5, marginLeft: 8}}>
+                                    {"  탑승 완료"}
+                                </Text>
+                            </View>
+                            {!this.state.isLoadingChat && !this.state.isLoadingCalculation && this.state.calculationChatList.length != 0 ?
+                                <FlatList
+                                style={styles.flatlist}
+                                data={this.state.calculationChatList}
+                                keyExtractor={this.keyExtractor}
+                                renderItem={this.renderItem}
+                                />
+                                :
+                                <View>
+
+                                </View>
+                            }
+                        
+                
 
                         </ScrollView>
                     }
