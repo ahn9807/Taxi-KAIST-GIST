@@ -8,6 +8,16 @@ export default KAIST = {
     },
     defaultMarkers: [
         {
+            title: 'KAIST',
+            description: 'Test Description',
+            latlng: {
+                latitude: 36.361251,
+                longitude: 127.3839924,
+                latitudeDelta: 0.15,
+                longitudeDelta: 0.15,
+            }
+        },
+        {
             title: '궁동이마트',
             description: 'Test Description',
             latlng: {
