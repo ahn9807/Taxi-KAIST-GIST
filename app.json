@@ -25,9 +25,7 @@
     ],
     "ios": {
       "supportsTablet": true
-    },
-    "android": {
-      "package": "com.gachitaxi.taekseung"
     }
   }
+  
 }
