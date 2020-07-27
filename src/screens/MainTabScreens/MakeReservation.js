@@ -89,6 +89,7 @@ export default class MakeReservation extends Component {
                     //LocalNotification(this.state.selectedEndTime - (1000 * 60 * 10), '택승', '택시타기 10분 전입니다!!\n나갈 준비 해주세요~')
                     //LocalNotification(this.state.selectedEndTime - (1000 * 60 * 5), '택승', '택시타기 5분 전입니다!!')
                     console.log('success')
+                    //navigate 기능 구현해야함. 
                     //this.handleReloadPress()
                 }
             }.bind(this))
@@ -237,7 +238,10 @@ export default class MakeReservation extends Component {
                     <SelectLocationPanel
                         onTouchClose={() => this._location_panel.hide()}
                         locationList={findRegionByName(this.state.initialRegionName).defaultMarkers}
-                        callback={(s) => { this.setState(this.state.panelMode == 'departure' ? { departure: s, destination: this.state.initialRegionName } : { destination: s, departure: this.state.initialRegionName }) }}
+                        callback={(s) => { this.setState(this.state.panelMode == 'departure' ?
+                         { departure: s, destination: this.state.initialRegionName } : { destination: s, departure: this.state.initialRegionName })
+                        this._location_panel.hide()
+                        }}
                     />
                 </SlidingUpPanel>
                 <DateTimePicker
