@@ -5,14 +5,22 @@ import {
     View,
     TouchableOpacity,
 } from "react-native"
+import { Button } from "react-native-elements"
 
-const EnterReservationPanel =()=>{
+const EnterReservationPanel =({enterItem})=>{
     return (
         <View style={styles.container}>
             <Text>
-                만들어야함 
+                {enterItem.source} ➤ {enterItem.dest}
             </Text>
+
+            <Button
+                title="호이호이"
+
+            />
+                
         </View>
+
     )
 }
 

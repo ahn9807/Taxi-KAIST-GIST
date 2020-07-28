@@ -37,6 +37,7 @@ export default class NewHomeScreen extends Component{
             filterLocation: null,
             filterDate:null,
             isFetching: false,
+            enterItem: null
       
 
         }
@@ -122,7 +123,9 @@ export default class NewHomeScreen extends Component{
                     subtitle={<Text style={{color: '#0078CD'}}>{' ' + FormattedDate(item.startTime) + ' ~ ' + FormattedDate(item.endTime)}</Text>}
                     badge={{ value: ' ' + item.users.length + ' ' }}
                     onPress={()=>{this.setState({
-                        showEnterPanel: true
+                        showEnterPanel: true,
+                        enterItem: item,
+
                     })} }
                     // onPress
                     // onLongPress
@@ -319,10 +322,13 @@ export default class NewHomeScreen extends Component{
                height='auto'
                overlayBackgroundColor='#fffa'>
                 
-                <EnterReservationPanel>
+                <EnterReservationPanel
+                    enterItem={this.state.enterItem}
+                
+                
+                />
 
 
-                </EnterReservationPanel>
 
                 {/* <FilterLocationPanel
                         // onTouchClose={() => this._home_location_panel.hide()}
