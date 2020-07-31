@@ -177,7 +177,7 @@ export default class NewHomeScreen extends Component{
         this.setState({
             recentReservationList: filterArray,
             showDatePicker: false,
-            showPanel: false
+            showLocationPanel: false
         })
 
     }
@@ -319,33 +319,22 @@ export default class NewHomeScreen extends Component{
 
             <Overlay
                visible={this.state.showEnterPanel}
-               height='auto'
-               overlayBackgroundColor='#fffa'>
+               height={200}
+            //    overlayBackgroundColor='#fffa'
+               onBackdropPress={()=>{ this.setState({showEnterPanel: false})}}
+
+               >
                 
                 <EnterReservationPanel
                     enterItem={this.state.enterItem}
-                
+                    onTouchClose={() => {
+                        this.setState({showEnterPanel:false })
+                    
+                    }}
+                    handleReloadPress={this.handleReloadPress}
+         
                 
                 />
-
-
-
-                {/* <FilterLocationPanel
-                        // onTouchClose={() => this._home_location_panel.hide()}
-                        onTouchClose={() => {
-                            console.log("rttt")
-                            this.setState({showEnterPanel:false })
-                        
-                        }}
-                        locationList={findRegionByName(this.state.initialRegionName).defaultMarkers}
-                        callback={(location)=>{
-                            console.log("loc " + location)
-                            this.setState({filterLocation: location}, ()=>{
-                                this.filterLocationDate()
-                            })
-                            
-                        }}
-                /> */}
             </Overlay>
 
    

@@ -12,12 +12,12 @@ const query = {
 };
 
 
-const SelectLocationPanel = ({ locationList, onTouchClose, callback }) => {
+const FilterLocationPanel = ({ locationList, onTouchClose, callback }) => {
     const [searchFocused, setSearchFocused] = useState(false)
 
     return (
         <View style={styles.container}>
-            <Divider></Divider>
+        <Divider></Divider>
             {/* <TouchableOpacity
                 style={styles.downslideContainer}
                 onPress={() => { onTouchClose() }}
@@ -73,26 +73,19 @@ const SelectLocationPanel = ({ locationList, onTouchClose, callback }) => {
                 }
             </ScrollView>
         
-            {/* <TouchableOpacity           
-                style={styles.cancelButton}
-                onPress={() =>{ onTouchClose()} }
-                // onPress={onTouchClose}
-                >
-                   <Text>
-                        취소
-                   </Text>
-            </TouchableOpacity> */}
+
             <Button 
                 style={styles.cancelButton}
                 title='취소'
                 onPress={()=>{onTouchClose()}}
 
             />
+
         </View>
     )
 }
 
-export default SelectLocationPanel;
+export default FilterLocationPanel;
 
 const styles = StyleSheet.create({
     container: {
