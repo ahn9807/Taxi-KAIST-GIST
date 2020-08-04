@@ -59,7 +59,7 @@ export default class MessengerLobbyScreen extends Component {
         this.handleReloadPress()
    }
 
-    handleReloadPress = () => { //arrow func로 해야 에러 안나는 이유?
+    handleReloadPress = () => { 
         this.setState({
             isLoadingCalculation: true,
             isLoadingChat: true

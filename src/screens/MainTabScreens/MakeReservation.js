@@ -13,6 +13,10 @@ import findRegionByName from '../../Region/Regions';
 import KAIST from '../../Region/KAIST';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import * as Reservation from '../../Networking/Reservation'
+import firebase from 'firebase'
+import 'firebase/firestore'
+import DigitalTimePicker from "react-native-24h-timepicker"
+
 
 export default class MakeReservation extends Component {
     constructor(props) {
@@ -26,11 +30,26 @@ export default class MakeReservation extends Component {
             showDatePicker: false,
             showTimePicker: false,
             date: new Date(),
-            startTime: new Date(),
-            endTime: new Date(),
-            comment: null
-            //selectedTime?
+            startTime: 0,
+            endTime: 0,
+            comment: null,
+            userInfo:null,
+
         }
+        firebase.firestore() 
+        .collection('users')
+        .doc(firebase.auth().currentUser.uid)
+        .get()
+        .then(function (user) {
+            // console.log(user.data().displayName)
+            this.setState({ 
+                // username: user.data().displayName,
+                            // avatarUri: user.data().profileUri,
+                            userInfo: user.data()
+                         }, ()=>{})
+
+        }.bind(this)
+        );
     }
 
     departureClickCallback = () => {
@@ -77,10 +96,13 @@ export default class MakeReservation extends Component {
             Reservation.makeReservation({
                 source: this.state.departure,
                 dest: this.state.destination,
+
                 startTime: this.state.startTime,
                 endTime: this.state.endTime,
                 marker: findRegionByName(this.state.initialRegionName).defaultMarkers.find((s) => { return s.title == this.state.initialRegionName }),
                 comment: this.state.comment,
+                fullName: this.state.userInfo.fullName
+
             }).then(function (res, err) {
                 if (res == false) {
                     console.log('failed')
@@ -89,6 +111,8 @@ export default class MakeReservation extends Component {
                     //LocalNotification(this.state.selectedEndTime - (1000 * 60 * 10), '택승', '택시타기 10분 전입니다!!\n나갈 준비 해주세요~')
                     //LocalNotification(this.state.selectedEndTime - (1000 * 60 * 5), '택승', '택시타기 5분 전입니다!!')
                     console.log('success')
+                    this.props.navigation.navigate('NewHome')
+
                     //navigate 기능 구현해야함. 
                     //this.handleReloadPress()
                 }
@@ -124,10 +148,10 @@ export default class MakeReservation extends Component {
 
                         <View style={{ width: 30 }}>
                             <Icon
-                                name='arrow-right'
+                                name='chevrons-right'
                                 type='feather'
                                 color='black'
-
+                                size={32}
                             />
                         </View>
 
@@ -163,27 +187,37 @@ export default class MakeReservation extends Component {
 
                     </View>
 
-                    <View style={styles.locationInput}>
+                    <View style={{alignItems:'center', marginTop: '2%' }}>
+                        <Text style={{fontWeight:'bold', color: '#747474'}}>
+                            출발 가능 시간
+                        </Text>
+                    </View>
+
+                    <View style={styles.timeInput}>
                         <TouchableOpacity
                             activeOpacity={0.8}
                             style={styles.locationDetailInput}
                             onPress={() => this.startTimeClickCallback()}
 
                         >
-                            <Text style={styles.titleText}>
+                            {/* <Text style={styles.titleText}>
                                 출발 시간
-                            </Text>
-                            <Text style={styles.inputText}>
-                                {FormattedTime(this.state.startTime)}
+                            </Text> */}
+                            <Text style={styles.inputTimeText}>
+                                {this.state.startTime!=0 ?
+                                    FormattedTime(this.state.startTime)
+                                    :
+                                    "언제부터"
+                                }
                             </Text>
                         </TouchableOpacity>
 
                         <View style={{ width: '8%' }}>
                             <Icon
-                                name='arrow-right'
-                                type='feather'
+                                name='compare-arrows'
+                                type='material'
                                 color='black'
-
+                                size={30}
                             />
                         </View>
 
@@ -192,11 +226,15 @@ export default class MakeReservation extends Component {
                             style={styles.locationDetailInput}
                             onPress={() => this.endTimeClickCallback()}
                         >
-                            <Text style={styles.titleText}>
+                            {/* <Text style={styles.titleText}>
                                 도착 시간
-                            </Text>
-                            <Text style={styles.inputText}>
-                                {FormattedTime(this.state.endTime)}
+                            </Text> */}
+                            <Text style={styles.inputTimeText}>
+                                {this.state.endTime!=0 ?
+                                    FormattedTime(this.state.endTime)
+                                    :
+                                    "언제까지"
+                                }
                             </Text>
                         </TouchableOpacity>
                     </View>
@@ -265,14 +303,14 @@ export default class MakeReservation extends Component {
                     onConfirm={(date) => {
                         if (this.state.pickerMode == 'start') {
                             this.setState({
-                                startTime: date,
+                                startTime: new Date(this.state.date).setHours(0,0,0,0) + (date.getHours() * 1000 * 60 * 60 + date.getMinutes() * 1000 * 60),
                                 showTimePicker: false,
 
                             })
 
                         } else {
                             this.setState({
-                                endTime: date,
+                                endTime: new Date(this.state.date).setHours(0,0,0,0) + (date.getHours() * 1000 * 60 * 60 + date.getMinutes() * 1000 * 60),
                                 showTimePicker: false,
                             })
                         }
@@ -297,15 +335,24 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
+    timeInput: {
+        marginTop: '1%',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
     locationDetailInput: {
         backgroundColor: '#D5D8DC',
         width: '36%',
-        height: 100,
+        height: 80,
+        // justifyContent:'center',
+        // alignItems:'center'
     },
     dateInput: {
         backgroundColor: '#D5D8DC',
         width: '80%',
-        height: 60
+        height: 70,
+        justifyContent:'center'
     },
     commentInput: {
         marginTop: '7%',
@@ -321,6 +368,16 @@ const styles = StyleSheet.create({
         fontSize: 20,
         flex: 1,
         alignSelf: 'center',
+        
+        // justifyContent:'center'
+    },
+    inputTimeText: {
+        color: '#555',
+        fontSize: 20,
+        flex: 1,
+        alignSelf: 'center',
+        textAlignVertical:'center'
+        // justifyContent:'center'
     },
     titleText: {
         color: 'white',
@@ -346,6 +403,10 @@ const styles = StyleSheet.create({
     }
 })
 
+function n(n){
+    return n > 9 ? "" + n: "0" + n;
+}
+
 function FormattedTime(date, line = false) {
     var d = new Date(date)
     var h = d.getHours()
@@ -364,9 +425,9 @@ function FormattedTime(date, line = false) {
     }
 
     if (line == false) {
-        return str + '\n' + cvt + ':' + m
+        return str + '\n' + cvt + ':' + n(m)
     } else {
-        return str + ' ' + cvt + ':' + m
+        return str + ' ' + cvt + ':' + n(m)
     }
 }
 

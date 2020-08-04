@@ -332,7 +332,7 @@ export default class NewHomeScreen extends Component{
                     
                     }}
                     handleReloadPress={this.handleReloadPress}
-         
+                    
                 
                 />
             </Overlay>

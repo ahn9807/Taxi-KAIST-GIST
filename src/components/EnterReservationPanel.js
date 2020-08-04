@@ -8,21 +8,52 @@ import {
 import { Button, Text, Divider } from "react-native-elements"
 import * as Reservation from "../Networking/Reservation"
 
-// 이름 표시를 위해 reservation 만들때 이름정보 추가해야함(fullname)
-// 인원 누르면 토글되는 구조로.  
+
+
 const EnterReservationPanel =({enterItem, onTouchClose, handleReloadPress})=>{
+
+    
+    function maskName(nameArray){
+        let tempArray=Array.from(nameArray)
+        let tempString=""
+        for(let i=0;i<nameArray.length;i++){
+            for(let j=0;j<nameArray[i].length;j++){
+                if(j%2==1){
+                    tempString+="*"
+                }else{
+                    tempString+=nameArray[i][j]
+                }
+            }
+            tempArray[i]=tempString
+        }
+        return tempArray
+    }
+
     return (
         <View style={styles.container}>
 
-            <Text style={{fontSize: 30, textAlign: 'center', fontWeight: 'bold', marginBottom: 30}}>
+            <Text style={{fontSize: 30, textAlign: 'center', fontWeight: 'bold', marginBottom: 15}}>
                 {enterItem.source} ➤ {enterItem.dest}
             </Text>
-            <Text style={{fontSize: 20, textAlign: 'center', color: '#0078CD'}}>
+            {
+                enterItem.comment!=null ? 
+                <Text style={{fontStyle:'italic',marginBottom: 15}}>
+                    {enterItem.comment}
+                </Text>
+                :
+                null
+
+            }     
+            <Text style={{fontSize: 20, textAlign: 'center', color: '#0078CD', marginBottom: 15}}>
                 {FormattedDate(enterItem.startTime)} ~ {FormattedDate(enterItem.endTime)}
             </Text>
-            <Text style={{textAlign: 'center', marginBottom: 20}}>
+            <Text style={{textAlign: 'center', marginBottom: 2, fontWeight:'bold'}}>
                 인원: {enterItem.users.length}/4
             </Text>
+            <Text style={{marginBottom:20, fontSize: 12}}>
+                {maskName(enterItem.fullNames)}
+            </Text>
+
             <Divider/>
             <View style={styles.buttonGroup}>
                 <Button
@@ -57,6 +88,8 @@ const EnterReservationPanel =({enterItem, onTouchClose, handleReloadPress})=>{
                                 }
                                 handleReloadPress()
                                 onTouchClose()
+                                // 채팅방으로 바로 이동하시겠습니까? 넣으면 좋을듯. 
+
                             }
                         )
  
@@ -78,7 +111,7 @@ export default EnterReservationPanel;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        height: 250,
+        height: 300,
         // bottom: 0,
         backgroundColor:'white',
         justifyContent: 'center',

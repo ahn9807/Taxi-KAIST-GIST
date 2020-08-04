@@ -14,6 +14,7 @@ export function setRegion(name) {
 }
 
 //일단은 여기서 시간이 지난 데이터를 삭제하도록 하자...
+// 히스토리 남게 안하도록 수정함. . 
 export function fetchReservationData() {
     return new Promise(function (resolve, reject) {
         firebase.firestore()
@@ -178,6 +179,9 @@ export function makeReservation(item, index = 0) {
     var marker = item.marker
     var userUid = firebase.auth().currentUser.uid
     var comment = item.comment
+    var fullName=item.fullName
+
+    console.log(" fn: "+ fullName)
 
     if(startTime.getTime != undefined) {
         console.log(startTime.getTime())
@@ -198,22 +202,26 @@ export function makeReservation(item, index = 0) {
 
             console.log(doc.data())
             if(doc.exists) {
-                var tempArray = doc.data().users
-                console.log(tempArray.length)
+                var uidArray = doc.data().users
+                var fullNameArray = doc.data().fullNames
+                console.log(uidArray.length)
                 //유저가 3명 이하인지 확인한다.
-                if(doc.data().users != undefined && tempArray.length < 4) {
+                if(doc.data().users != undefined && uidArray.length < 4) {
                     //유저가 이미 가입했는지 확인한다.
                     var alreadyContained = false
-                    for(var i=0;i<tempArray.length;i++) {
-                        if(tempArray[i] == userUid) {
+                    for(var i=0;i<uidArray.length;i++) {
+                        if(uidArray[i] == userUid) {
                             alreadyContained = true
                         }
                     }
                     //전체 유저가 3명 이하이며, 자기자신이 가입되어 있지 않는다면
                     if(!alreadyContained) {
-                        tempArray.push(userUid)
+                        uidArray.push(userUid)
+                        fullNameArray.push(fullName)
                         docRef.set({
-                            users: tempArray
+                            users: uidArray,
+                            fullNames: fullNameArray
+
                         }, { merge: true})
                         alert('가입되었습니다')
                         resolve(true)
@@ -240,6 +248,7 @@ export function makeReservation(item, index = 0) {
                     marker: marker,
                     comment: comment,
                     users: [userUid],
+                    fullNames: [fullName], 
                 })
                 alert('가입되었습니다')
                 resolve(true)

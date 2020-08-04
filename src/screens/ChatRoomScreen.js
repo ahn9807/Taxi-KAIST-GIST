@@ -148,7 +148,9 @@ export default class ChatRoomScreen extends Component {
     Reservation.removeReservationById(chatId).then(function(){
       
       setTimeout(()=> {this.props.navigation.navigate('ChatNavigator')}, 300)
-       // 리얼 개야매코드 이러면 안되는데 ㅠㅠㅠㅠㅠㅠㅠ
+       // 리얼 개야매코드 이러면 안되는데 ㅠㅠㅠㅠㅠㅠㅠ 
+       //아마 navigate할때 바로 안돌려져서 한거일듯. 
+
     }.bind(this)
     );
 }
