@@ -10,13 +10,15 @@ import * as Reservation from "../Networking/Reservation"
 
 
 
-const EnterReservationPanel =({enterItem, onTouchClose, handleReloadPress})=>{
+const EnterReservationPanel =({enterItem, onTouchClose, handleReloadPress, fullName})=>{
 
     
     function maskName(nameArray){
+        console.log("name"+nameArray)
         let tempArray=Array.from(nameArray)
-        let tempString=""
+   
         for(let i=0;i<nameArray.length;i++){
+            let tempString=""
             for(let j=0;j<nameArray[i].length;j++){
                 if(j%2==1){
                     tempString+="*"
@@ -71,8 +73,9 @@ const EnterReservationPanel =({enterItem, onTouchClose, handleReloadPress})=>{
                     buttonStyle={styles.button2}
                     titleStyle={{ textAlign: 'center', fontWeight: 'bold', color: '#FFF' }}
                     onPress={()=>{
-                        console.log(enterItem)
-                        
+                   
+                        enterItem.fullName=fullName
+                        // console.log(enterItem)
                         Reservation.makeReservation(enterItem)
                         .then(
                             function(res,err) {

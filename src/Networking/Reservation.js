@@ -179,6 +179,7 @@ export function makeReservation(item, index = 0) {
     var marker = item.marker
     var userUid = firebase.auth().currentUser.uid
     var comment = item.comment
+
     var fullName=item.fullName
 
     console.log(" fn: "+ fullName)
@@ -200,7 +201,7 @@ export function makeReservation(item, index = 0) {
     
         docRef.get().then(function(doc) {
 
-            console.log(doc.data())
+            // console.log(doc.data())
             if(doc.exists) {
                 var uidArray = doc.data().users
                 var fullNameArray = doc.data().fullNames
@@ -303,14 +304,14 @@ export function removeReservation(source, dest, startTime, endTime, index = 0) {
     })
 }
 
-export function removeReservationById(reservationId) {
+export function removeReservationById(reservationId, fullName) {
     return new Promise(function(resolve, reject) {
         var docRef = firebase.firestore()
         .collection(regionName)
         .doc(reservationId)
 
         // 사람 없는 채팅방도 삭제
-
+        
         var chatDoc=firebase.firestore()
             .collection('ChatRooms')
             .doc(reservationId)
@@ -320,10 +321,13 @@ export function removeReservationById(reservationId) {
             .doc(reservationId)
 
         var userUid = firebase.auth().currentUser.uid
-    
+        
         docRef.get().then(function(doc) {
             if(doc.exists) {
                 var tempArray = doc.data().users
+                // console.log("ahahahhah")
+                var fullNameArray=doc.data().fullNames
+                // console.log("haha")
                 var contained = false
                 for(var i=0;i<tempArray.length;i++) {
                     if(tempArray[i] == userUid) {
@@ -332,17 +336,29 @@ export function removeReservationById(reservationId) {
                     }
                 }
 
+                
+                for(var i=0;i<fullNameArray.length;i++) {
+                    if(fullNameArray[i] == fullName) {
+                        contained = true
+                        fullNameArray.splice(i, 1)
+                    }
+                }
+                console.log("???"+ fullNameArray)
+
                 if(contained) {
                     //만약 아무도 가입하지 않은 예약이면 예약을 삭제한다
                     if(tempArray.length == 0) {
+                        // console.log("rrrr")
                         docRef.delete()
                         chatDoc.delete()
                         calDoc.delete()
                     }
                     //누군가 가입한 방이면 예약을 삭제하지 않는다 
                     else {
+                        // console.log("dddd")
                         docRef.set({
-                            users: tempArray
+                            users: tempArray,
+
                         }, { merge: true })
                     }
                     

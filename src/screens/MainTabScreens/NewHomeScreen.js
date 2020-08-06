@@ -19,7 +19,8 @@ import findRegionByName from '../../Region/Regions';
 import SwipeGestures from 'react-native-swipe-gestures'
 import GestureRecognizer from "react-native-swipe-gestures";
 import EnterReservationPanel from "../../components/EnterReservationPanel"
-
+import firebase from 'firebase'
+import 'firebase/firestore'
 
 
 
@@ -37,10 +38,24 @@ export default class NewHomeScreen extends Component{
             filterLocation: null,
             filterDate:null,
             isFetching: false,
-            enterItem: null
-      
-
+            enterItem: null,
+            userInfo: {},
         }
+      
+        firebase.firestore() 
+        .collection('users')
+        .doc(firebase.auth().currentUser.uid)
+        .get()
+        .then(function (user) {
+            // console.log(user.data().displayName)
+            this.setState({ 
+                // username: user.data().displayName,
+                //             avatarUri: user.data().profileUri,
+                            userInfo: user.data() })
+
+        }.bind(this)
+        );
+
 
         this.handleReloadPress()
     }
@@ -332,6 +347,7 @@ export default class NewHomeScreen extends Component{
                     
                     }}
                     handleReloadPress={this.handleReloadPress}
+                    fullName={this.state.userInfo.fullName}
                     
                 
                 />

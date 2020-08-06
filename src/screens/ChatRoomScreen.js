@@ -21,6 +21,7 @@ export default class ChatRoomScreen extends Component {
   
     // console.log(this.props.route)
 
+
   }
  
 
@@ -62,6 +63,7 @@ export default class ChatRoomScreen extends Component {
       .find(v => v.name === 'ChatRoom')
       .params
       .avatarUri;
+
 
     return {
       name: username,
@@ -145,7 +147,15 @@ export default class ChatRoomScreen extends Component {
     .params
     .chatId;
 
-    Reservation.removeReservationById(chatId).then(function(){
+    const fullName=this.props.navigation
+    .dangerouslyGetState()
+    .routes
+    .find(v => v.name === 'ChatRoom')
+    .params
+    .fullName;
+
+
+    Reservation.removeReservationById(chatId, fullName).then(function(){
       
       setTimeout(()=> {this.props.navigation.navigate('ChatNavigator')}, 300)
        // 리얼 개야매코드 이러면 안되는데 ㅠㅠㅠㅠㅠㅠㅠ 
