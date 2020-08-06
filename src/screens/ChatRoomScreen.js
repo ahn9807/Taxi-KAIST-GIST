@@ -184,7 +184,6 @@ export default class ChatRoomScreen extends Component {
               <Icon name='menu' color='black'  ></Icon>
             </Tooltip>
           }
-
           centerComponent={{ text: this.state.roomname, style: { color: 'black', fontWeight: 'bold' } }}
         />
         <GiftedChat
@@ -193,9 +192,10 @@ export default class ChatRoomScreen extends Component {
           user={this.user}
           renderUsernameOnMessage={true}
           showUserAvatar={true}
+          renderAvatar={}
+          placeholder={' 메시지 입력 ➤'}
           // renderTime={(props)=> props.currentMessage.createdAt.toDate()}
-        ></GiftedChat>
-        <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={0} />
+        />
       </View>
     )
   }
