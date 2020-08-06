@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, KeyboardAvoidingView, TouchableOpacity, Platform } from 'react-native';
 import { GiftedChat } from "react-native-gifted-chat";
 import firebase from 'firebase'
 import { Header , Button, Icon, Text, Tooltip, Divider} from 'react-native-elements'
@@ -24,7 +24,6 @@ export default class ChatRoomScreen extends Component {
 
   }
  
-
 
   static navigationOptions = ({ props }) => ({
     title: (props.navigation.state.params || {}).name,
@@ -131,7 +130,7 @@ export default class ChatRoomScreen extends Component {
   send = messages => {
     for (let i = 0; i < messages.length; i++) {
       const { text, user } = messages[i];
-      const message = { text, user, createdAt: Date() };
+      const message = { text, user, createdAt: (new Date()).getTime() };
       //new date로 하면 안된다. giftedchat에서 요구하는게 그런듯....
       // console.log(message)
       this.append(message)
@@ -213,10 +212,17 @@ export default class ChatRoomScreen extends Component {
           user={this.user}
           renderUsernameOnMessage={true}
           showUserAvatar={true}
-          renderAvatar={}
+          // renderAvatar={}
           placeholder={' 메시지 입력 ➤'}
           // renderTime={(props)=> props.currentMessage.createdAt.toDate()}
         />
+        {
+          Platform.OS=='android'?
+          <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={0} />
+          :
+          null
+        }
+
       </View>
     )
   }

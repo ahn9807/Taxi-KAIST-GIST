@@ -1,251 +1,318 @@
-import React, { Component } from 'react';
-import {
-    TouchableOpacity,
-    StyleSheet,
-    View,
-    KeyboardAvoidingView,
-    AsyncStorage
-
-} from 'react-native';
-import { Button, Input, Text, Icon, Divider, Overlay } from 'react-native-elements'
+import React, { Component } from "react";
+import { StyleSheet, View, ActivityIndicator, ScrollView, Clipboard } from "react-native";
+import * as Calculation from "../Networking/Calculation"
+import { ListItem, Button, Icon, Text, Header, CheckBox, Avatar, Divider } from "react-native-elements"
 import firebase from 'firebase'
 import 'firebase/firestore'
-import Modal from "react-native-modal"
-import * as Calculation from "../Networking/Calculation"
+import { AccordionList } from "accordion-collapse-react-native";
+import { Separator } from 'native-base';
 
-export default class CalculationDetail extends Component { //클래스형 컴포넌트인데... 여기 분류에 있어도 되겠지?
+export default class CalculationDetail extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            charge: 0,
-            dividedCharge: 0,
-            index: 0,
-            length: 0,
-            bankAccount: undefined,
-            bankName: undefined,
-            isModalVisible: false,
+            isLoadingHost: false,
+            isLoadingSend: false,
+            calculationList: [],
+            hostList: [],
+            sendList: [],
+            checked: false
+
         }
-
-        this.setState({
-            accountNumber: this.props.userInfo.accountNumber,
-            accountBank: this.props.userInfo.accountBank
-        })
-
-        this.tryToSetAccountFirst()
     }
 
-    async tryToSetAccountFirst() {
-        const bankAccount = await AsyncStorage.getItem('@loggedInUserID:backAccount')
-        const bankName = await AsyncStorage.getItem('@loggedInUserID:bankName')
-        if(bankAccount != null && bankName !=null) {
-            this.setState({
-                bankAccount: bankAccount,
-                bankName: bankName,
-            })
-        } else {
-            var user_uid = firebase.auth().currentUser.uid
-            firebase.firestore()
-            .collection('users')
-            .doc(user_uid)
-            .get()
-            .then(function(user) {
-                if(user.exists) {
-                    var bankAccount = user.data().bankAccount
-                    var backName = user.data().bankName
+    componentWillReceiveProps(newProps){
+        console.log("newPro")
+        this.setState({
+            isLoadingHost: newProps.isLoadingHost,
+            isLoadingSend: newProps.isLoadingSend,
+            hostList: newProps.hostList,
+            sendList: newProps.sendList,
+        })
+    }
 
-                    this.setState({
-                        backName: backName,
-                        bankAccount: bankAccount,
-                    })
-                }
+    completeCalculation = (calculationId) => {
+        console.log("???")
+
+        Calculation.completeCalculation(calculationId).then(
+            Calculation.fetchCalculationData().then(function (res, err) { //function
+                const uid = firebase.auth().currentUser.uid
+                this.setState({
+                    hostList: Calculation.searchCalculationHostByUId(uid),
+                    sendList: Calculation.searchCalculationSendByUId(uid)
+                })
+                this.props.handleReloadHost()
             }.bind(this))
-        }
+        )
     }
 
-    componentWillReceiveProps(nextProps) {
-        console.log("recive")
-        this.setState({
-            accountNumber: nextProps.userInfo.accountNumber,
-            accountBank: nextProps.userInfo.accountBank
-        })
+    deleteCalculation = (calculationId) => {
+        Calculation.deleteCalculation(calculationId).then(
+            Calculation.fetchCalculationData().then(function (res, err) { //function
+                const uid = firebase.auth().currentUser.uid
+                this.setState({
+                    hostList: Calculation.searchCalculationHostByUId(uid),
+                    sendList: Calculation.searchCalculationSendByUId(uid)
+                })
+                this.props.handleReloadHost()
+            }.bind(this))
+        )
     }
 
-    selectBankModal = () => {
-        console.log(13333)
-        this.setState({ isModalVisible: !this.state.isModalVisible })
-        console.log("passed")
+    _head(item) {
+        return (
+            <Separator bordered style={{  marginBottom: 5 }}>
+                <View style={styles.header}>
+
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}
+                    >{' ' + item.source + ' ➤ ' + item.dest + ' '}</Text>
+                </View>
+            </Separator>
+        );
+    }
+
+    _body_1 = (item) => {
+        return (
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <View style={styles.sdContainer}>
+                    <View style={{ marginRight: 10 }}>
+                        <Avatar
+                            rounded
+                            icon={{ name: 'money', color: 'black', type: 'font-awesome' }}
+                            overlayContainerStyle={{ backgroundColor: 'white' }}
+                        />
+                    </View>
+                    <Text style={{ color: '#fff', textAlign: 'center', fontWeight: '500', fontSize: 25 }}>
+                        {item.charge} 원
+                    </Text>
+                </View>
+
+                <View style={styles.sdContainer}>
+                    <View style={{ marginRight: 10 }}>
+                        <Avatar
+                            rounded
+                            icon={{ name: 'send', color: 'black' }}
+                            overlayContainerStyle={{ backgroundColor: 'white' }}
+                        />
+                    </View>
+                    <Text style={{ color: '#fff', textAlign: 'center', fontWeight: '500', fontSize: 25 }}>
+                        {item.accountBank} {item.accountNumber}
+                    </Text>
+                </View>
+
+
+                <View style={{ alignItems: "center" }}>
+                    <View style={styles.buttonGroup}>
+                        <Button title="정산 취소"
+                            titleStyle={{ textAlign: 'center', fontWeight: 'bold', color: 'black' }}
+                            onPress={() => { this.deleteCalculation(item.calculationId) }}
+                            buttonStyle={{ borderRadius: 30, width: 150, backgroundColor: "#fff" }}
+                            containerStyle={{ marginBottom: 20, marginTop: 10, marginRight: 10 }}
+                            icon={{ name: 'local-taxi', color: 'black' }}
+
+                        ></Button>
+
+                        <Button title="정산 완료!"
+                            titleStyle={{ textAlign: 'center', fontWeight: 'bold' }}
+                            onPress={() => { this.completeCalculation(item.calculationId) }}
+                            buttonStyle={{ borderRadius: 30, width: 150 }}
+                            containerStyle={{ marginBottom: 20, marginTop: 10 }}
+                            icon={{ name: 'local-taxi', color: 'white' }}
+                        ></Button>
+                    </View>
+                </View>
+            </View>
+        );
+    }
+
+    _body_2 = (item) => {
+        return (
+            <View style={{ padding: 10, justifyContent: 'center', alignItems: 'center' }}>
+                {/* <Text style={styles.textDetail}>{"     - "}인당 {item.charge}원</Text> */}
+                {/* <Text style={styles.textDetail}>{"     - "}계좌 정보: {item.accountBank} {item.accountNumber}</Text> */}
+                <View style={styles.sdContainer}>
+                    <View style={{ marginRight: 10 }}>
+                        <Avatar
+                            rounded
+                            icon={{ name: 'money', color: 'black', type: 'font-awesome'  }}
+                            overlayContainerStyle={{ backgroundColor: 'white' }}
+                        />
+                    </View>
+                    <Text style={{ color: '#fff', textAlign: 'center', fontWeight: '500', fontSize: 25 }}>
+                        {item.charge} 원
+                    </Text>
+                </View>
+
+                <View style={styles.sdContainer}>
+                    <View style={{ marginRight: 10 }}>
+                        <Avatar
+                            rounded
+                            icon={{ name: 'send', color: 'black' }}
+                            overlayContainerStyle={{ backgroundColor: 'white' }}
+                        />
+                    </View>
+                    <Text style={{ color: '#fff', textAlign: 'center', fontWeight: '500', fontSize: 25 }}>
+                        {item.accountBank} {item.accountNumber}
+                    </Text>
+                </View>
+
+
+                <View style={{ alignItems: "center" }}>
+                    <View style={styles.buttonGroup}>
+                        <Button title="계좌 복사"
+                            titleStyle={{ textAlign: 'center', fontWeight: 'bold' }}
+                            onPress={() => {
+                                Clipboard.setString(item.accountBank +' '+item.accountNumber)
+                                alert('계좌가 복사되었습니당'); //toast
+                            }}
+                            buttonStyle={{ borderRadius: 30, width: 150 }}
+                            containerStyle={{ marginBottom: 20, marginTop: 10 }}
+                            icon={{ name: 'copy', color: 'white', type: 'font-awesome'  }}
+                        ></Button>
+
+                        
+                        <CheckBox
+                            // style={{borderRadius: 10}}
+                            containerStyle={{borderRadius: 30, width: 150, marginBottom: 20, marginTop: 10 }}
+                            center
+                            title='보냄 체크!'
+                            checkedIcon='dot-circle-o'
+                            uncheckedIcon='circle-o'
+                            checked={this.state.checked}
+                            checkedColor='#0078CD'
+                            onPress={() => this.setState({ checked: !this.state.checked })}
+                        />
+                    </View>
+                </View>
+            </View>
+        );
     }
 
 
-
-    closeBankModal = () => {
-        this.setState({ isModalVisible: !this.state.isModalVisible });
-    }
-
-    calculate = () => {
-        const calculationInfo = this.props.calculationInfo
-        const userInfo = this.props.userInfo
-
-        const payment = this.state.charge / calculationInfo.users.length
-        console.log(payment)
-        const { bankName: accountNumber } = this.state
-        console.log(accountNumber + "fsddffff")
-
-        Calculation.makeCalculation({
-            calculationId: calculationInfo.id,
-
-            source: calculationInfo.source,
-            dest: calculationInfo.dest,
-            startTime: calculationInfo.startTime,
-            endTime: calculationInfo.endTime,
-
-            hostId: firebase.auth().currentUser.uid,
-            users: calculationInfo.users,
-
-            accountBank: this.state.bankAccount, 
-            accountNumber: this.state.bankName,
-            charge: payment
-        }).then(function (res, err) {
-            if (res == false) {
-                console.log('failed')
-            } else {
-                this.props.onSubmit()
-                this.props.offSlidingPanel()
-                // this.setState({charge: 0})
-                console.log('success')
-            }
-        }.bind(this))
-
-
+    calculationMenu() {
 
     }
 
     render() {
-        const calculationInfo = this.props.calculationInfo
-        const userInfo = this.props.userInfo
-
-        // console.log("dsdfg" + this.state.accountBank)
-        // 탑승인원 default를 user length로 주고, 변경 가능하게 하기( 안 탄 사람이 있을수도 있으니까 )
-        // undefined error debugging needed{calculationInfo.users.length} 왜 length만???
-        // modal/overlay select, 은행바꾸기 부분 구현 해야 함. 아마도 interactionmanager이해해서 state 다룰 수 있으면 할만할 듯.
-        // form을 써도 좋을 듯
         return (
-            <KeyboardAvoidingView style={styles.container} behavior='padding'>
-                <View style={styles.pricingCardContainer}>
-                    <Text style={{ fontSize: 30, fontWeight: 'bold', marginBottom: 15 }} >
-                        {calculationInfo.source} ➤ {calculationInfo.dest}
-                    </Text>
-                    <Text style={styles.textTemp}> 탑승인원: {calculationInfo.users.length} </Text>
-                    <View style={styles.inputStyle}>
-                        <Input
-                            placeholder='택시 요금을 입력해 주세요'
-                            autoCompleteType='off'
-                            keyboardType='number-pad'
-                            onChangeText={text => this.setState({ charge: text })}
-                            value={this.state.charge}
-                            inputStyle={{color:'black'}}
-                            label={'택시 요금'}
-                            returnKeyType='done'
-                            autoCompleteType='name'
-                            autoCapitalize='none'
-                            maxLength={19}
-                        />
-                        <Input
-                            placeholder='00000000000000'
-                            autoCompleteType='off'
-                            keyboardType='number-pad'
-                            containerStyle={{paddingTop: 20}}
-                            onChangeText={text => this._handlingCardNumber(text)}
-                            value={this.state.bankAccount}
-                            inputStyle={{color:'black'}}
-                            label={'계좌번호'}
-                            returnKeyType='done'
-                            autoCompleteType='name'
-                            autoCapitalize='none'
-                            maxLength={19}
-                            editable={true}
-                        />
-                        <Input
-                            placeholder='국민은행'
-                            autoCompleteType='off'
-                            containerStyle={{paddingTop: 20}}
-                            returnKeyType='done'
-                            onChangeText={text => this.setState({bankName: text})}
-                            value={this.state.bankName}
-                            inputStyle={{color:'black'}}
-                            label={'은행 정보'}
-                            autoCompleteType='name'
-                            autoCapitalize='none'
-                            maxLength={19}
-                            editable={true}
-                        />
+            <View style={styles.container}>
+             
+                <ScrollView style={{ marginTop: 0 }}>
+                    <View style={{flex:1, backgroundColor:'white'}}>
+                        <Divider></Divider>
+                        <Text style={{ color: '#333', fontWeight:'bold', fontSize: 15, marginTop: 5, marginBottom: 5, marginLeft: 8}}>
+                            {"  받을 목록"}
+                        </Text>
                     </View>
-                    <Divider />
 
-                    <Button
-                        title={"정산하기"}
-                        titleStyle={{ textAlign: 'center', fontWeight: 'bold' }}
-                        buttonStyle={{ borderRadius: 30, width: 250 }}
-                        containerStyle={{ marginBottom: 20, marginTop: 10 }}
-                        icon={{ name: 'local-taxi', color: 'white' }}
-                        onPress={this.calculate}
-                    />
-                </View>
+                    {/* <View style={{}}> */}
+                    {this.state.isLoadingHost ?
+                        <View>
+                            <ActivityIndicator
+                                style={styles.spinner}
+                                size='large'
+                            />
+                        </View>
+                        :
+                        !this.state.hostList.length ?
+                            null
+                            :
 
-            </KeyboardAvoidingView>
+                            <AccordionList
+                                style={styles.accordion}
+                                list={this.state.hostList}
+                                header={this._head}
+                                body={this._body_1}
+                                width='100%'
+                            />
 
+                    }
+                    {/* </View> */}
+                    <View style={{flex:1, backgroundColor:'white'}}>
+                        <Divider></Divider>
+                        <Text style={{ color: '#333', fontWeight:'bold', fontSize: 15, marginTop: 5, marginBottom: 5, marginLeft: 8}}>
+                            {"  보낼 목록"}
+                        </Text>
+                    </View>
+                    {this.state.isLoadingSend ?
+                        <View>
+                            <ActivityIndicator
+                                style={styles.spinner}
+                                size='large'
+                            />
+                        </View>
+                        :
+                        !this.state.sendList.length ? 
+                            null
+                            :
+                            <AccordionList
+                                style={styles.accordion}
+                                list={this.state.sendList} 
+                                header={this._head}
+                                body={this._body_2}
+                                width='100%'
+                            />
 
+                    }
+
+                </ScrollView>
+            </View>
         )
-
     }
-
 }
 
 const styles = StyleSheet.create({
     container: {
-        width: '100%',
-        justifyContent: 'flex-end',
         flex: 1,
-    },
-    pricingCardContainer: {
-        paddingTop: 25,
-        width: '100%',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        backgroundColor: 'white',
-        position: 'absolute',
-        flex: 1,
-        borderTopLeftRadius: 10,
-        borderTopRightRadius: 10,
-    },
-    inputStyle: {
-        width: '90%',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    textTemp: {
-        fontSize: 18,
-        marginBottom: 20
-    },
-    textTemp2: {
-        fontSize: 18,
-        marginTop: 20
-    },
-    modalContainer: {
-        // width: '70%',
-        height: '50%',
         justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-        borderRadius: 20
+        alignItems: "stretch"
     },
-    modalButton:{
-        // width: '70%',
-        marginTop: 10,
-        backgroundColor: '#29AEEC',
-        borderRadius: 3
+    accordion: {
+        flex: 1,
+        // justifyContent: "center"
+        // alignItems: "center"
+    },
+    sdContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        width: '90%',
+        backgroundColor: 'lightgrey',
+        borderRadius: 5,
+        padding: 5,
+        marginLeft: 50,
+        marginRight: 50,
+        marginBottom: 2,
+    },
+    textContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        width: '90%',
+        borderRadius: 5,
+        padding: 5,
+        marginLeft: 10,
+        marginRight: 50,
+        marginBottom: 2
+
+    },
+    header: {
+        // height: 150,
+        // justifyContent: 'center',
+        // alignItems: 'flex-start'
+
+
+    },
+    spinner: {
+        marginTop: 100
+    },
+    buttonGroup: {
+        flexDirection: "row",
+        alignItems: "center"
+    },
+    textDetail: {
+        textAlign: "left",
+        fontSize: 16,
 
     }
-
 })

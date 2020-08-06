@@ -20,7 +20,7 @@ import SettingScreen from './src/screens/SettingScreen'
 import MessengerLobbyScreen from './src/screens/MainTabScreens/MessengerLobbyScreen'
 import EmailAuthScreen from './src/screens/AuthScreens/EmailAuthScreen'
 import ReservationScreen from './src/screens/ReservationScreen'
-import CalculationScreen from './src/screens/MainTabScreens/CalculationScreen'
+import CalculationDetail from './src/components/CalculationDetail'
 
 import ChatRoomScreen from './src/screens/ChatRoomScreen'
 import { SafeAreaProvider } from 'react-native-safe-area-view';
@@ -94,14 +94,6 @@ const MainTabNavigator = () => (
         tabBarLabel: '내 택시방',
         tabBarIcon: ({ color, size }) => (
           <MaterialCommunityIcons name='message-text-outline' color={color} size={size} />
-        )
-      }}
-    />
-    <Tab.Screen name='Calculation' component={CalculationScreen}
-      options={{
-        tabBarLabel: '정산하기',
-        tabBarIcon: ({ color, size }) => (
-          <MaterialCommunityIcons name='cash-multiple' color={color} size={size} />
         )
       }}
     />

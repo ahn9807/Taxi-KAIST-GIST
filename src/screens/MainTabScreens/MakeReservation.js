@@ -81,7 +81,7 @@ export default class MakeReservation extends Component {
     endTimeClickCallback = () => {
         this.setState({ pickerMode: 'end' })
         if(Platform.OS=='android'){
-            this.startTimeButton();
+            this.endTimeButton();
         }else{
             this.setState({ showTimePicker: true })
         }
@@ -149,13 +149,14 @@ export default class MakeReservation extends Component {
     }
 
     startTimeButton(){
-        this.DigitalTimePicker.open()
         this.setState({pickerMode: 'start'})
+        this.DigitalTimePicker.open()
     }
 
     endTimeButton(){
-        this.DigitalTimePicker.open()
         this.setState({pickerMode: 'end'})
+        this.DigitalTimePicker.open()
+
     }
 
 
@@ -362,6 +363,13 @@ export default class MakeReservation extends Component {
                     }}
                     onCancel={() => this.onCancelDigital()}
                     onConfirm={(hour, minute) => this.onConfirmDigital(hour, minute)}
+                    textCancel="취소"
+                    textConfirm="확인"
+                    hourUnit=" 시"
+                    minuteUnit=" 분"
+                    minuteInterval={5}
+                    itemStyle={styles.digitalTimePicker}
+
                     // selec
                 />
             </View>
@@ -447,6 +455,9 @@ const styles = StyleSheet.create({
         fontSize: 23,
         fontWeight: '500',
         color: '#FFF'
+    },
+    digitalTimePicker:{
+        alignItems:'center'
     }
 })
 

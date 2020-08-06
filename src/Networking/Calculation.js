@@ -135,37 +135,48 @@ export function completeCalculation(calculationId){
         .collection('KAIST') //아직 kaist. regionName도 받아와야겠지
         .doc(calculationId)
 
+        // resDoc.get().then(function(doc){
+        //     if(doc.exists){
+        //         const data=doc.data()
+        //         data.
+            
+        // })
+
+        resDoc.set({
+            completed: true
+        }, {merge:true})
+
         docRef.get().then(function(doc) {
   
-            if(doc.exists){
-                const data=doc.data()
+            // if(doc.exists){
+            //     const data=doc.data()
 
-                data.users.forEach((uid)=>{
-                    firebase.firestore()
-                    .collection('History')
-                    .doc(uid)
-                    .collection('Data')
-                    .doc(calculationId)
-                    .set({
-                        source: data.source,
-                        dest: data.dest,
-                        startTime: data.startTime,
-                        endTime: data.endTime,
-                        hostId: data.hostId,
-                        users: data.users,
-                        accountBank: data.accountBank,
-                        accountNumber: data.accountNumber,
-                        charge: data.charge
-                    })
+            //     data.users.forEach((uid)=>{
+            //         firebase.firestore()
+            //         .collection('History')
+            //         .doc(uid)
+            //         .collection('Data')
+            //         .doc(calculationId)
+            //         .set({
+            //             source: data.source,
+            //             dest: data.dest,
+            //             startTime: data.startTime,
+            //             endTime: data.endTime,
+            //             hostId: data.hostId,
+            //             users: data.users,
+            //             accountBank: data.accountBank,
+            //             accountNumber: data.accountNumber,
+            //             charge: data.charge
+            //         })
                     
-                })
+            //     })
 
                 docRef.delete()
-                resDoc.delete()
-
-
-            }
+                // resDoc.delete()
+            // }
         })
+
+
         resolve(false)
     })
 

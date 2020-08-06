@@ -1,7 +1,8 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { StyleSheet, View, Text, ScrollView, FlatList, TouchableOpacity, InteractionManager, KeyboardAvoidingView,
-        ActivityIndicator } from "react-native";
-import { Button, ListItem, Icon, ButtonGroup, Header } from "react-native-elements";
+        ActivityIndicator, 
+        Platform} from "react-native";
+import { Button, ListItem, Icon, ButtonGroup, Header, Divider } from "react-native-elements";
 import firebase from 'firebase'
 import 'firebase/firestore'
 import * as Messenger from '../../Networking/Messenger'
@@ -10,12 +11,12 @@ import * as Reservation from "../../Networking/Reservation"
 import * as Calculation from "../../Networking/Calculation"
 
 import { NavigationEvents } from 'react-navigation';
-import CalculationDetail from "../../components/CalculationDetail"
+import MakeCalculationDetail from "../../components/MakeCalculationDetail"
 import SlidingUpPanel from 'rn-sliding-up-panel'
-import { Divider } from "react-native-paper";
+import CalculationDetail from "../../components/CalculationDetail";
 
 
-export default class MessengerLobbyScreen extends Component {
+export default class MessengerLobbyScreen extends PureComponent {
     constructor(props) {
         super(props)
         this.state = {
@@ -40,7 +41,12 @@ export default class MessengerLobbyScreen extends Component {
             },
             calculationIdList: [], 
             disabled: false,
-            chatPreview:[]
+            chatPreview:[],
+
+            hostList: [],
+            sendList: [],
+            isLoadingHost: true,
+            isLoadingSend: true,
         };
  
         firebase.firestore() 
@@ -60,9 +66,13 @@ export default class MessengerLobbyScreen extends Component {
    }
 
     handleReloadPress = () => { 
+
         this.setState({
             isLoadingCalculation: true,
-            isLoadingChat: true
+            isLoadingChat: true,
+            isLoadingHost: true,
+            isLoadingSend: true,
+            toRefresh: true
         })
         
         Messenger.setRegion('KAIST')
@@ -78,9 +88,44 @@ export default class MessengerLobbyScreen extends Component {
         Calculation.fetchCalculationData().then(function(res, err){
             this.setState({
                 calculationIdList: Calculation.searchCalculationIdsByUId(firebase.auth().currentUser.uid),
-                isLoadingCalculation: false
+                isLoadingCalculation: false,
+                hostList: Calculation.searchCalculationHostByUId(firebase.auth().currentUser.uid),
+                sendList: Calculation.searchCalculationSendByUId(firebase.auth().currentUser.uid),
+                isLoadingSend: false,
+                isLoadingHost: false
             })
         }.bind(this))
+        
+    }
+
+    
+    handleReloadHost = () => { 
+
+        this.setState({
+            isLoadingCalculation: true,
+            // isLoadingChat: true,
+            isLoadingHost: true,
+            // isLoadingSend: true,
+            toRefresh: true
+        })
+        
+        Messenger.setRegion('KAIST')
+        Messenger.fetchReservationData().then(function (res, err) {
+            this.setState({
+                calculationChatList: Messenger.getCalculationChatRoomName(),
+            })
+            // this.previewLoad()
+        }.bind(this)
+        )
+        Calculation.fetchCalculationData().then(function(res, err){
+            this.setState({
+                calculationIdList: Calculation.searchCalculationIdsByUId(firebase.auth().currentUser.uid),
+                isLoadingCalculation: false,
+                hostList: Calculation.searchCalculationHostByUId(firebase.auth().currentUser.uid),
+                isLoadingHost: false
+            })
+        }.bind(this))
+        
     }
 
     componentDidMount() {
@@ -166,13 +211,13 @@ export default class MessengerLobbyScreen extends Component {
     keyExtractor = (item, index) => index.toString()
 
     calculationOnPress = (item) => {
-        console.log("???")
+        // console.log("???")
         InteractionManager.runAfterInteractions(() => {
             this.setState({ calculationInfo: item })
+            
         }).done(function (res) {
             console.log(item.users.length)
-            if (item.users.length > 0) { //나중에 1로 고치면됨.
-                console.log("눌렀는데");
+            if (item.users.length > 1) { //나중에 1로 고치면됨.
                 this._panel.show()
             } else {
                 alert("두 명 이상 타야 정산이 가능합니다.")
@@ -183,12 +228,16 @@ export default class MessengerLobbyScreen extends Component {
     
     onCalculation=()=>{
         console.log("oncalculation")
-        this.setState({isLoadingCalculation: true})
+        this.setState({isLoadingCalculation: true,
+                    isLoadingHost:true
+        })
         
         Calculation.fetchCalculationData().then(function(res, err){
             this.setState({
                 calculationIdList: Calculation.searchCalculationIdsByUId(firebase.auth().currentUser.uid),
-                isLoadingCalculation: false
+                isLoadingCalculation: false,
+                hostList: Calculation.searchCalculationHostByUId(firebase.auth().currentUser.uid),
+                isLoadingHost: false
             })
         }.bind(this))
     }
@@ -258,9 +307,6 @@ export default class MessengerLobbyScreen extends Component {
         </View>
     )
 
-
-
-
     render() {
         return (
                 <View style={styles.container}>
@@ -278,12 +324,22 @@ export default class MessengerLobbyScreen extends Component {
                     //     </View>
                     //     :
                         <ScrollView>
+                            <CalculationDetail 
+                                hostList= {this.state.hostList}
+                                sendList= {this.state.sendList}
+                                isLoadingSend= {this.state.isLoadingSend}
+                                isLoadingHost= {this.state.isLoadingHost}
+                                handleReloadPress={this.handleReloadPress}
+                                handleReloadHost={this.handleReloadHost}
+                            />
 
                             <View style={{flex:1, backgroundColor:'white'}}>
                                 <Divider></Divider>
                                 <Text style={{ color: '#333', fontWeight:'bold', fontSize: 15, marginTop: 5, marginBottom: 5, marginLeft: 8}}>
                                     {"  탑승 예정"}
                                 </Text>
+                                <Divider></Divider>
+
                             </View>
                             {!this.state.isLoadingChat  ?
                                 <FlatList
@@ -299,14 +355,13 @@ export default class MessengerLobbyScreen extends Component {
                                 </View>
                             }
 
-
-
-
                             <View style={{flex:1, backgroundColor:'white'}}>
                                 <Divider></Divider>
                                 <Text style={{ color: '#333', fontWeight:'bold', fontSize: 15, marginTop: 5, marginBottom: 5, marginLeft: 8}}>
                                     {"  탑승 완료"}
                                 </Text>
+                                <Divider></Divider>
+
                             </View>
                             {!this.state.isLoadingCalculation?
                                 <FlatList
@@ -352,29 +407,21 @@ export default class MessengerLobbyScreen extends Component {
                             onPress={this.closeModal} 
                             containerStyle={{width: 100}}/>
                         </TouchableOpacity>
-                    </Modal>
-{/* 
-                <Button type='clear'
-                    
-                    icon={<Icon name='cached'
-                        color='#5d5d5d'
-                        onPress={this.handleReloadPress}>
-                    </Icon>}>
-
-                </Button> */}
+                    </Modal>      
 
                 <SlidingUpPanel
                     ref={c => this._panel = c}
                     backdropOpacity={0.5}
-                    friction={0.7}
+                    friction={Platform.OS=='android'?  0.1 : 0.7}
                     allowDragging={Platform.OS == 'android' ? false : true}
                 >
 
-                    <CalculationDetail
+                    <MakeCalculationDetail
                         calculationInfo={this.state.calculationInfo}
                         userInfo={this.state.userInfo}
-                        offSlidingPanel={this.offSlidingPanel}
+                        offSlidingPanel={()=> this.offSlidingPanel()}
                         onSubmit={this.onCalculation}
+                        handleReloadPress={this.handleReloadPress}
                     />
                     {/* <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={0}/> */}
                 </SlidingUpPanel>

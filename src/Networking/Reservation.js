@@ -311,7 +311,6 @@ export function removeReservationById(reservationId, fullName) {
         .doc(reservationId)
 
         // 사람 없는 채팅방도 삭제
-        
         var chatDoc=firebase.firestore()
             .collection('ChatRooms')
             .doc(reservationId)
