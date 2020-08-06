@@ -130,6 +130,7 @@ export default class MessengerLobbyScreen extends Component {
             username: this.state.username,
             avatarUri: this.state.avatarUri,
             roomname: roomname,
+            fullname: this.state.userInfo.fullName
         })
 
     }
@@ -149,7 +150,7 @@ export default class MessengerLobbyScreen extends Component {
     }
 
     leaveReservation = () => {
-        Reservation.removeReservationById(this.state.modalChatId).then(
+        Reservation.removeReservationById(this.state.modalChatId, this.state.userInfo.fullName).then(
             Messenger.fetchReservationData().then(function (res, err) {
                 this.setState({
                     availableChatList: Messenger.getAvailableChatRoomName(),
