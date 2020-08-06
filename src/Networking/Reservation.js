@@ -358,7 +358,7 @@ export function removeReservationById(reservationId, fullName) {
                         // console.log("dddd")
                         docRef.set({
                             users: tempArray,
-
+                            fullNames: fullNameArray
                         }, { merge: true })
                     }
                     

@@ -271,11 +271,12 @@ export default class MessengerLobbyScreen extends Component {
                         rightComponent={<Button type='clear' titleStyle={{color:'black'}} icon={<Icon name='menu' type='feather' color='black' onPress={this.messengerLobbyMenu}></Icon>}></Button>}
                         leftComponent={{ text: ' 내 택시 팟', style: {color: 'black', fontWeight:'bold', fontSize: 23, }}}
                     />
-                    {this.state.isLoadingChat || this.state.isLoadingCalculation ? 
-                        <View style={{flex:1, alignItems:'center', marginTop: 200}}>
-                            <ActivityIndicator size='large'/>
-                        </View>
-                        :
+                    {
+                    // this.state.isLoadingChat || this.state.isLoadingCalculation ? 
+                    //     <View style={{flex:1, alignItems:'center', marginTop: 200}}>
+                    //         <ActivityIndicator size='large'/>
+                    //     </View>
+                    //     :
                         <ScrollView>
 
                             <View style={{flex:1, backgroundColor:'white'}}>
@@ -284,7 +285,7 @@ export default class MessengerLobbyScreen extends Component {
                                     {"  탑승 예정"}
                                 </Text>
                             </View>
-                            {!this.state.isLoadingChat && !this.state.isLoadingChat && this.state.availableChatList.length != 0 ?
+                            {!this.state.isLoadingChat  ?
                                 <FlatList
                                 style={styles.flatlist}
                                 data={this.state.availableChatList}
@@ -293,6 +294,7 @@ export default class MessengerLobbyScreen extends Component {
                                 />
                                 :
                                 <View>
+                                    <ActivityIndicator size='large'/>
 
                                 </View>
                             }
@@ -306,7 +308,7 @@ export default class MessengerLobbyScreen extends Component {
                                     {"  탑승 완료"}
                                 </Text>
                             </View>
-                            {!this.state.isLoadingChat && !this.state.isLoadingCalculation && this.state.calculationChatList.length != 0 ?
+                            {!this.state.isLoadingCalculation?
                                 <FlatList
                                 style={styles.flatlist}
                                 data={this.state.calculationChatList}
@@ -315,6 +317,7 @@ export default class MessengerLobbyScreen extends Component {
                                 />
                                 :
                                 <View>
+                                    <ActivityIndicator size='large'/>
 
                                 </View>
                             }

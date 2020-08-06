@@ -22,7 +22,7 @@ export function fetchCalculationData() {
 
 
 export function makeCalculation(item){
-    console.log(item)
+    // console.log(item)
     console.log("make cal")
 
     return new Promise(function(resolve, reject) {

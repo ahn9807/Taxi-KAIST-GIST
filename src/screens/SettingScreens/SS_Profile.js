@@ -163,7 +163,7 @@ export default class SS_Profile extends Component {
                             title={this.state.image_uri == undefined ? '?' : this.state.displayName[0]}
                             size='xlarge'
                             showEditButton
-                            onPress={this.onClickProfileImage}
+                            onPress={this.changeProfileImage}
                             source={{uri: this.state.image_uri}}
                             renderPlaceholderContent={this.state.image_uri == undefined ? <Text>title</Text> : <ActivityIndicator size='large'></ActivityIndicator>}
                         />

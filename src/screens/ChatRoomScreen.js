@@ -57,6 +57,7 @@ export default class ChatRoomScreen extends Component {
       .params
       .username;
 
+    
     const avatarUri = this.props.navigation
       .dangerouslyGetState()
       .routes
@@ -65,11 +66,21 @@ export default class ChatRoomScreen extends Component {
       .avatarUri;
 
 
-    return {
-      name: username,
-      _id: this.uid(),
-      avatar: avatarUri
+    if(avatarUri==undefined){
+      return{
+        name: username,
+        _id: this.uid(),
+        avatar: "https://firebasestorage.googleapis.com/v0/b/taekseung-a118b.appspot.com/o/image%2FprofileImages%2FQbFfEvhPhpOvxAxDlA9k5BXgk6t2?alt=media&token=87f0106b-cf9a-416b-886b-3e8a66e898ea"
+      }
     }
+    else{
+      return {
+        name: username,
+        _id: this.uid(),
+        avatar: avatarUri
+      }
+    }
+
   }
 
   refm() {

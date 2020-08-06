@@ -4,6 +4,7 @@ import {
     StyleSheet,
     View,
     TouchableOpacity,
+    Platform,
 } from "react-native"
 import { Button, Icon, Header, Input } from "react-native-elements";
 import { color } from 'react-native-reanimated';
@@ -34,6 +35,7 @@ export default class MakeReservation extends Component {
             endTime: 0,
             comment: null,
             userInfo:null,
+
 
         }
         firebase.firestore() 
@@ -69,12 +71,20 @@ export default class MakeReservation extends Component {
 
     startTimeClickCallback = () => {
         this.setState({ pickerMode: 'start' })
-        this.setState({ showTimePicker: true })
+        if(Platform.OS=='android'){
+            this.startTimeButton();
+        }else{
+            this.setState({ showTimePicker: true })
+        }
     }
 
     endTimeClickCallback = () => {
         this.setState({ pickerMode: 'end' })
-        this.setState({ showTimePicker: true })
+        if(Platform.OS=='android'){
+            this.startTimeButton();
+        }else{
+            this.setState({ showTimePicker: true })
+        }
     }
 
 
@@ -119,6 +129,35 @@ export default class MakeReservation extends Component {
             }.bind(this))
         }
     }
+
+    onCancelDigital() {
+        this.DigitalTimePicker.close();
+      }
+     
+    onConfirmDigital(hour, minute) {
+        this.setState({ time: `${hour}:${minute}` });
+        if(this.state.pickerMode=='start'){
+            this.setState({
+                startTime: new Date(this.state.date).setHours(0,0,0,0) + (hour * 1000 * 60 * 60 + minute * 1000 * 60),
+            })    
+        }else{
+            this.setState({
+                endTime: new Date(this.state.date).setHours(0,0,0,0) + (hour * 1000 * 60 * 60 + minute * 1000 * 60),
+            }) 
+        }
+        this.DigitalTimePicker.close();
+    }
+
+    startTimeButton(){
+        this.DigitalTimePicker.open()
+        this.setState({pickerMode: 'start'})
+    }
+
+    endTimeButton(){
+        this.DigitalTimePicker.open()
+        this.setState({pickerMode: 'end'})
+    }
+
 
 
     render() {
@@ -316,6 +355,14 @@ export default class MakeReservation extends Component {
                         }
                     }
                     }
+                />
+                <DigitalTimePicker
+                    ref={ref => {
+                        this.DigitalTimePicker = ref;
+                    }}
+                    onCancel={() => this.onCancelDigital()}
+                    onConfirm={(hour, minute) => this.onConfirmDigital(hour, minute)}
+                    // selec
                 />
             </View>
         )
