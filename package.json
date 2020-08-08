@@ -19,6 +19,7 @@
     "expo": "~36.0.0",
     "expo-blur": "^8.0.0",
     "expo-constants": "^8.0.0",
+    "expo-file-system": "^9.1.0",
     "expo-image-picker": "^8.0.2",
     "expo-permissions": "^8.0.0",
     "firebase": "^7.8.1",
@@ -60,6 +61,7 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "rn-sliding-up-panel": "^2.4.3",
+    "shorthash": "0.0.2",
     "yarn": "^1.22.4"
   },
   "devDependencies": {

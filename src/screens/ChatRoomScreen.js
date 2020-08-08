@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, TouchableOpacity, Platform } from 'react-native';
+import { View, StyleSheet, KeyboardAvoidingView, TouchableOpacity, Platform, Image } from 'react-native';
 import { GiftedChat } from "react-native-gifted-chat";
 import firebase from 'firebase'
 import { Header , Button, Icon, Text, Tooltip, Divider} from 'react-native-elements'
 import 'firebase/firestore'
 import Fire from '../config/Firebase'
 import * as Reservation from "../Networking/Reservation"
+import CacheImage from '../components/CacheImage';
 // import PopoverTooltip from 'react-native-popover-tooltip';
 // import ReactNativeTooltipMenu from 'react-native-tooltip-menu';
 
@@ -212,8 +213,13 @@ export default class ChatRoomScreen extends Component {
           user={this.user}
           renderUsernameOnMessage={true}
           showUserAvatar={true}
-          // renderAvatar={}
+          renderAvatar={(obj) => { console.log(obj.currentMessage.user.avatar); return( 
+          <CacheImage
+            uri={obj.currentMessage.user.avatar}
+            style={{ width: 30, height: 30, borderRadius: 90 }}
+          />)}}
           placeholder={' 메시지 입력 ➤'}
+          showUserAvatar={true}
           // renderTime={(props)=> props.currentMessage.createdAt.toDate()}
         />
         {
