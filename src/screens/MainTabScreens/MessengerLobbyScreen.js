@@ -275,6 +275,18 @@ export default class MessengerLobbyScreen extends PureComponent {
                         // 정산 상태, 채팅방 인원에 따라 style 변경 해줄거임!
                     <View style={{backgroundColor: "#FFF", position:'absolute', top: '30%', right:'2.5%'}}>
                         {
+                            item.completed?
+                            <Button 
+                            type='outline'
+                            title='정산완료'
+                            titleStyle={{fontSize: 15, fontWeight: '500'}}
+                            disabled={true}
+                            containerStyle={{paddingLeft: 20, width: 90}}
+                            buttonStyle={{borderRadius: 30, padding: 3, borderWidth: 2}}
+                            onPress={()=> {}}
+                            />
+                            :
+
                             this.state.calculationIdList.includes(item.id)
                             ?
                             <Button 
@@ -414,6 +426,7 @@ export default class MessengerLobbyScreen extends PureComponent {
                     backdropOpacity={0.5}
                     friction={Platform.OS=='android'?  0.1 : 0.7}
                     allowDragging={Platform.OS == 'android' ? false : true}
+                    
                 >
 
                     <MakeCalculationDetail

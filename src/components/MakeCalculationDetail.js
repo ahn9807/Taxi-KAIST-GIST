@@ -28,14 +28,14 @@ export default class CalculationDetail extends Component { //클래스형 컴포
         }
 
         this.setState({
-            accountNumber: this.props.userInfo.accountNumber,
-            accountBank: this.props.userInfo.accountBank
+            bankName: this.props.userInfo.bankName,
+            bankAccount: this.props.userInfo.bankAccount
         })
 
         this.tryToSetAccountFirst()
     }
 
-    async tryToSetAccountFirst() {
+    async tryToSetAccountFirst() { //사실상 prop에서만 받아오기 때문에 안쓰일듯. 
         const bankAccount = await AsyncStorage.getItem('@loggedInUserID:backAccount')
         const bankName = await AsyncStorage.getItem('@loggedInUserID:bankName')
         if(bankAccount != null && bankName !=null) {
@@ -52,10 +52,10 @@ export default class CalculationDetail extends Component { //클래스형 컴포
             .then(function(user) {
                 if(user.exists) {
                     var bankAccount = user.data().bankAccount
-                    var backName = user.data().bankName
+                    var bankName = user.data().bankName
 
                     this.setState({
-                        backName: backName,
+                        bankName: bankName,
                         bankAccount: bankAccount,
                     })
                 }
@@ -66,8 +66,8 @@ export default class CalculationDetail extends Component { //클래스형 컴포
     componentWillReceiveProps(nextProps) {
         console.log("recive")
         this.setState({
-            accountNumber: nextProps.userInfo.accountNumber,
-            accountBank: nextProps.userInfo.accountBank
+            bankAccount: nextProps.userInfo.accountNumber,
+            bankName: nextProps.userInfo.accountBank
         })
     }
 
@@ -89,8 +89,8 @@ export default class CalculationDetail extends Component { //클래스형 컴포
 
         const payment = (this.state.charge / calculationInfo.users.length).toFixed(0)
         console.log(payment)
-        const { bankName: accountNumber } = this.state
-        console.log(accountNumber + "fsddffff")
+        const { bankName: accountBank } = this.state
+        console.log(accountBank + "fsddffff")
 
         Calculation.makeCalculation({
             calculationId: calculationInfo.id,
@@ -103,8 +103,8 @@ export default class CalculationDetail extends Component { //클래스형 컴포
             hostId: firebase.auth().currentUser.uid,
             users: calculationInfo.users,
 
-            accountBank: this.state.bankAccount, 
-            accountNumber: this.state.bankName,
+            accountBank: this.state.bankName, 
+            accountNumber: this.state.bankAccount,
             charge: payment
         }).then(function (res, err) {
             if (res == false) {
@@ -128,12 +128,8 @@ export default class CalculationDetail extends Component { //클래스형 컴포
     render() {
         const calculationInfo = this.props.calculationInfo
         const userInfo = this.props.userInfo
+        //userinfo 를 렌더 처음 할때만 가져오는 문제 있음. 메이저한 문제는 아니지만... 
 
-        // console.log("dsdfg" + this.state.accountBank)
-        // 탑승인원 default를 user length로 주고, 변경 가능하게 하기( 안 탄 사람이 있을수도 있으니까 )
-        // undefined error debugging needed{calculationInfo.users.length} 왜 length만???
-        // modal/overlay select, 은행바꾸기 부분 구현 해야 함. 아마도 interactionmanager이해해서 state 다룰 수 있으면 할만할 듯.
-        // form을 써도 좋을 듯
         return (
             <KeyboardAvoidingView style={styles.container} behavior='padding'>
                 <View style={styles.pricingCardContainer}>
@@ -156,12 +152,17 @@ export default class CalculationDetail extends Component { //클래스형 컴포
                             maxLength={19}
                         />
                         <Input
-                            placeholder='00000000000000'
+                            placeholder={
+                                userInfo.bankAccount!=undefined?
+                                null
+                                :
+                                '계좌 번호를 입력해주세요'
+                            }
                             autoCompleteType='off'
                             keyboardType='number-pad'
                             containerStyle={{paddingTop: 20}}
                             onChangeText={text => this._handlingCardNumber(text)}
-                            value={this.state.bankAccount}
+                            value={userInfo.bankAccount}
                             inputStyle={{color:'black'}}
                             label={'계좌번호'}
                             returnKeyType='done'
@@ -171,12 +172,16 @@ export default class CalculationDetail extends Component { //클래스형 컴포
                             editable={true}
                         />
                         <Input
-                            placeholder='국민은행'
+                            placeholder={
+                                userInfo.bankName!= undefined?
+                                null:
+                                '은행을 입력해주세요'
+                            }
                             autoCompleteType='off'
                             containerStyle={{paddingTop: 20}}
                             returnKeyType='done'
                             onChangeText={text => this.setState({bankName: text})}
-                            value={this.state.bankName}
+                            value={userInfo.bankName}
                             inputStyle={{color:'black'}}
                             label={'은행 정보'}
                             autoCompleteType='name'
