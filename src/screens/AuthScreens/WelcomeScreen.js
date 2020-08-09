@@ -73,10 +73,6 @@ export default class WelcomeScreen extends Component {
         }
     }
 
-    componentDidMount() {
-        AskPermission()
-    }
-
     onPressLogin = () => {
         this.setState({
             isLoading: true,

@@ -21,6 +21,7 @@ import GestureRecognizer from "react-native-swipe-gestures";
 import EnterReservationPanel from "../../components/EnterReservationPanel"
 import firebase from 'firebase'
 import 'firebase/firestore'
+import { AskPermission } from "../../components/LocalNotification";
 
 
 
@@ -60,6 +61,9 @@ export default class NewHomeScreen extends Component{
         this.handleReloadPress()
     }
 
+    componentDidMount() {
+        AskPermission()
+    }
 
     componentWillMount() {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
