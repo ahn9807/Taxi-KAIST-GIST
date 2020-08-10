@@ -1,9 +1,10 @@
-import * as Notifications from 'expo-notifications'
+import { Notifications } from 'expo'
 import * as Permissions from 'expo-permissions'
 import Constants from 'expo-constants'
 import { AsyncStorage } from 'react-native'
 import firebase from 'firebase'
 import 'firebase/firestore'
+import { Tile } from 'react-native-elements'
 
 var notification_token = null
 
@@ -25,15 +26,15 @@ export async function LocalNotification(time, title, body) {
     //)
 }
 
-export async function sendPushNotification(expoPushToken) {
+export async function sendPushNotification(expoPushToken, title, body, data) {
   console.log('push notification sended')
   
   const message = {
-    to: notification_token,
+    to: expoPushToken,
     sound: 'default',
-    title: 'Original Title',
-    body: 'And here is the body!',
-    data: { data: 'goes here' },
+    title: title,
+    body: body,
+    data: { data: data },
   }
 
   await fetch('https://exp.host/--/api/v2/push/send', {

@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, TouchableOpacity, Platform, Image } from 'react-native';
 import { GiftedChat } from "react-native-gifted-chat";
 import firebase from 'firebase'
-import { Header , Button, Icon, Text, Tooltip, Divider} from 'react-native-elements'
+import { Header, Button, Icon, Text, Tooltip, Divider } from 'react-native-elements'
 import 'firebase/firestore'
 import Fire from '../config/Firebase'
 import * as Reservation from "../Networking/Reservation"
 import CacheImage from '../components/CacheImage';
+import { sendPushNotification } from '../components/LocalNotification';
 // import PopoverTooltip from 'react-native-popover-tooltip';
 // import ReactNativeTooltipMenu from 'react-native-tooltip-menu';
 
@@ -15,24 +16,29 @@ export default class ChatRoomScreen extends Component {
     super(props)
     this.state = {
       messages: [],
-      roomname: '', 
-
+      roomname: '',
+      regionName: 'KAIST',
+      users: [],
       // tabBarVisible: false,
     }
-  
+
     // console.log(this.props.route)
 
 
   }
- 
 
   static navigationOptions = ({ props }) => ({
     title: (props.navigation.state.params || {}).name,
-    
+
   }
   );
 
   componentDidMount() {
+    const roomname = this.props.navigation
+    .dangerouslyGetState()
+    .routes
+    .find(v => v.name === 'ChatRoom')
+    .params.chatId
 
     this.on(message => {
       // console.log(message);
@@ -40,8 +46,20 @@ export default class ChatRoomScreen extends Component {
         messages: GiftedChat.append(previousState.messages, message)
       }))
     })
-
-
+    firebase.
+      firestore().
+      collection(this.state.regionName).
+      doc(roomname).
+      get().then(function (room) {
+        if (room.exists) {
+          this.setState({
+            users: room.data().users
+          })
+        }
+      }.bind(this))
+      .catch(function (err) {
+        alert(err.message)
+      })
   }
 
   componentWillMount() {
@@ -57,7 +75,7 @@ export default class ChatRoomScreen extends Component {
       .params
       .username;
 
-    
+
     const avatarUri = this.props.navigation
       .dangerouslyGetState()
       .routes
@@ -66,14 +84,14 @@ export default class ChatRoomScreen extends Component {
       .avatarUri;
 
 
-    if(avatarUri==undefined){
-      return{
+    if (avatarUri == undefined) {
+      return {
         name: username,
         _id: this.uid(),
         avatar: "https://firebasestorage.googleapis.com/v0/b/taekseung-a118b.appspot.com/o/image%2FprofileImages%2FQbFfEvhPhpOvxAxDlA9k5BXgk6t2?alt=media&token=87f0106b-cf9a-416b-886b-3e8a66e898ea"
       }
     }
-    else{
+    else {
       return {
         name: username,
         _id: this.uid(),
@@ -136,14 +154,17 @@ export default class ChatRoomScreen extends Component {
       // console.log(message)
       this.append(message)
     }
+    for(let i=0;i<this.state.users.length;i++) {
+      sendPushNotification(this.state.users[i])
+    }
   };
 
 
   append = message => this.refm().add(message)
 
-  handleOnOpenMenu=()=> {
+  handleOnOpenMenu = () => {
     console.log(this.state.roomname)
-  } 
+  }
 
   handleBackPress = () => {
     this.props.navigation.navigate('ChatNavigator')
@@ -152,29 +173,29 @@ export default class ChatRoomScreen extends Component {
   leaveReservation = () => {
 
     const chatId = this.props.navigation
-    .dangerouslyGetState()
-    .routes
-    .find(v => v.name === 'ChatRoom')
-    .params
-    .chatId;
+      .dangerouslyGetState()
+      .routes
+      .find(v => v.name === 'ChatRoom')
+      .params
+      .chatId;
 
-    const fullName=this.props.navigation
-    .dangerouslyGetState()
-    .routes
-    .find(v => v.name === 'ChatRoom')
-    .params
-    .fullName;
+    const fullName = this.props.navigation
+      .dangerouslyGetState()
+      .routes
+      .find(v => v.name === 'ChatRoom')
+      .params
+      .fullName;
 
 
-    Reservation.removeReservationById(chatId, fullName).then(function(){
-      
-      setTimeout(()=> {this.props.navigation.navigate('ChatNavigator')}, 300)
-       // 리얼 개야매코드 이러면 안되는데 ㅠㅠㅠㅠㅠㅠㅠ 
-       //아마 navigate할때 바로 안돌려져서 한거일듯. 
+    Reservation.removeReservationById(chatId, fullName).then(function () {
+
+      setTimeout(() => { this.props.navigation.navigate('ChatNavigator') }, 300)
+      // 리얼 개야매코드 이러면 안되는데 ㅠㅠㅠㅠㅠㅠㅠ 
+      //아마 navigate할때 바로 안돌려져서 한거일듯. 
 
     }.bind(this)
     );
-}
+  }
 
   render() {
     return (
@@ -190,15 +211,15 @@ export default class ChatRoomScreen extends Component {
               height={100}
               containerStyle={styles.tooltip}
               popover={
-                <View style={{width: '100%'}}> 
+                <View style={{ width: '100%' }}>
                   <TouchableOpacity style={styles.menuComponent}
-                    onPress={()=> {this.leaveReservation()}}
+                    onPress={() => { this.leaveReservation() }}
                   >
-                    <Text style={{color: '#000', textAlign: 'center', fontWeight:'bold', fontSize: 16}}> 방 나가기 </Text>
+                    <Text style={{ color: '#000', textAlign: 'center', fontWeight: 'bold', fontSize: 16 }}> 방 나가기 </Text>
                   </TouchableOpacity>
-                  <Divider/>
+                  <Divider />
                   <TouchableOpacity style={styles.menuComponent}>
-                    <Text style={{color: '#000', textAlign: 'center', fontWeight:'bold', fontSize: 16}}> 신고하기 </Text>
+                    <Text style={{ color: '#000', textAlign: 'center', fontWeight: 'bold', fontSize: 16 }}> 신고하기 </Text>
                   </TouchableOpacity>
                 </View>
               }>
@@ -213,20 +234,22 @@ export default class ChatRoomScreen extends Component {
           user={this.user}
           renderUsernameOnMessage={true}
           showUserAvatar={true}
-          renderAvatar={(obj) => { console.log(obj.currentMessage.user.avatar); return( 
-          <CacheImage
-            uri={obj.currentMessage.user.avatar}
-            style={{ width: 30, height: 30, borderRadius: 90 }}
-          />)}}
+          renderAvatar={(obj) => {
+            console.log(obj.currentMessage.user.avatar); return (
+              <CacheImage
+                uri={obj.currentMessage.user.avatar}
+                style={{ width: 30, height: 30, borderRadius: 90 }}
+              />)
+          }}
           placeholder={' 메시지 입력 ➤'}
           showUserAvatar={true}
-          // renderTime={(props)=> props.currentMessage.createdAt.toDate()}
+        // renderTime={(props)=> props.currentMessage.createdAt.toDate()}
         />
         {
-          Platform.OS=='android'?
-          <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={0} />
-          :
-          null
+          Platform.OS == 'android' ?
+            <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={0} />
+            :
+            null
         }
 
       </View>
@@ -239,19 +262,19 @@ const styles = StyleSheet.create({
   chat: {
     flex: 1
   },
-  tooltip:{
+  tooltip: {
     backgroundColor: '#FFFFFF',
-  
+
   },
-  menuComponent:{
+  menuComponent: {
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
     height: 50
   }
 });
 
-function n(n){
-  return n > 9 ? "" + n: "0" + n;
+function n(n) {
+  return n > 9 ? "" + n : "0" + n;
 }
 
 function FormattedDate(date) {

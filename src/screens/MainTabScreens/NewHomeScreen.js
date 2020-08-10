@@ -21,7 +21,8 @@ import GestureRecognizer from "react-native-swipe-gestures";
 import EnterReservationPanel from "../../components/EnterReservationPanel"
 import firebase from 'firebase'
 import 'firebase/firestore'
-import { AskPermission } from "../../components/LocalNotification";
+import { AskPermission, sendPushNotification } from "../../components/LocalNotification";
+import { Notifications } from 'expo'
 
 
 
@@ -94,9 +95,6 @@ export default class NewHomeScreen extends Component{
 
     };
 
-
-
-    
     handleReloadPress= () =>{
         console.log("heheheheh")
         this.setState({
