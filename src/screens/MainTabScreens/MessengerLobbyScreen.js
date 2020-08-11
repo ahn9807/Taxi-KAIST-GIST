@@ -259,11 +259,11 @@ export default class MessengerLobbyScreen extends PureComponent {
                     // key={i}
                     style={styles.chatList}
                     subtitle={<Text style={{color: '#0078CD'}}>{' ' + FormattedDate(item.startTime) + ' ~ ' + FormattedDate(item.endTime)}</Text>}
-                    title={' ' + item.source + ' ➤ ' + item.dest + ' '}
+                    title={' ' + item.source + ' ➤ ' + item.dest + ' ' + Messenger.getUnreadMessage(item.id, firebase.auth().currentUser.uid)}
                     // rightIcon={{ name: 'chevron-right' }}
                     //bottomDivider
                     badge={{ value: ' ' + item.users.length + ' ' }}
-                    onPress={() => this.GoChat(item.id, ' ' + item.source + ' ➤ ' + item.dest + ' ')}
+                    onPress={() => {this.GoChat(item.id, ' ' + item.source + ' ➤ ' + item.dest + ' ')}}
                     onLongPress={() => this.openModal({
                         title: ' ' + item.source + ' ➤ ' + item.dest + ' ',
                         time: '  ' + FormattedDate(item.startTime) + ' 부터' + '  ' + FormattedDate(item.endTime) + ' 까지',

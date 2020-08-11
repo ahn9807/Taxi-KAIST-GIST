@@ -8,6 +8,7 @@ import Fire from '../config/Firebase'
 import * as Reservation from "../Networking/Reservation"
 import CacheImage from '../components/CacheImage';
 import { sendPushNotification } from '../components/LocalNotification';
+import { setUnreadMessage, setUnreadMessageToZero } from '../Networking/Messenger';
 // import PopoverTooltip from 'react-native-popover-tooltip';
 // import ReactNativeTooltipMenu from 'react-native-tooltip-menu';
 
@@ -19,6 +20,7 @@ export default class ChatRoomScreen extends Component {
       roomname: '',
       regionName: 'KAIST',
       users: [],
+      chatRoomId: null,
       // tabBarVisible: false,
     }
 
@@ -39,6 +41,10 @@ export default class ChatRoomScreen extends Component {
     .routes
     .find(v => v.name === 'ChatRoom')
     .params.chatId
+
+    this.setState({
+      chatRoomId: roomname,
+    })
 
     this.on(message => {
       // console.log(message);
@@ -156,6 +162,13 @@ export default class ChatRoomScreen extends Component {
     }
     for(let i=0;i<this.state.users.length;i++) {
       sendPushNotification(this.state.users[i])
+      console.log(this.state.users[i])
+      if(this.state.users[i] != firebase.auth().currentUser.uid) {
+        console.log('test')
+        setUnreadMessage(this.state.chatRoomId, this.state.users[i])
+      } else {
+        setUnreadMessageToZero(this.state.chatRoomId, this.state.users[i])
+      }
     }
   };
 
