@@ -137,7 +137,8 @@ const ChatNavigator = () => (
 )
 
 function AppNavigator() {
-  const [badgeNumber, setBadgeNumber] = useState(1)
+  //now don't use message alarm
+  const [badgeNumber, setBadgeNumber] = useState(0)
   // firebase.auth().onAuthStateChanged(function (user) {
   // var user=firebase.auth().currentUser;
   // if (user) {

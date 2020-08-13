@@ -23,7 +23,7 @@ export function setUnreadMessage(roomname, uid) {
                 alert('可愛いジュンホちゃん。。。')
             }
             var newUnreadMessage = doc.data()[uid] + 1
-            if(newUnreadMessage == NaN) {
+            if(newUnreadMessage == 'NaN') {
                 newUnreadMessage = 0
             }
             var data = {}
@@ -47,6 +47,15 @@ export function setUnreadMessageToZero(roomname, uid) {
     data[uid] = 0
 
     docRef.set(data, { merge: true })
+
+    var index = 0
+    internalDocumentation.forEach(function (doc) {
+        if (doc.id == roomname) {
+            //console.log(internalDocumentation.docs[index].data()[uid])
+            internalDocumentation.docs[index].data()[uid] = 0
+        }
+        index ++ 
+    })
 }
 
 export function getUnreadMessage(roomname, uid) {
@@ -57,7 +66,10 @@ export function getUnreadMessage(roomname, uid) {
         }
     })
 
-    return returnVal == undefined ? 0 : returnVal
+    returnVal = (returnVal == undefined) || (isNaN(returnVal)) ? 0 : returnVal
+    //console.log('test' + returnVal + 1)
+
+    return (returnVal == undefined) || (returnVal == 'NaN') ? 0 : returnVal
 }
 
 export function fetchReservationData() {

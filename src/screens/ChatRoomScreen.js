@@ -66,6 +66,8 @@ export default class ChatRoomScreen extends Component {
       .catch(function (err) {
         alert(err.message)
       })
+
+      //setUnreadMessage(roomname, firebase.auth().currentUser.uid)
   }
 
   componentWillMount() {
@@ -163,12 +165,14 @@ export default class ChatRoomScreen extends Component {
     for(let i=0;i<this.state.users.length;i++) {
       sendPushNotification(this.state.users[i])
       console.log(this.state.users[i])
+      /*
       if(this.state.users[i] != firebase.auth().currentUser.uid) {
         console.log('test')
         setUnreadMessage(this.state.chatRoomId, this.state.users[i])
       } else {
         setUnreadMessageToZero(this.state.chatRoomId, this.state.users[i])
       }
+      */
     }
   };
 
@@ -180,6 +184,16 @@ export default class ChatRoomScreen extends Component {
   }
 
   handleBackPress = () => {
+    for(let i=0;i<this.state.users.length;i++) {
+      //sendPushNotification(this.state.users[i])
+      console.log(this.state.users[i])
+      if(this.state.users[i] != firebase.auth().currentUser.uid) {
+        //console.log('test')
+        setUnreadMessage(this.state.chatRoomId, this.state.users[i])
+      } else {
+        setUnreadMessageToZero(this.state.chatRoomId, this.state.users[i])
+      }
+    }
     this.props.navigation.navigate('ChatNavigator')
   }
 

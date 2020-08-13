@@ -2,7 +2,7 @@ import React, { PureComponent } from "react";
 import { StyleSheet, View, Text, ScrollView, FlatList, TouchableOpacity, InteractionManager, KeyboardAvoidingView,
         ActivityIndicator, 
         Platform} from "react-native";
-import { Button, ListItem, Icon, ButtonGroup, Header, Divider } from "react-native-elements";
+import { Button, ListItem, Icon, ButtonGroup, Header, Divider, Badge } from "react-native-elements";
 import firebase from 'firebase'
 import 'firebase/firestore'
 import * as Messenger from '../../Networking/Messenger'
@@ -255,11 +255,20 @@ export default class MessengerLobbyScreen extends PureComponent {
         //간격 수정요함
         <View style={[{flex: 1, justifyContent: 'center'}]}> 
             <View style={styles.elem}>
+                {Messenger.getUnreadMessage(item.id, firebase.auth().currentUser.uid) != 0  &&
+                    <Icon
+                        name='fiber-new'
+                        type='material'
+                        color='#517fa4'
+                        status="success"
+                        containerStyle={{ position: 'absolute', top: -68, left: 10 }}
+                    />
+                }
                 <ListItem
                     // key={i}
                     style={styles.chatList}
                     subtitle={<Text style={{color: '#0078CD'}}>{' ' + FormattedDate(item.startTime) + ' ~ ' + FormattedDate(item.endTime)}</Text>}
-                    title={' ' + item.source + ' ➤ ' + item.dest + ' ' + Messenger.getUnreadMessage(item.id, firebase.auth().currentUser.uid)}
+                    title={' ' + item.source + ' ➤ ' + item.dest + ' '}
                     // rightIcon={{ name: 'chevron-right' }}
                     //bottomDivider
                     badge={{ value: ' ' + item.users.length + ' ' }}
@@ -270,7 +279,6 @@ export default class MessengerLobbyScreen extends PureComponent {
                         id: item.id
                     })}
                 />
-
                 {item.endTime < Date.now() ?
                         // 정산 상태, 채팅방 인원에 따라 style 변경 해줄거임!
                     <View style={{backgroundColor: "#FFF", position:'absolute', top: '30%', right:'2.5%'}}>
