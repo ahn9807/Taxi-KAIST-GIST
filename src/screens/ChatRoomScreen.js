@@ -21,6 +21,7 @@ export default class ChatRoomScreen extends Component {
       regionName: 'KAIST',
       users: [],
       chatRoomId: null,
+      isSended: false,
       // tabBarVisible: false,
     }
 
@@ -155,6 +156,9 @@ export default class ChatRoomScreen extends Component {
   }
 
   send = messages => {
+    this.setState({
+      isSended: true,
+    })
     for (let i = 0; i < messages.length; i++) {
       const { text, user } = messages[i];
       const message = { text, user, createdAt: (new Date()).getTime() };
@@ -187,7 +191,7 @@ export default class ChatRoomScreen extends Component {
     for(let i=0;i<this.state.users.length;i++) {
       //sendPushNotification(this.state.users[i])
       console.log(this.state.users[i])
-      if(this.state.users[i] != firebase.auth().currentUser.uid) {
+      if(this.state.users[i] != firebase.auth().currentUser.uid && this.state.isSended) {
         //console.log('test')
         setUnreadMessage(this.state.chatRoomId, this.state.users[i])
       } else {
