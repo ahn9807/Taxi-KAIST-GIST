@@ -86,11 +86,11 @@ export default class CalculationDetail extends Component { //클래스형 컴포
     calculate = () => {
         const calculationInfo = this.props.calculationInfo
         const userInfo = this.props.userInfo
-
+        
         const payment = (this.state.charge / calculationInfo.users.length).toFixed(0)
         console.log(payment)
         const { bankName: accountBank } = this.state
-        console.log(accountBank + "fsddffff")
+        console.log(accountBank + "fsddffff " + userInfo.bankName)
 
         Calculation.makeCalculation({
             calculationId: calculationInfo.id,
@@ -103,8 +103,8 @@ export default class CalculationDetail extends Component { //클래스형 컴포
             hostId: firebase.auth().currentUser.uid,
             users: calculationInfo.users,
 
-            accountBank: this.state.bankName, 
-            accountNumber: this.state.bankAccount,
+            accountBank: userInfo.bankName, 
+            accountNumber: userInfo.bankAccount,
             charge: payment
         }).then(function (res, err) {
             if (res == false) {

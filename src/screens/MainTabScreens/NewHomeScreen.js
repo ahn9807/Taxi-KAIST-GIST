@@ -9,7 +9,7 @@ import { Text,
         
 
 } from "react-native"
-import { Button, ListItem, Overlay, Icon } from "react-native-elements"
+import { Button, ListItem, Overlay, Icon, Header  } from "react-native-elements"
 import SlidingUpPanel from "rn-sliding-up-panel";
 
 import * as Reservation from '../../Networking/Reservation'
@@ -204,11 +204,13 @@ export default class NewHomeScreen extends Component{
         return(
         <View style={styles.container}>
             
-            <Text style={{ color: '#000', marginTop: 40, marginBottom: 15, textAlign: 'center', fontWeight: '500', fontSize: 30 }}>
-                택시 탈 사람 ㅎㅎ
-            </Text>
-            
-             <View style={styles.buttonGroup}>
+
+            <Header
+                containerStyle={{ backgroundColor: '#fffa', borderBottomColor: 'transparent', marginBottom: 20 }}
+                centerComponent={{ text: '택시 탈 사람 찾기', style: { color: 'black', fontWeight: 'bold', fontSize: 25 } }}
+
+            />
+            <View style={styles.buttonGroup}>
                 <Button
                     title='장소 선택'
                     containerStyle={{ width: 90}}
@@ -402,7 +404,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 10
+        // marginBottom: 5
     },
     filterCondition:{
         // marginLeft: '20%',

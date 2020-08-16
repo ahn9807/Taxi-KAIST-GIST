@@ -26,7 +26,7 @@ const EnterReservationPanel =({enterItem, onTouchClose, handleReloadPress, fullN
                     tempString+=nameArray[i][j]
                 }
             }
-            tempArray[i]=tempString
+            tempArray[i]=tempString+" "
         }
         return tempArray
     }
