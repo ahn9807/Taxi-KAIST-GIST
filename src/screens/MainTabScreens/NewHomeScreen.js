@@ -19,6 +19,7 @@ import findRegionByName from '../../Region/Regions';
 import SwipeGestures from 'react-native-swipe-gestures'
 import GestureRecognizer from "react-native-swipe-gestures";
 import EnterReservationPanel from "../../components/EnterReservationPanel"
+import PointReservationPanel from "../../components/PointReservationPanel"
 import firebase from 'firebase'
 import 'firebase/firestore'
 import { AskPermission, sendPushNotification } from "../../components/LocalNotification";
@@ -36,6 +37,7 @@ export default class NewHomeScreen extends Component{
             fetchReservationList: [],
             showLocationPanel: false,
             showEnterPanel: false,
+            showPointPanel: false,
             showDatePicker: false,
             filterLocation: null,
             filterDate:null,
@@ -346,6 +348,11 @@ export default class NewHomeScreen extends Component{
                 
                 <EnterReservationPanel
                     enterItem={this.state.enterItem}
+                    showPointPanel={()=>{
+                        this.setState({
+                            showPointPanel: true
+                        })
+                    }}
                     onTouchClose={() => {
                         this.setState({showEnterPanel:false })
                     
@@ -355,6 +362,27 @@ export default class NewHomeScreen extends Component{
                     
                 
                 />
+            </Overlay>
+
+            <Overlay
+               visible={this.state.showPointPanel}
+               height={200}
+            //    overlayBackgroundColor='#fffa'
+               onBackdropPress={()=>{ this.setState({showEnterPanel: false})}}
+
+               >
+                
+                <PointReservationPanel
+                    enterItem={this.state.enterItem}
+                    onTouchClose={() => {
+                        this.setState({showPointPanel:false })
+                    
+                    }}
+                    handleReloadPress={this.handleReloadPress}
+                    fullName={this.state.userInfo.fullName}
+
+                />
+                
             </Overlay>
 
    

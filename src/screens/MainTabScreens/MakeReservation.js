@@ -137,9 +137,16 @@ export default class MakeReservation extends Component {
     onConfirmDigital(hour, minute) {
         this.setState({ time: `${hour}:${minute}` });
         if(this.state.pickerMode=='start'){
-            this.setState({
-                startTime: new Date(this.state.date).setHours(0,0,0,0) + (hour * 1000 * 60 * 60 + minute * 1000 * 60),
-            })    
+            if(this.state.endTime==''){
+                this.setState({
+                    startTime: new Date(this.state.date).setHours(0,0,0,0) + (hour * 1000 * 60 * 60 + minute * 1000 * 60),
+                    endTime:  new Date(this.state.date).setHours(0,0,0,0) + (hour * 1000 * 60 * 60 + (minute+20) * 1000 * 60)
+                })    
+            }else{
+                this.setState({
+                    startTime: new Date(this.state.date).setHours(0,0,0,0) + (hour * 1000 * 60 * 60 + minute * 1000 * 60),
+                })        
+            }
         }else{
             this.setState({
                 endTime: new Date(this.state.date).setHours(0,0,0,0) + (hour * 1000 * 60 * 60 + minute * 1000 * 60),
@@ -370,7 +377,7 @@ export default class MakeReservation extends Component {
                     minuteInterval={5}
                     itemStyle={styles.digitalTimePicker}
 
-                    // selec
+                    // selected hour 일단 안했는데 로직 세울수는 있을 것 같다. 
                 />
             </View>
         )
