@@ -159,7 +159,6 @@ export default class NewHomeScreen extends Component{
     makeReservation= () =>{
         console.log("make it")
         this.props.navigation.navigate('MakeReservation')
-        
     }
 
     locationSelect=() =>{
