@@ -274,6 +274,7 @@ export default class ChatRoomScreen extends Component {
           user={this.user}
           renderUsernameOnMessage={true}
           showUserAvatar={true}
+          
           renderAvatar={(obj) => {
             console.log(obj.currentMessage.user.avatar); return (
               <CacheImage
@@ -281,6 +282,7 @@ export default class ChatRoomScreen extends Component {
                 style={{ width: 30, height: 30, borderRadius: 90 }}
               />)
           }}
+          
           placeholder={' 메시지 입력 ➤'}
           showUserAvatar={true}
         // renderTime={(props)=> props.currentMessage.createdAt.toDate()}
