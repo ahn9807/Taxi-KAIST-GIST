@@ -386,7 +386,7 @@ export default class MessengerLobbyScreen extends PureComponent {
                             {!this.state.isLoadingCalculation?
                                 <FlatList
                                 style={styles.flatlist}
-                                data={this.state.calculationChatList}
+                                data={this.state.calculationChatList.reverse()} //의도적 reverse. 
                                 keyExtractor={this.keyExtractor}
                                 renderItem={this.renderItem}
                                 />
@@ -503,7 +503,7 @@ const styles = StyleSheet.create({
     modalButton:{
         // width: '70%',
         marginBottom: 20,
-        backgroundColor: '#29AEEC',
+        // backgroundColor: '#29AEEC',
         borderRadius: 3
 
     }

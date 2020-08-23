@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, TouchableOpacity, Platform, Image } from 'react-native';
+import { View, StyleSheet, KeyboardAvoidingView, TouchableOpacity, Platform, Image, BackHandler } from 'react-native';
 import { GiftedChat } from "react-native-gifted-chat";
 import firebase from 'firebase'
 import { Header, Button, Icon, Text, Tooltip, Divider } from 'react-native-elements'
@@ -37,6 +37,10 @@ export default class ChatRoomScreen extends Component {
   );
 
   componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
+
+
+    
     const roomname = this.props.navigation
     .dangerouslyGetState()
     .routes
@@ -74,6 +78,11 @@ export default class ChatRoomScreen extends Component {
   componentWillMount() {
     this.off();
   }
+
+  handleBackButton=()=>{
+    this.props.navigation.navigate("MessengerLobby"); //네비게이터 분리해놓아서 좀 임시방편 
+  }
+
 
   get user() {
     // const { navigation } = this.props;

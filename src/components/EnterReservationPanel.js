@@ -75,33 +75,7 @@ const EnterReservationPanel =({enterItem, showPointPanel, onTouchClose, handleRe
                     onPress={()=>{
                         showPointPanel();
                     }}
-                    // onPress={()=>{
-                    //     // 여기서 함수 실행
-
-                    //     enterItem.fullName=fullName
-                    //     // console.log(enterItem)
-                    //     Reservation.makeReservation(enterItem)
-                    //     .then(
-                    //         function(res,err) {
-                    //             if(res == false) {
-                    //                 console.log('failed')
-                    //             } else {
-                    //                 LocalNotification(this.state.selectedEndTime - (1000 * 60 * 30), '택승', '택시타기 30분 전입니다')
-                    //                 LocalNotification(this.state.selectedEndTime - (1000 * 60 * 10), '택승', '택시타기 10분 전입니다!!\n나갈 준비 해주세요~')
-                    //                 LocalNotification(this.state.selectedEndTime - (1000 * 60 * 5), '택승', '택시타기 5분 전입니다!!')
-                    //                 console.log('success')
-                             
-                    //                 // this.handleReloadPress()
-                    //             }
-                    //             handleReloadPress()
-                    //             onTouchClose()
-                    //             // 채팅방으로 바로 이동하시겠습니까? 넣으면 좋을듯. 
-
-                    //         }
-                    //     )
- 
-                    // }
-                
+               
 
                 />
 
@@ -178,7 +152,6 @@ const styles = StyleSheet.create({
         // flex: 2
     }
 })
-
 function n(n){
     return n > 9 ? "" + n: "0" + n;
 }

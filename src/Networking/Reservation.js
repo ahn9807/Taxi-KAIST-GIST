@@ -170,7 +170,7 @@ export function getMarkerByDest(dest) {
     return returnArray
 }
 
-export function makeReservation(item, index = 0) {
+export function makeReservation(item, index = 0, navigateToChat) {
     console.log('make Reservation')
     var source = item.source
     var dest = item.dest
@@ -181,6 +181,7 @@ export function makeReservation(item, index = 0) {
     var comment = item.comment
 
     var fullName=item.fullName
+
 
     console.log(" fn: "+ fullName)
 
@@ -224,7 +225,18 @@ export function makeReservation(item, index = 0) {
                             fullNames: fullNameArray
 
                         }, { merge: true})
-                        alert('가입되었습니다')
+                        Alert.alert('가입되었습니다', '', [{
+                            text: '확인', onPress: ()=>{ return null}
+                        },
+                        { text: "채팅방으로 이동", onPress: ()=>{ 
+
+                            navigateToChat()
+
+                       
+
+
+                        }}
+                        ])
                         resolve(true)
                     } else {
                         alert('이미 가입되어 있습니다')
@@ -251,7 +263,7 @@ export function makeReservation(item, index = 0) {
                     users: [userUid],
                     fullNames: [fullName], 
                 })
-                alert('가입되었습니다')
+                alert('여정이 생성되었습니다')
                 resolve(true)
             }
         }).catch(function(err) {

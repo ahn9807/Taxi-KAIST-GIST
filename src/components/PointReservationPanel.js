@@ -9,36 +9,48 @@ import { Button, Text, Divider } from "react-native-elements"
 import * as Reservation from "../Networking/Reservation"
 
 
+export function navigateToChat(){
+    console.log("1242341")
+    //여기서부터 구현하면됨. 
+}
 
 const PointReservationPanel =({enterItem, onTouchClose, handleReloadPress, fullName})=>{ 
 
     
-    function maskName(nameArray){
-        console.log("name"+nameArray)
-        let tempArray=Array.from(nameArray)
-   
-        for(let i=0;i<nameArray.length;i++){
-            let tempString=""
-            for(let j=0;j<nameArray[i].length;j++){
-                if(j%2==1){
-                    tempString+="*"
-                }else{
-                    tempString+=nameArray[i][j]
-                }
-            }
-            tempArray[i]=tempString+" "
-        }
-        return tempArray
-    }
+
+
+    // firebase.firestore() 
+    // .collection('users')
+    // .doc(firebase.auth().currentUser.uid)
+    // .get()
+    // .then(function (user) {
+    //     var avatarUri=user.avatarUri;
+    //     var username=user.username;
+    //     this.props.navigation.navigate('ChatRoom', {
+    //         chatId: source + '->' + dest + ' s:' + startTime + ' d:' + endTime + 'index:' + index,
+    //         username: username,
+    //         avatarUri: avatarUri,
+    //         roomname: ' ' + source + ' ➤ ' + dest + ' ',
+    //         fullname: fullName
+    //     })
+    // })
 
     return (
         <View style={styles.container}>
 
-                <Text>
+                <Text style={{fontWeight: 'bold', fontSize: 25}}>
                     참여 하시겠습니까?{"\n"}
+                </Text>
+                <Text style={{fontWeight: 'bold', fontSize: 17,color: "red"}}>
+                    *택시 탑승시 마스크는 필수입니다!{"\n"}
+                </Text>
+                
+
+                <Text style={{marginBottom: 10, color: "#444"}}>
                     내 포인트: 10000{"\n"}
                     차감 포인트: 0
                 </Text>
+            <View style={styles.buttonGroup}>
 
                 <Button
                     title="닫기"
@@ -59,7 +71,7 @@ const PointReservationPanel =({enterItem, onTouchClose, handleReloadPress, fullN
 
                         enterItem.fullName=fullName
                         // console.log(enterItem)
-                        Reservation.makeReservation(enterItem)
+                        Reservation.makeReservation(enterItem, 0 , navigateToChat)
                         .then(
                             function(res,err) {
                                 if(res == false) {
@@ -83,7 +95,8 @@ const PointReservationPanel =({enterItem, onTouchClose, handleReloadPress, fullN
 
                 />
             
-         
+            </View>
+
         </View>
 
     )
@@ -119,7 +132,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginLeft: '10%'
+        marginLeft: '9%'
     },
     button: {
         width: '80%',

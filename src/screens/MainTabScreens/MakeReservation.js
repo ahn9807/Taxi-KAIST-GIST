@@ -92,7 +92,7 @@ export default class MakeReservation extends Component {
         if (this.state.endTime == null || this.state.startTime == null) {
             alert('시작 시간 및 종료 시간을 입력해 주세요')
         }
-        else if(this.state.startTime < new Date()){
+        else if(this.state.startTime < new Date().getTime()){
             alert('출발 시간이 너무 이릅니다!')
         }
         else if (this.state.startTime > this.state.endTime) {

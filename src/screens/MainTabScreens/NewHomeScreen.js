@@ -5,7 +5,8 @@ import { Text,
     FlatList,
     ActivityIndicator,
     TouchableOpacity,
-    BackHandler
+    BackHandler,
+    Modal
         
 
 } from "react-native"
@@ -115,7 +116,7 @@ export default class NewHomeScreen extends Component{
                 // recentReservationList: this.state.fetchReservationList,
                 isLoading: false,
                 isFetching:false
-            })//일케 비동기처리? 
+            })
             
         })
     }
@@ -350,8 +351,9 @@ export default class NewHomeScreen extends Component{
                     enterItem={this.state.enterItem}
                     showPointPanel={()=>{
                         this.setState({
-                            showPointPanel: true
-                        })
+                            showPointPanel: true,
+                            showEnterPanel: false
+                        }, ()=> ( console.log("hoho " + this.state.showPointPanel)))
                     }}
                     onTouchClose={() => {
                         this.setState({showEnterPanel:false })
