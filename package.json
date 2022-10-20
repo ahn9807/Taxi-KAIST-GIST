@@ -44,7 +44,7 @@
     "react-native-paper": "^3.6.0",
     "react-native-popover-tooltip": "^1.1.4",
     "react-native-raw-bottom-sheet": "^2.0.6",
-    "react-native-reanimated": "^1.7.0",
+    "react-native-reanimated": "^2.10.0",
     "react-native-render-html": "^4.2.0",
     "react-native-safe-area-context": "^0.7.3",
     "react-native-safe-area-view": "^1.0.0",
